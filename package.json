@@ -1,11 +1,16 @@
 {
   "name": "asn_fe",
   "version": "1.0.0",
+  "packageManager": "pnpm@9.0.0",
   "description": "어른들나라 프론트엔드 레포지토리입니다.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky && git config core.hooksPath .husky"
+    "prepare": "husky && git config core.hooksPath .husky",
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "dev:service": "turbo dev --filter=service"
   },
   "repository": {
     "type": "git",
@@ -20,6 +25,7 @@
   },
   "homepage": "https://github.com/Adults-Nara/Adults-Nara_FE#readme",
   "devDependencies": {
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "turbo": "^2.8.5"
   }
 }
