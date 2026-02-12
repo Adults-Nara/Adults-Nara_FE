@@ -3,7 +3,8 @@
     "baseUrl": ".",
     "paths": {
       "@repo/configs/*": ["packages/configs/*"],
-      "@repo/ui/*": ["packages/ui/*"]
+      "@repo/ui/*": ["packages/ui/*"],
+      "@repo/ui": ["packages/ui/src/index.ts"]
     },
     "target": "ESNext",
     "module": "ESNext",

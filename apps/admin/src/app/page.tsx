@@ -1,4 +1,4 @@
-import { cn, Logo } from '@repo/ui';
+import { Button, Logo } from '@repo/ui';
 
 export default function Home() {
   return (

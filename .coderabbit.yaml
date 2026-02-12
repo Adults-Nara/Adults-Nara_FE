@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------- #
 # CodeRabbit 기본 설정 (언어 및 페르소나)
 # ---------------------------------------------------------------- #
-language: 'ko-KR'
+language: "ko-KR"
 
 # 페르소나와 응답 톤앤매너 지시 (최대 250자)
 tone_instructions: >
@@ -15,7 +15,7 @@ tone_instructions: >
 # 코드 리뷰 기능 세부 설정
 # ---------------------------------------------------------------- #
 reviews:
-  profile: 'chill' # 리뷰 톤
+  profile: "chill" # 리뷰 톤
   request_changes_workflow: false # 모든 코멘트 resolve 시 자동 Approve
   high_level_summary: true # PR 전체 요약
   changed_files_summary: false # 파일 단위 요약
@@ -30,7 +30,7 @@ reviews:
   auto_assign_reviewers: false
 
   path_instructions:
-    - path: '**'
+    - path: "**"
       instructions: |
         1. **높은 코드 품질**인지 철저히 확인하고 변수 네이밍도 점검
         2. 새로운 기능 추가나 수정 시, 기존 코드와의 호환성, 재사용성뿐 아니라 **확장 가능한 구조**인지도 검토
@@ -45,14 +45,13 @@ reviews:
   auto_review:
     enabled: true # PR 생성 시 자동 리뷰
     auto_incremental_review: true # 새 커밋 시 변경 부분만 리뷰
-
-tools:
-  gitleaks:
-    enabled: true
-  yamllint:
-    enabled: true
-  markdownlint:
-    enabled: true
+  tools:
+    gitleaks:
+      enabled: true
+    yamllint:
+      enabled: true
+    markdownlint:
+      enabled: true
 
 # ---------------------------------------------------------------- #
 # 채팅 기능 세부 설정
@@ -69,8 +68,8 @@ knowledge_base:
   code_guidelines:
     enabled: false
   learnings:
-    scope: 'local'
+    scope: "local"
   issues:
-    scope: 'local'
+    scope: "local"
   pull_requests:
-    scope: 'local'
+    scope: "local"
