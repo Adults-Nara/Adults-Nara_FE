@@ -6,8 +6,8 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./icons": "./src/icons/index.ts",
-    "./common": "./src/common/index.ts"
+    "./*": "./src/*",
+    "./styles": "./src/styles/tokens.css"
   },
   "scripts": {
     "lint": "eslint src/",
@@ -20,8 +20,14 @@
   },
   "devDependencies": {
     "@svgr/cli": "^8.1.0",
+    "@tailwindcss/postcss": "^4",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "tailwindcss": "^4",
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.4.0"
   }
 }

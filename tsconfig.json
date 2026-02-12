@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@repo/config/*": ["packages/config/*"],
+      "@repo/configs/*": ["packages/configs/*"],
       "@repo/ui/*": ["packages/ui/*"]
     },
     "target": "ESNext",

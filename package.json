@@ -10,7 +10,8 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
-    "dev:service": "turbo dev --filter=service"
+    "dev:service": "turbo dev --filter=service",
+    "dev:admin": "turbo dev --filter=admin"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,8 @@
   "homepage": "https://github.com/Adults-Nara/Adults-Nara_FE#readme",
   "devDependencies": {
     "husky": "^9.1.7",
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
     "turbo": "^2.8.5"
   }
 }

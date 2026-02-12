@@ -3,7 +3,7 @@ import { cn, Logo } from '@repo/ui';
 export default function Home() {
   return (
     <>
-      <h1>서비스</h1>
+      <h1>관리자</h1>
       <Logo className="h-50 w-50" />
 
       <div className="title1">title1</div>
