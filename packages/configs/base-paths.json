@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@repo/configs/*": ["../../packages/configs/*"],
+      "@repo/ui": ["../../packages/ui/src/index.ts"]
+    }
+  }
+}

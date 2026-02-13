@@ -1,0 +1,10 @@
+{
+  "name": "@repo/configs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./eslint": "./eslint.mjs",
+    "./prettier": "./prettier.json"
+  }
+}

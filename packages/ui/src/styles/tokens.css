@@ -1,0 +1,83 @@
+@theme inline {
+  --font-sans: "Pretendard", ui-sans-serif, system-ui, sans-serif;
+
+  /* Primary Colors */
+  --color-primary-100: #fce8ec;
+  --color-primary-200: #f7c1cc;
+  --color-primary-300: #f39aaa;
+  --color-primary-400: #ee5e72;
+  --color-primary-500: #e21d3e;
+  --color-primary-600: #c91835;
+  --color-primary-700: #a3142b;
+  --color-primary-800: #7d0f21;
+  --color-primary-900: #570a17;
+
+  /* Basic Colors */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Gray Colors */
+  --color-gray-100: #f9fafc;
+  --color-gray-200: #eff1f4;
+  --color-gray-300: #e4e6ea;
+  --color-gray-400: #d5d8dc;
+  --color-gray-500: #bec1c7;
+  --color-gray-600: #9da0a8;
+  --color-gray-700: #7f828c;
+  --color-gray-800: #5a5e6a;
+  --color-gray-900: #3b3f4a;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("./fonts/Pretendard-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("./fonts/Pretendard-SemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("./fonts/Pretendard-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer components {
+  .title1 {
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .title2 {
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .title3 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .body1 {
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .body2 {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .body3 {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .body4 {
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
