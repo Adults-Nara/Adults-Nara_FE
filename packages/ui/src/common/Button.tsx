@@ -11,6 +11,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary-500 text-white hover:bg-primary-500/80",
         outline: "border border-gray-700 bg-gray-200 hover:bg-gray-200/50",
+        noneline: "border-none bg-gray-200 rounded-3xl hover:bg-gray-200/50",
       },
       size: {
         default: "body1 h-[50px] px-5 w-full",
