@@ -53,7 +53,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           <div className="flex items-center gap-1.5 ">
-            {showClear && value && !isPassword && (
+            {showClear && value !== undefined && value !== "" && !isPassword && (
               <button type="button" onClick={onClear}>
                 <Close />
               </button>
