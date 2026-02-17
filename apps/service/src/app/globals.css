@@ -3,9 +3,12 @@
 @import '@repo/ui/styles';
 @source '../../../../packages/ui/src/common/';
 
-html,
-body {
-  max-width: 390px;
-  min-height: 100vh;
-  margin: 0 auto;
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 파이어폭스 등에서 스크롤바 숨기기 */
+.custom-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }

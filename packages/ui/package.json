@@ -14,7 +14,7 @@
   "scripts": {
     "lint": "eslint src/",
     "type-check": "tsc --noEmit",
-    "icons": "svgr --out-dir src/icons --typescript --icon --replace-attr-values \"#000=currentColor\" src/icons/svgs"
+    "icons": "svgr --out-dir src/icons --typescript --icon --replace-attr-values \"#000=currentColor\" src/icons/svgs --no-prettier"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
