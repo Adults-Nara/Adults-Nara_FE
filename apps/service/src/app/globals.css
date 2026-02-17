@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin 'tailwindcss-animate';
 @import '@repo/ui/styles';
 @source '../../../../packages/ui/src/common/';
 
