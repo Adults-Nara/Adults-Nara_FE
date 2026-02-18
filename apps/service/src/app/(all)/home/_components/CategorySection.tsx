@@ -3,7 +3,7 @@ import VideoVerticalCard from '@/components/thumbnail/VideoVerticalCard';
 import { MOCK_VIDEO_DATA } from '@/constant/mockData';
 import { Chip } from '@repo/ui';
 import useEmblaCarousel from 'embla-carousel-react';
-import { useCallback } from 'react';
+import { useState } from 'react';
 
 // 임시 데이터 (나중에 API 연동)
 const categories = [
@@ -18,6 +18,8 @@ const categories = [
 ];
 
 const CategorySection = () => {
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+
   const [categoriRef] = useEmblaCarousel({
     align: 'start',
     containScroll: 'trimSnaps',
@@ -35,7 +37,13 @@ const CategorySection = () => {
       <div className="overflow-hidden px-3" ref={categoriRef}>
         <div className="flex gap-2.5">
           {categories.map((cat, index) => (
-            <Chip key={index}> {cat}</Chip>
+            <Chip
+              key={index}
+              selected={selectedCategory === cat}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat}
+            </Chip>
           ))}
         </div>
       </div>
