@@ -1,0 +1,45 @@
+/**
+ * 조회수를 단위(만, 억)로 변환합니다.
+ */
+export const formatViewCount = (count: number): string => {
+  if (count < 1000) return `${count}회`;
+  if (count < 10000) {
+    const notched = Number((count / 1000).toFixed(1));
+    return `${notched}천회`;
+  }
+  if (count < 100000000) {
+    const notched = Number((count / 10000).toFixed(1));
+    return `${notched}만회`;
+  }
+  const notched = Number((count / 100000000).toFixed(1));
+  return `${notched}억회`;
+};
+
+/**
+ * 업로드 날짜를 기준으로 현재와의 상대적 날짜를 계산합니다.
+ */
+export const formatRelativeTime = (date: string | Date): string => {
+  const start = new Date(date);
+  const end = new Date();
+  const diffInSeconds = Math.floor((end.getTime() - start.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return '방금 전';
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) return `${diffInHours}시간 전`;
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 7) return `${diffInDays}일 전`;
+
+  const diffInWeeks = Math.floor(diffInDays / 7);
+  if (diffInWeeks < 4) return `${diffInWeeks}주 전`;
+
+  const diffInMonths = Math.floor(diffInDays / 30);
+  if (diffInMonths < 12) return `${diffInMonths}개월 전`;
+
+  const diffInYears = Math.floor(diffInDays / 365);
+  return `${diffInYears}년 전`;
+};

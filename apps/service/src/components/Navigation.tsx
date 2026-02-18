@@ -1,4 +1,5 @@
 'use client';
+import { ROUTES } from '@/constant/routes';
 import { Home, Profile, Shorts } from '@repo/ui';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -7,11 +8,11 @@ const Navigation = () => {
   const pathname = usePathname();
 
   const navItems = [
-    { name: '홈', href: '/home', icon: <Home className="h-7 w-7" /> },
-    { name: '쇼츠', href: '/shorts', icon: <Shorts className="h-7 w-7" /> },
+    { name: '홈', href: ROUTES.HOME, icon: <Home className="h-7 w-7" /> },
+    { name: '쇼츠', href: ROUTES.SHORTS, icon: <Shorts className="h-7 w-7" /> },
     {
       name: '내 정보',
-      href: '/mypage',
+      href: ROUTES.MYPAGE,
       icon: <Profile className="h-7 w-7" />,
     },
   ];

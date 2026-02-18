@@ -1,18 +1,13 @@
-import { Button, Logo } from '@repo/ui';
+import CategorySection from './_components/CategorySection';
+import RecommendedSection from './_components/RecommendedSection';
+import TopTenSection from './_components/TopTenSection';
 
 export default function Home() {
   return (
-    <div className="">
-      <h1>홈페이지</h1>
-      <Logo className="h-50 w-50" />
-      <Logo className="h-50 w-50" />
-      {/* <Button>회원가입</Button> */}
-      <Logo className="h-50 w-50" />
-      <Logo className="h-50 w-50" />
-      <Logo className="h-50 w-50" />
-      <Logo className="h-50 w-50" />
-      <Logo className="h-50 w-50" />
-      <Logo className="h-50 w-50" />
+    <div className="flex flex-col gap-5 py-5">
+      <TopTenSection />
+      <CategorySection />
+      <RecommendedSection />
     </div>
   );
 }

@@ -44,7 +44,7 @@ const Header = () => {
       <motion.header
         initial={{ y: 0 }}
         animate={{ y: headerVisible ? 0 : -71 }}
-        transition={{ duration: 0.4, ease: 'easeInOut' }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
         className="sticky top-0 z-40 border-b border-gray-300 bg-gray-100"
       >
         <div className="flex h-17.5 items-center justify-between pr-5 pl-1">

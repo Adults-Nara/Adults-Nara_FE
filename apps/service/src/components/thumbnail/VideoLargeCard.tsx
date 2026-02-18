@@ -1,0 +1,32 @@
+import { thumbrnailData } from '@/types/video';
+import Thumbnail from './Thumbnail';
+import { formatRelativeTime, formatViewCount } from '@/utils/format';
+
+interface VideoLargeCardProps {
+  data: thumbrnailData;
+}
+
+const VideoLargeCard = ({ data }: VideoLargeCardProps) => {
+  return (
+    <div className="flex w-full flex-col overflow-hidden">
+      <Thumbnail
+        type="long"
+        src={data.thumbrnailSrc}
+        duration={data.duration}
+        progress={data.progress}
+      />
+      <div className="flex w-full gap-3 bg-white px-2 py-3">
+        <div className="bg-primary-100 h-12.5 w-12.5 rounded-full"></div>
+        <div className="flex flex-col gap-1">
+          <span className="title3 line-clamp-2">{data.title}</span>
+          <span className="body4 text-gray-700">
+            {data.uploader} · 조회수 {formatViewCount(data.views)} ·{' '}
+            {formatRelativeTime(data.date)}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default VideoLargeCard;

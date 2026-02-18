@@ -1,10 +1,24 @@
 'use client';
 
+import { ROUTES } from '@/constant/routes';
 import { Chip, Input, LeftArrow, SearchIcon } from '@repo/ui';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-const SearchLayer = ({ onClose }: { onClose: () => void }) => {
-  const [keyword, setKeyword] = useState('');
+interface SearchLayerProps {
+  onClose: () => void;
+  initial?: string;
+}
+
+const SearchLayer = ({ onClose, initial = '' }: SearchLayerProps) => {
+  const [keyword, setKeyword] = useState(initial);
+  const route = useRouter();
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      route.push(ROUTES.SEARCH(keyword));
+    }
+  };
 
   // 임시 데이터 (나중에 API 연동)
   const categories = [
@@ -47,6 +61,7 @@ const SearchLayer = ({ onClose }: { onClose: () => void }) => {
           placeholder="검색어를 입력하세요."
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
+          onKeyDown={handleKeyDown}
           onClear={() => setKeyword('')}
           showClear
         />
@@ -68,7 +83,11 @@ const SearchLayer = ({ onClose }: { onClose: () => void }) => {
         /* 값이 있을 때: 자동완성 리스트 */
         <div className="flex flex-col gap-6 rounded-b-lg bg-white px-6 py-5">
           {suggestions.map((item, i) => (
-            <button key={i} className="flex items-center gap-3">
+            <button
+              key={i}
+              onClick={() => route.push(ROUTES.SEARCH(item))}
+              className="flex items-center gap-3"
+            >
               <SearchIcon className="h-5 w-5 text-gray-700" />
               <span className="body2">{item}</span>
             </button>
