@@ -7,11 +7,9 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="overflow-hidde flex h-dvh flex-col">
+    <div className="flex flex-col">
       <Header />
-      <main className="custom-scrollbar mb-17.5 flex-1 overflow-x-hidden overflow-y-auto">
-        {children}
-      </main>
+      <main className="mb-17.5">{children}</main>
       <Navigation />
     </div>
   );

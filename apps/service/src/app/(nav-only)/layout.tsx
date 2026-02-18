@@ -6,10 +6,8 @@ export default function NavOnlyLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="overflow-hidde flex h-dvh flex-col">
-      <main className="custom-scrollbar mb-17.5 flex-1 overflow-x-hidden overflow-y-auto">
-        {children}
-      </main>
+    <div className="flex flex-col">
+      <main className="mb-17.5">{children}</main>
       <Navigation />
     </div>
   );
