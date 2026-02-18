@@ -294,39 +294,37 @@ export default function ShortsTab() {
   const [algorithmList, setAlgorithmList] =
     useState<VideoData[]>(ALGORITHM_VIDEOS);
 
+  // 마지막으로 본 영상 저장 (rowIndex -> VideoData)
   const lastSeenRef = useRef<Map<number, VideoData>>(new Map());
 
-  // 수직 스크롤 핸들러
+  // activeRowIndexRef와 algorithmListRef는 최신 값을 참조하기 위한 ref.
+  /* TODO : 가로 스크롤 해도 리랜더링 되는 부분 수정 */
+  const activeRowIndexRef = useRef(0);
+  const algorithmListRef = useRef(algorithmList);
+
+  // 세로 스크롤 핸들러
   const handleVerticalScroll = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
     const scrollTop = container.scrollTop;
     const rowHeight = container.clientHeight;
-    const newRowIndex = Math.round(scrollTop / rowHeight);
+    const currentRow = activeRowIndexRef.current;
 
-    if (
-      newRowIndex !== activeRowIndex &&
-      newRowIndex >= 0 &&
-      newRowIndex < algorithmList.length
-    ) {
-      const lastSeen = lastSeenRef.current.get(activeRowIndex);
-      if (lastSeen && lastSeen.id !== algorithmList[activeRowIndex]?.id) {
-        setAlgorithmList((prev) => {
-          const next = [...prev];
-          next[activeRowIndex] = lastSeen;
-          return next;
-        });
-      }
+    // 스크롤 위치가 현재 index 기준으로 반 이상 넘어갔는지 판단
+    const scrolledTo = Math.round(scrollTop / rowHeight);
 
-      setActiveRowIndex(newRowIndex);
-
-      const currentVideo =
-        lastSeenRef.current.get(newRowIndex) ?? algorithmList[newRowIndex];
-      if (currentVideo) {
-        window.history.replaceState(null, '', `/shortForm/${currentVideo.id}`);
-      }
+    if (scrolledTo > currentRow) {
+      // 아래로 넘김
+      const newIndex = currentRow + 1;
+      activeRowIndexRef.current = newIndex;
+      setActiveRowIndex(newIndex);
+    } else if (scrolledTo < currentRow) {
+      // 위로 넘김
+      const newIndex = currentRow - 1;
+      activeRowIndexRef.current = newIndex;
+      setActiveRowIndex(newIndex);
     }
-  }, [activeRowIndex, algorithmList]);
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -337,6 +335,7 @@ export default function ShortsTab() {
     return () => container.removeEventListener('scroll', handleVerticalScroll);
   }, [handleVerticalScroll]);
 
+  // 가로 스크롤 핸들러
   const handleHorizontalChange = useCallback(
     (rowIndex: number) => (hIndex: number, video: VideoData) => {
       lastSeenRef.current.set(rowIndex, video);
