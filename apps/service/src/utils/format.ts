@@ -4,14 +4,14 @@
 export const formatViewCount = (count: number): string => {
   if (count < 1000) return `${count}회`;
   if (count < 10000) {
-    const notched = Number((count / 1000).toFixed(1));
+    const notched = Math.floor(count / 100) / 10;
     return `${notched}천회`;
   }
   if (count < 100000000) {
-    const notched = Number((count / 10000).toFixed(1));
+    const notched = Math.floor(count / 1000) / 10;
     return `${notched}만회`;
   }
-  const notched = Number((count / 100000000).toFixed(1));
+  const notched = Math.floor(count / 10000000) / 10;
   return `${notched}억회`;
 };
 

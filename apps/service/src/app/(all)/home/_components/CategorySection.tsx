@@ -20,7 +20,7 @@ const categories = [
 const CategorySection = () => {
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
-  const [categoriRef] = useEmblaCarousel({
+  const [categoryRef] = useEmblaCarousel({
     align: 'start',
     containScroll: 'trimSnaps',
     dragFree: true,
@@ -34,7 +34,7 @@ const CategorySection = () => {
   return (
     <div className="flex flex-col gap-4">
       <span className="title1 pl-3">주제별 인기 영상</span>
-      <div className="overflow-hidden px-3" ref={categoriRef}>
+      <div className="overflow-hidden px-3" ref={categoryRef}>
         <div className="flex gap-2.5">
           {categories.map((cat, index) => (
             <Chip

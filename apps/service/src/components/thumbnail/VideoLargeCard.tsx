@@ -1,9 +1,9 @@
-import { thumbrnailData } from '@/types/video';
+import { ThumbnailData } from '@/types/video';
 import Thumbnail from './Thumbnail';
 import { formatRelativeTime, formatViewCount } from '@/utils/format';
 
 interface VideoLargeCardProps {
-  data: thumbrnailData;
+  data: ThumbnailData;
 }
 
 const VideoLargeCard = ({ data }: VideoLargeCardProps) => {
@@ -11,11 +11,12 @@ const VideoLargeCard = ({ data }: VideoLargeCardProps) => {
     <div className="flex w-full flex-col overflow-hidden">
       <Thumbnail
         type="long"
-        src={data.thumbrnailSrc}
+        src={data.thumbnailSrc}
         duration={data.duration}
         progress={data.progress}
       />
       <div className="flex w-full gap-3 bg-white px-2 py-3">
+        {/* API연동시 이미지 태그추가 */}
         <div className="bg-primary-100 h-12.5 w-12.5 rounded-full"></div>
         <div className="flex flex-col gap-1">
           <span className="title3 line-clamp-2">{data.title}</span>

@@ -1,9 +1,9 @@
-import { thumbrnailData } from '@/types/video';
+import { ThumbnailData } from '@/types/video';
 import Thumbnail from './Thumbnail';
 import { formatRelativeTime, formatViewCount } from '@/utils/format';
 
 interface VideoVerticalCardProps {
-  data: thumbrnailData;
+  data: ThumbnailData;
 }
 
 const VideoVerticalCard = ({ data }: VideoVerticalCardProps) => {
@@ -11,7 +11,7 @@ const VideoVerticalCard = ({ data }: VideoVerticalCardProps) => {
     <div className="flex w-full flex-col overflow-hidden rounded-lg shadow-[0_0_2px_0px_rgba(0,0,0,0.25)]">
       <Thumbnail
         type="long"
-        src={data.thumbrnailSrc}
+        src={data.thumbnailSrc}
         duration={data.duration}
         progress={data.progress}
       />

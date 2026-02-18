@@ -1,5 +1,5 @@
-export interface thumbrnailData {
-  thumbrnailSrc: string;
+export interface ThumbnailData {
+  thumbnailSrc: string;
   title: string;
   uploader: string;
   duration: string;

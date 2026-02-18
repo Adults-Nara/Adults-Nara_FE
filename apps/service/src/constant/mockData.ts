@@ -1,8 +1,8 @@
-import { thumbrnailData } from '@/types/video';
+import { ThumbnailData } from '@/types/video';
 
-export const MOCK_VIDEO_DATA: thumbrnailData[] = [
+export const MOCK_VIDEO_DATA: ThumbnailData[] = [
   {
-    thumbrnailSrc: 'https://picsum.photos/1600/900?random=11',
+    thumbnailSrc: 'https://picsum.photos/1600/900?random=11',
     title: '[건강] 무릎 통증 싹 사라지는 아침 5분 스트레칭 (의사 권장)',
     uploader: '백세건강TV',
     duration: '15:30',
@@ -11,7 +11,7 @@ export const MOCK_VIDEO_DATA: thumbrnailData[] = [
     date: '2024-03-20 08:30',
   },
   {
-    thumbrnailSrc: 'https://picsum.photos/1600/900?random=12',
+    thumbnailSrc: 'https://picsum.photos/1600/900?random=12',
     title: '[요리] 입맛 없을 때 딱! 보리보리 된장찌개 맛있게 끓이는 법',
     uploader: '엄마의손맛',
     duration: '08:45',
@@ -20,7 +20,7 @@ export const MOCK_VIDEO_DATA: thumbrnailData[] = [
     date: '2024-03-19 11:15',
   },
   {
-    thumbrnailSrc: 'https://picsum.photos/1600/900?random=13',
+    thumbnailSrc: 'https://picsum.photos/1600/900?random=13',
     title: '[원예] 베란다에서 상추와 고추 키우기 - 초보자도 실패 없는 비법',
     uploader: '숲속작은정원',
     duration: '12:10',
@@ -29,7 +29,7 @@ export const MOCK_VIDEO_DATA: thumbrnailData[] = [
     date: '2024-03-18 15:00',
   },
   {
-    thumbrnailSrc: 'https://picsum.photos/1600/900?random=14',
+    thumbnailSrc: 'https://picsum.photos/1600/900?random=14',
     title: '[애완동물] 우리 집 강아지 노령견 케어법 - 관절 건강과 영양 관리',
     uploader: '댕냥이연구소',
     duration: '10:20',
@@ -38,7 +38,7 @@ export const MOCK_VIDEO_DATA: thumbrnailData[] = [
     date: '2024-03-15 14:40',
   },
   {
-    thumbrnailSrc: 'https://picsum.photos/1600/900?random=15',
+    thumbnailSrc: 'https://picsum.photos/1600/900?random=15',
     title: '[교양] 퇴계 이황에게 배우는 마음 다스리는 법 - 중년의 지혜',
     uploader: '인문학산책',
     duration: '25:55',
@@ -47,7 +47,7 @@ export const MOCK_VIDEO_DATA: thumbrnailData[] = [
     date: '2024-03-19 20:00',
   },
   {
-    thumbrnailSrc: 'https://picsum.photos/1600/900?random=16',
+    thumbnailSrc: 'https://picsum.photos/1600/900?random=16',
     title: '[뉴스] 2024년 달라지는 기초연금과 시니어 복지 혜택 총정리',
     uploader: '데일리뉴스24',
     duration: '05:00',
@@ -56,7 +56,7 @@ export const MOCK_VIDEO_DATA: thumbrnailData[] = [
     date: '2024-03-20 09:00',
   },
   {
-    thumbrnailSrc: 'https://picsum.photos/1600/900?random=17',
+    thumbnailSrc: 'https://picsum.photos/1600/900?random=17',
     title: '[음식] 소화 잘 되는 나물 반찬 5가지 - 보관법까지 알려드려요',
     uploader: '산촌밥상',
     duration: '11:30',
@@ -65,7 +65,7 @@ export const MOCK_VIDEO_DATA: thumbrnailData[] = [
     date: '2024-03-17 10:20',
   },
   {
-    thumbrnailSrc: 'https://picsum.photos/1600/900?random=18',
+    thumbnailSrc: 'https://picsum.photos/1600/900?random=18',
     title: '[드라마] 다시 봐도 가슴 뭉클한 그 시절 명작 드라마 명장면 모음',
     uploader: '추억의상영관',
     duration: '45:10',
@@ -74,7 +74,7 @@ export const MOCK_VIDEO_DATA: thumbrnailData[] = [
     date: '2024-02-10 22:45',
   },
   {
-    thumbrnailSrc: 'https://picsum.photos/1600/900?random=19',
+    thumbnailSrc: 'https://picsum.photos/1600/900?random=19',
     title: '[건강] 당뇨 걱정 없는 간식 추천 - 설탕 없이도 달콤한 과일들',
     uploader: '닥터시니어',
     duration: '09:15',
@@ -83,7 +83,7 @@ export const MOCK_VIDEO_DATA: thumbrnailData[] = [
     date: '2024-03-20 16:55',
   },
   {
-    thumbrnailSrc: 'https://picsum.photos/1600/900?random=20',
+    thumbnailSrc: 'https://picsum.photos/1600/900?random=20',
     title: '[원예] 시들시들한 화분 심폐소생술! 분갈이만 잘해도 살아납니다',
     uploader: '초록이집사',
     duration: '14:40',

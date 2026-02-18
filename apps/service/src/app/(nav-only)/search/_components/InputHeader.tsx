@@ -21,7 +21,7 @@ const InputHeader = () => {
   return (
     <>
       <div className="sticky top-0 z-40 flex h-17.5 items-center gap-5 border-b border-gray-300 bg-gray-100 px-5">
-        <button onClick={route.back}>
+        <button onClick={route.back} aria-label="뒤로가기">
           <LeftArrow className="h-6 w-6.5" />
         </button>
         <Input

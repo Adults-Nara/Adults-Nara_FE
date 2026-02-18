@@ -30,7 +30,7 @@ const Thumbnail = ({
           style={{ width: `${Math.min(progress, 100)}%` }}
         />
       )}
-      {type === 'long' && (
+      {type === 'long' && duration && (
         <span className="body4 absolute right-2 bottom-2 rounded-sm bg-black/80 px-1 text-white">
           {duration}
         </span>

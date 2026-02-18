@@ -3,7 +3,7 @@
 import { ROUTES } from '@/constant/routes';
 import { Chip, Input, LeftArrow, SearchIcon } from '@repo/ui';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface SearchLayerProps {
   onClose: () => void;
@@ -15,10 +15,28 @@ const SearchLayer = ({ onClose, initial = '' }: SearchLayerProps) => {
   const route = useRouter();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && keyword) {
       route.push(ROUTES.SEARCH(keyword));
     }
   };
+
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [onClose]);
 
   // 임시 데이터 (나중에 API 연동)
   const categories = [

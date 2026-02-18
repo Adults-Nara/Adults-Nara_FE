@@ -18,7 +18,10 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 z-40 h-17.5 w-full max-w-112.5 border-t border-gray-300 bg-gray-100">
+    <nav
+      className="fixed bottom-0 z-40 h-17.5 w-full max-w-112.5 border-t border-gray-300 bg-gray-100"
+      aria-label="하단 메뉴"
+    >
       <div className="flex h-full items-center justify-around">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
