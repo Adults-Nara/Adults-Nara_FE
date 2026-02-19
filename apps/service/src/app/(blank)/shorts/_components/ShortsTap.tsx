@@ -74,7 +74,7 @@ export default function ShortsTab(props: ShortsTabProps) {
   const handleHorizontalChange = useCallback(
     (rowIndex: number) => (hIndex: number, video: VideoData) => {
       lastSeenRef.current.set(rowIndex, video);
-      window.history.replaceState(null, '', `/shorts/${video.id}`);
+      // window.history.replaceState(null, '', `/shorts/${video.id}`);
     },
     [],
   );
