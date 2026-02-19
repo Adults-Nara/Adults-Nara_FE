@@ -1,6 +1,6 @@
 import { Logo } from '@repo/ui';
 
-export default function Home() {
+export default function Root() {
   return (
     <>
       <h1>서비스</h1>

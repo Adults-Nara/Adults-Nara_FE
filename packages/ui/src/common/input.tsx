@@ -38,7 +38,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className="flex w-full flex-col gap-1.5">
         <div
           className={cn(
-            'group flex h-[50px] w-full items-center gap-2 rounded-lg border border-gray-500 bg-gray-200 px-5 focus-within:border-gray-900',
+            'group flex h-[50px] w-full items-center gap-4 rounded-lg border border-gray-500 bg-gray-200 px-5 focus-within:border-gray-900',
             error && 'border-red-500 focus-within:border-red-500',
             props.disabled && 'cursor-not-allowed opacity-50',
             className,
@@ -49,7 +49,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={inputType}
             value={value}
             onChange={onChange}
-            className="body2 flex-1 py-2 outline-none placeholder:text-gray-600 disabled:cursor-not-allowed"
+            className="body2 w-full flex-1 py-2 outline-none placeholder:text-gray-600 disabled:cursor-not-allowed"
             ref={ref}
             {...props}
           />
