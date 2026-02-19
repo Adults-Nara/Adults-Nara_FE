@@ -43,17 +43,18 @@ export default function ShortsTab(props: ShortsTabProps) {
       // 위로 넘김
       newIndex = currentRow - 1;
     }
-    activeRowIndexRef.current = newIndex;
-    setActiveRowIndex(newIndex);
+
     setVerticalList((prev) => {
       const newList = [...prev];
       // 현재 행에 마지막으로 본 영상이 있으면, 그 영상으로 verticalList 업데이트
-      const lastSeenVideo = lastSeenRef.current.get(newIndex);
+      const lastSeenVideo = lastSeenRef.current.get(currentRow);
       if (lastSeenVideo) {
-        newList[newIndex] = lastSeenVideo;
+        newList[currentRow] = lastSeenVideo;
       }
       return newList;
     });
+    activeRowIndexRef.current = newIndex;
+    setActiveRowIndex(newIndex);
   }, []);
 
   // event listener 등록
