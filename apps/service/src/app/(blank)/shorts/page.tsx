@@ -1,6 +1,11 @@
+'use client';
+
 import { Close, SearchIcon } from '@repo/ui';
 import { VideoData } from '../../../types/video';
 import ShortsTab from './_components/ShortsTap';
+
+import { ROUTES } from '@/constant/routes';
+import { useRouter } from 'next/navigation';
 
 // --- Mock Data ---
 const ALGORITHM_VIDEOS = fetchAlgorithmVideo();
@@ -25,11 +30,17 @@ function fetchAlgorithmVideo(): VideoData[] {
 }
 
 export default function ShortsPage() {
+  const router = useRouter();
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-black">
       {/* 헤더 */}
       <div className="absolute top-0 right-0 left-0 z-30 flex items-center justify-between bg-linear-to-b from-black/10 to-transparent px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3 text-[28px] text-white">
-        <button className="drop-shadow-sm">
+        <button
+          className="drop-shadow-sm"
+          onClick={() => {
+            router.replace(ROUTES.HOME);
+          }}
+        >
           <Close />
         </button>
         <button className="drop-shadow-sm">
