@@ -6,6 +6,7 @@ interface ThumbnailProps {
   alt?: string;
   type?: 'long' | 'short';
   progress?: number;
+  fillContainer?: boolean; //북마크 그리드썸네일 용
 }
 const Thumbnail = ({
   src,
@@ -13,8 +14,13 @@ const Thumbnail = ({
   alt = 'thumbnail',
   type = 'long',
   progress,
+  fillContainer = false,
 }: ThumbnailProps) => {
-  const ratioClass = type === 'short' ? 'aspect-9/16' : 'aspect-video';
+  const ratioClass = fillContainer
+    ? 'h-full'
+    : type === 'short'
+      ? 'aspect-9/16'
+      : 'aspect-video';
   return (
     <div className={`relative w-full overflow-hidden ${ratioClass}`}>
       <Image

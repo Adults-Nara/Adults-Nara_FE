@@ -21,7 +21,7 @@ const CategoryBoard = () => {
     <div className="flex w-full flex-col gap-4 rounded-lg bg-gray-100 p-4 shadow-[0_5px_15px_0px_rgba(0,0,0,0.1)]">
       <div className="flex w-full justify-between">
         <span className="title2">선호주제</span>
-        <button className="body4 text-primary-500 cursor-pointer">
+        <button className="body3 text-primary-500 cursor-pointer">
           자세히보기{' >'}
         </button>
       </div>

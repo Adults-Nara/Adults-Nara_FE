@@ -6,7 +6,7 @@ import UserProfile from './_components/UserProfile';
 
 const MyPage = () => {
   return (
-    <div className="flex flex-col gap-5 px-5 pt-5">
+    <div className="flex flex-col gap-5 px-5 py-5">
       <UserProfile />
       <CategoryBoard />
       <RewardSummary />

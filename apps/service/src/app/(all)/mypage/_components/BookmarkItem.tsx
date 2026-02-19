@@ -9,10 +9,18 @@ interface BookmarkItemProps {
 const BookmarkItem = ({ data, type }: BookmarkItemProps) => {
   return (
     <div className="flex w-full flex-col overflow-hidden rounded-lg shadow-[0_0_2px_0px_rgba(0,0,0,0.25)]">
-      <div className="grid aspect-video grid-cols-2 grid-rows-2">
-        {data.slice(0, 4).map((video, index) => {
-          return <Thumbnail key={index} type={type} src={video.thumbnailSrc} />;
-        })}
+      <div
+        className={`grid aspect-video w-full bg-gray-100 ${
+          type === 'long'
+            ? 'grid-cols-2 grid-rows-2'
+            : 'grid-cols-4 grid-rows-1'
+        }`}
+      >
+        {data.slice(0, 4).map((video, index) => (
+          <div key={index} className="relative h-full w-full overflow-hidden">
+            <Thumbnail type={type} src={video.thumbnailSrc} fillContainer />
+          </div>
+        ))}
       </div>
       <div className="flex w-full flex-col gap-1 bg-white p-2">
         <span className="title3 line-clamp-2">

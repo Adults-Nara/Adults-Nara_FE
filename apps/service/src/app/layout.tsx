@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import BottomSheet from '@/components/BottomSheet';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -28,6 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} custom-scrollbar mx-auto h-dvh max-w-112.5 overflow-x-hidden overflow-y-auto antialiased`}
       >
         {children}
+        <BottomSheet />
       </body>
     </html>
   );

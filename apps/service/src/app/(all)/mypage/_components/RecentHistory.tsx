@@ -17,7 +17,7 @@ const RecentHistory = () => {
           모두보기{' >'}
         </button>
       </div>
-      <div className="overflow-hidden py-0.5" ref={videoListRef}>
+      <div className="overflow-hidden px-0.5 py-0.5" ref={videoListRef}>
         <div className="flex gap-4">
           {/* 임시데이터 (API연동 필요) */}
           {MOCK_VIDEO_DATA.map((data, index) => {
