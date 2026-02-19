@@ -1,7 +1,6 @@
 export const ROUTES = {
   HOME: '/home',
   SHORTS: '/shorts',
-
   MYPAGE: '/mypage',
   SEARCH: (query?: string) => {
     if (!query?.trim()) return '/search';

@@ -34,18 +34,26 @@ export default function ShortsTab(props: ShortsTabProps) {
 
     // 스크롤 위치가 현재 index 기준으로 반 이상 넘어갔는지 판단
     const scrolledTo = Math.round(scrollTop / rowHeight);
-
+    if (scrolledTo === currentRow) return; // 같은 행에 머무는 경우, 업데이트 X
+    let newIndex = currentRow;
     if (scrolledTo > currentRow) {
       // 아래로 넘김
-      const newIndex = currentRow + 1;
-      activeRowIndexRef.current = newIndex;
-      setActiveRowIndex(newIndex);
+      newIndex = currentRow + 1;
     } else if (scrolledTo < currentRow) {
       // 위로 넘김
-      const newIndex = currentRow - 1;
-      activeRowIndexRef.current = newIndex;
-      setActiveRowIndex(newIndex);
+      newIndex = currentRow - 1;
     }
+    activeRowIndexRef.current = newIndex;
+    setActiveRowIndex(newIndex);
+    setVerticalList((prev) => {
+      const newList = [...prev];
+      // 현재 행에 마지막으로 본 영상이 있으면, 그 영상으로 verticalList 업데이트
+      const lastSeenVideo = lastSeenRef.current.get(newIndex);
+      if (lastSeenVideo) {
+        newList[newIndex] = lastSeenVideo;
+      }
+      return newList;
+    });
   }, []);
 
   // event listener 등록

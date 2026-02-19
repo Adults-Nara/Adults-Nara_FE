@@ -1,6 +1,6 @@
 import { Close, SearchIcon } from '@repo/ui';
-import { VideoData } from '../../../../types/video';
-import ShortsTab from '../_components/ShortsTap';
+import { VideoData } from '../../../types/video';
+import ShortsTab from './_components/ShortsTap';
 
 // --- Mock Data ---
 const ALGORITHM_VIDEOS = fetchAlgorithmVideo();
