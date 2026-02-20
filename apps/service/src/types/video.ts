@@ -1,3 +1,15 @@
+export interface VideoData {
+  id: string;
+  videoUrl: string;
+  thumbnail: string;
+  uploader: { name: string; profileImg: string | null };
+  title: string;
+  likes: number;
+  dislikes: number;
+  comments: number;
+  bookmarked: boolean;
+  longformUrl: string;
+}
 export interface ThumbnailData {
   thumbnailSrc: string;
   title: string;
@@ -6,4 +18,11 @@ export interface ThumbnailData {
   progress: number;
   views: number;
   date: string;
+}
+
+export interface DetailedVideoData extends VideoData {
+  description: string;
+  uploadDate: string;
+  viewCount: number;
+  tags: string[];
 }

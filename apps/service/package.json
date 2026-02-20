@@ -14,9 +14,11 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.34.1",
     "lucide-react": "^0.564.0",
+    "media-chrome": "^4.17.2",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-player": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
     "zustand": "^5.0.11"
   },
