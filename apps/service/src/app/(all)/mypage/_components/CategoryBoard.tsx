@@ -1,4 +1,7 @@
+'use client';
+import { ROUTES } from '@/constant/routes';
 import { Chip } from '@repo/ui';
+import { useRouter } from 'next/navigation';
 
 // 임시 데이터 (나중에 API 연동)
 const categories = ['건강', '요리', '애완동물'];
@@ -17,11 +20,15 @@ const categoriesRanking = [
   },
 ];
 const CategoryBoard = () => {
+  const route = useRouter();
   return (
     <div className="flex w-full flex-col gap-4 rounded-lg bg-gray-100 p-4 shadow-[0_5px_15px_0px_rgba(0,0,0,0.1)]">
       <div className="flex w-full justify-between">
         <span className="title2">선호주제</span>
-        <button className="body3 text-primary-500 cursor-pointer">
+        <button
+          className="body3 text-primary-500 cursor-pointer"
+          onClick={() => route.push(ROUTES.CATEGORY)}
+        >
           자세히보기{' >'}
         </button>
       </div>

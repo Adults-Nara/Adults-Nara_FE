@@ -9,6 +9,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     progress: 70,
     views: 85000,
     date: '2024-03-20 08:30',
+    type: 'long',
   },
   {
     thumbnailSrc: 'https://picsum.photos/1600/900?random=12',
@@ -18,6 +19,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     progress: 0,
     views: 12000,
     date: '2024-03-19 11:15',
+    type: 'long',
   },
   {
     thumbnailSrc: 'https://picsum.photos/1600/900?random=13',
@@ -27,6 +29,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     progress: 30,
     views: 5600,
     date: '2024-03-18 15:00',
+    type: 'short',
   },
   {
     thumbnailSrc: 'https://picsum.photos/1600/900?random=14',
@@ -36,6 +39,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     progress: 100,
     views: 2100,
     date: '2024-03-15 14:40',
+    type: 'long',
   },
   {
     thumbnailSrc: 'https://picsum.photos/1600/900?random=15',
@@ -45,6 +49,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     progress: 10,
     views: 34000,
     date: '2024-03-19 20:00',
+    type: 'long',
   },
   {
     thumbnailSrc: 'https://picsum.photos/1600/900?random=16',
@@ -54,6 +59,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     progress: 90,
     views: 150000,
     date: '2024-03-20 09:00',
+    type: 'short',
   },
   {
     thumbnailSrc: 'https://picsum.photos/1600/900?random=17',
@@ -63,6 +69,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     progress: 0,
     views: 7800,
     date: '2024-03-17 10:20',
+    type: 'long',
   },
   {
     thumbnailSrc: 'https://picsum.photos/1600/900?random=18',
@@ -72,6 +79,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     progress: 50,
     views: 920000,
     date: '2024-02-10 22:45',
+    type: 'long',
   },
   {
     thumbnailSrc: 'https://picsum.photos/1600/900?random=19',
@@ -81,6 +89,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     progress: 0,
     views: 43000,
     date: '2024-03-20 16:55',
+    type: 'short',
   },
   {
     thumbnailSrc: 'https://picsum.photos/1600/900?random=20',
@@ -90,5 +99,6 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     progress: 20,
     views: 3200,
     date: '2024-03-18 13:30',
+    type: 'long',
   },
 ];

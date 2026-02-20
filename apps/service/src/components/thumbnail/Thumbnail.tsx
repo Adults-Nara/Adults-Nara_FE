@@ -16,21 +16,22 @@ const Thumbnail = ({
   progress,
   fillContainer = false,
 }: ThumbnailProps) => {
-  const ratioClass = fillContainer
-    ? 'h-full'
-    : type === 'short'
-      ? 'aspect-9/16'
-      : 'aspect-video';
+  const containerClass = fillContainer ? 'h-full' : 'aspect-video';
+  const isShort = type === 'short';
   return (
-    <div className={`relative w-full overflow-hidden ${ratioClass}`}>
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-      />
-      {progress !== undefined && progress > 0 && (
+    <div
+      className={`relative w-full overflow-hidden ${containerClass} ${
+        isShort ? 'flex items-center justify-center bg-black' : ''
+      }`}
+    >
+      {isShort ? (
+        <div className="relative aspect-9/16 h-full">
+          <Image src={src} alt={alt} fill className="object-cover" />
+        </div>
+      ) : (
+        <Image src={src} alt={alt} fill className="object-cover" />
+      )}
+      {progress !== undefined && !isShort && progress > 0 && (
         <div
           className="absolute bottom-0 h-0.75 bg-red-500"
           style={{ width: `${Math.min(progress, 100)}%` }}

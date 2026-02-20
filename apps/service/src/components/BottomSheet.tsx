@@ -43,7 +43,9 @@ const BottomSheet = () => {
           </div>
         </div>
 
-        <div className="min-h-150 overflow-y-auto">{content}</div>
+        <div className="custom-scrollbar h-[60vh] overflow-y-auto">
+          {content}
+        </div>
       </div>
     </div>
   );

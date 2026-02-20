@@ -2,8 +2,11 @@
 import VideoVerticalCard from '@/components/thumbnail/VideoVerticalCard';
 import { MOCK_VIDEO_DATA } from '@/constant/mockData';
 import useEmblaCarousel from 'embla-carousel-react';
+import SheetPlayList from './SheetPlayList';
+import { useSheetStore } from '@/store/useSheetStore';
 
 const RecentHistory = () => {
+  const { open } = useSheetStore();
   const [videoListRef] = useEmblaCarousel({
     align: 'start',
     containScroll: 'trimSnaps',
@@ -13,7 +16,10 @@ const RecentHistory = () => {
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">
         <span className="title1">최근 시청 이력</span>
-        <button className="body3 text-primary-500 cursor-pointer">
+        <button
+          className="body3 text-primary-500 cursor-pointer"
+          onClick={() => open('최근 시청 이력', <SheetPlayList />)}
+        >
           모두보기{' >'}
         </button>
       </div>
