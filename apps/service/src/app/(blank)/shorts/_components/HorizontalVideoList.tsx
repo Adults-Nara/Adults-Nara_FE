@@ -66,8 +66,11 @@ export function HorizontalCardsArea({
       newIndex >= 0 &&
       newIndex < allVideos.length
     ) {
-      setHorizontalIndex(newIndex);
-      onHorizontalIndexChange(newIndex, allVideos[newIndex]!);
+      const video = allVideos[newIndex];
+      if (video) {
+        setHorizontalIndex(newIndex);
+        onHorizontalIndexChange(newIndex, video);
+      }
     }
   }, [horizontalIndex, allVideos, onHorizontalIndexChange]);
 
