@@ -110,7 +110,7 @@ export function ShortCard({ data, isActive }: ShortCardProps) {
         </button>
         <button className="flex flex-col items-center gap-1 border-none">
           <Comment />
-          <span className="body4 font-medium">{data.comments}</span>
+          <span className="body4">{data.comments}</span>
         </button>
       </div>
 

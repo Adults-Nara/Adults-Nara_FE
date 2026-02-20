@@ -4,9 +4,7 @@
     "paths": {
       "@repo/configs/*": ["packages/configs/*"],
       "@repo/ui/*": ["packages/ui/*"],
-      "@repo/ui": ["packages/ui/src/index.ts"],
-      "@repo/ui/icons": ["packages/ui/src/icons"],
-      "@repo/ui/icons/*": ["packages/ui/src/icons/*"]
+      "@repo/ui": ["packages/ui/src/index.ts"]
     },
     "target": "ESNext",
     "module": "ESNext",

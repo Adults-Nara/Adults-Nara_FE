@@ -87,7 +87,7 @@ export function HorizontalCardsArea({
   return (
     <div
       ref={scrollRef}
-      className="flex h-full w-full snap-x snap-mandatory overflow-x-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="custom-scrollbar flex h-full w-full snap-x snap-mandatory overflow-x-scroll"
     >
       {allVideos.map((video, i) => (
         <ShortCard

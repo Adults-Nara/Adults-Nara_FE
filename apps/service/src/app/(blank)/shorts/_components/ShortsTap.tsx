@@ -83,7 +83,7 @@ export default function ShortsTab(props: ShortsTabProps) {
     <>
       <div
         ref={containerRef}
-        className="flex-1 snap-y snap-mandatory overflow-y-scroll [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="custom-scrollbar flex-1 snap-y snap-mandatory overflow-y-scroll [-webkit-overflow-scrolling:touch]"
       >
         {verticalList.map((video, rowIndex) => (
           <div

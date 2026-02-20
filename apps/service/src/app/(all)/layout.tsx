@@ -7,9 +7,9 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="mx-auto flex h-screen w-full max-w-112.5 flex-col bg-white">
+    <div className="flex flex-col">
       <Header />
-      <main className="flex-1 overflow-y-auto">{children}</main>
+      <main className="mb-17.5">{children}</main>
       <Navigation />
     </div>
   );
