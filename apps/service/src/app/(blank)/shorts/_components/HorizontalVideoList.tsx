@@ -40,16 +40,16 @@ export function HorizontalCardsArea({
 
   // sourceVideo가 바뀔 때마다 관련 관련 영상 리스트 초기화
   useEffect(() => {
-    if (isActiveRow && relatedVideos.length === 0) {
+    if (isActiveRow) {
       const related = fetchRelatedVideos(sourceVideo);
       setRelatedVideos(related);
     }
-  }, [isActiveRow, sourceVideo, relatedVideos.length]);
+  }, [isActiveRow, sourceVideo]);
 
   // activeRow가 아닐 때, 가로 스크롤 처음으로 초기화
   useEffect(() => {
     if (!isActiveRow && scrollRef.current) {
-      scrollRef.current.scrollTo({ left: 0, behavior: 'instant' });
+      scrollRef.current.scrollTo({ left: 0 });
       setHorizontalIndex(0);
     }
   }, [isActiveRow]);
