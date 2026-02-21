@@ -32,7 +32,7 @@ const CategoryBoard = () => {
           자세히보기{' >'}
         </button>
       </div>
-      <div className="flex w-full gap-3">
+      <div className="flex w-full gap-2">
         {categories.map((cat, index) => {
           return (
             <Chip key={index} selected className="hover:bg-primary-500">
