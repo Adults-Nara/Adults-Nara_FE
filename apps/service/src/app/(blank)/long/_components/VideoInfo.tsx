@@ -1,6 +1,7 @@
+import RecommendedSection from '@/app/(all)/home/_components/RecommendedSection';
 import { DetailedVideoData } from '@/types/video';
-import { Bookmark, Chip, Comment, Dislike, Like } from '@repo/ui';
-import { IconChip } from './IconChip';
+import { formatRelativeTime, formatViewCount } from '@/utils/format';
+import { Bookmark, Button, Comment, Dislike, Like } from '@repo/ui';
 
 export function VideoInfo({ data }: { data: DetailedVideoData }) {
   return (
@@ -9,9 +10,9 @@ export function VideoInfo({ data }: { data: DetailedVideoData }) {
       <div className="flex flex-col gap-1">
         <p className="title2 wrap-break-word whitespace-normal">{data.title}</p>
         <div className="body4 flex flex-row text-gray-700">
-          <p>조회수 {data.viewCount}회</p>
+          <p>조회수 {formatViewCount(data.viewCount)}</p>
           <p className="mx-1">·</p>
-          <p>{data.uploadDate}</p>
+          <p>{formatRelativeTime(data.uploadDate)}</p>
         </div>
       </div>
 
@@ -32,27 +33,28 @@ export function VideoInfo({ data }: { data: DetailedVideoData }) {
       </div>
 
       {/* 반응 */}
-      <div className="flex flex-row flex-wrap gap-1">
-        <IconChip icon={Like} label="좋아요" iconWidth={20} iconHeight={20} />
-        <IconChip
-          icon={Dislike}
-          label="싫어요"
-          iconWidth={20}
-          iconHeight={20}
-        />
-        <IconChip
-          icon={Bookmark}
-          label="찜하기"
-          iconWidth={20}
-          iconHeight={20}
-        />
-        <IconChip
-          icon={Comment}
-          label={`댓글 확인 · ${data.comments}`}
-          iconWidth={20}
-          iconHeight={20}
-        />
+      <div className="flex flex-row flex-wrap gap-1 text-gray-800">
+        <Button variant="noneline" size="lg">
+          <Like />
+          좋아요
+        </Button>
+
+        <Button variant="noneline" size="lg">
+          <Dislike />
+          싫어요
+        </Button>
+        <Button variant="noneline" size="lg">
+          <Bookmark />
+          찜하기
+        </Button>
+        <Button variant="noneline" size="lg">
+          <Comment />
+          댓글 확인 · {data.comments}
+        </Button>
       </div>
+
+      {/* 추천 영상 */}
+      <RecommendedSection />
     </div>
   );
 }
