@@ -1,7 +1,14 @@
-import Dropdown from '@/components/Dropdown';
-import { MOCK_DATA_CATEGORY } from '@/types/category';
-import { Chip } from '@repo/ui';
-import { useState } from 'react';
+'use client';
+import { CATEGORY_MAP, MainCategory } from '@/types/category';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Button,
+  Chip,
+} from '@repo/ui';
+import { Check } from 'lucide-react';
 
 interface PreferenceEditProps {
   selectedCategories: string[];
@@ -12,17 +19,17 @@ const PreferenceEdit = ({
   selectedCategories,
   onToggle,
 }: PreferenceEditProps) => {
-  const [dropdownMeun, setDropdownMeun] = useState(MOCK_DATA_CATEGORY[0].title);
   return (
     <div className="flex flex-col gap-4">
-      <span className="title1">선호 주제 편집 </span>
+      <span className="title1">선호주제 </span>
+
       <div className="flex flex-col gap-5 px-2">
-        <div className="flex w-full gap-2">
+        <div className="flex w-full flex-wrap gap-2">
           {selectedCategories.map((cat, index) => {
             return (
               <Chip
                 key={index}
-                onDelete={() => {}}
+                onDelete={() => onToggle(cat)}
                 selected
                 className="hover:bg-primary-500"
               >
@@ -31,7 +38,46 @@ const PreferenceEdit = ({
             );
           })}
         </div>
-        {/* <Dropdown onChange={setDropdownMeun} options={MOCK_DATA_CATEGORY. } value={dropdownMeun}/> */}
+        <Accordion
+          type="single"
+          collapsible
+          defaultValue="item-0"
+          className="overflow-hidden rounded-lg border border-gray-400"
+        >
+          {MainCategory.map((mCat, index) => {
+            const subCategories = CATEGORY_MAP[mCat.key];
+
+            const selectedCount = subCategories.filter((sCat) =>
+              selectedCategories.includes(sCat.label),
+            ).length;
+            return (
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger>
+                  {mCat.label}
+                  {selectedCount > 0 && (
+                    <div className="body2 ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-gray-800 text-white">
+                      {selectedCount}
+                    </div>
+                  )}
+                </AccordionTrigger>
+                <AccordionContent className="flex w-full flex-wrap items-center justify-between gap-3 px-3 py-2">
+                  {CATEGORY_MAP[mCat.key].map((sCat, index) => {
+                    return (
+                      <Chip
+                        selected={selectedCategories.includes(sCat.label)}
+                        key={index}
+                        size={'lg'}
+                        onClick={() => onToggle(sCat.label)}
+                      >
+                        {sCat.label}
+                      </Chip>
+                    );
+                  })}
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
       </div>
     </div>
   );

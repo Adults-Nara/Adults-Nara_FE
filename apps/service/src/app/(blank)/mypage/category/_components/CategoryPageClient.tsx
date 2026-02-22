@@ -5,7 +5,7 @@ import WatchTimeRanking from './WatchTimeRanking';
 import PreferenceEdit from './PreferenceEdit';
 
 //선호주제 임시 API연동필요
-const categories = ['건강', '여행', '애완동물'];
+const categories = ['등산', '요리', '반려동물'];
 
 const CategoryPageClient = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
@@ -27,7 +27,7 @@ const CategoryPageClient = () => {
   return (
     <>
       <CategoryHeader onSave={handleSave} />
-      <div className="flex flex-col gap-8 px-3 pt-5">
+      <div className="flex flex-col gap-8 px-3 py-5">
         <WatchTimeRanking
           selectedCategories={selectedCategories}
           onToggle={toggleCategory}

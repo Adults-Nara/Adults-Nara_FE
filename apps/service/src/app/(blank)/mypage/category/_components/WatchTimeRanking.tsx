@@ -1,37 +1,47 @@
-import { Minus, Plus } from '@repo/ui';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Minus,
+  More,
+  Plus,
+} from '@repo/ui';
 
 //임시 API연동필요
 const MOCK_DATA_RANK = [
   {
-    category: '건강',
+    category: '등산',
     time: '5시간 20분',
   },
   {
-    category: '요리',
+    category: '트로트',
     time: '3시간 40분',
   },
   {
-    category: '애완동물',
+    category: '반려동물',
     time: '2시간',
   },
   {
-    category: '여행',
+    category: '부동산',
     time: '1시간 40분',
   },
   {
-    category: '음악',
+    category: '원예',
     time: '1시간 10분',
   },
   {
-    category: '뉴스',
+    category: '발라드',
     time: '1시간',
   },
   {
-    category: '교양',
+    category: '명상',
     time: '50분',
   },
   {
-    category: '드라마',
+    category: '부동산',
     time: '40분',
   },
 ];
@@ -62,10 +72,34 @@ const WatchTimeRanking = ({
               </div>
               <div className="flex items-center gap-2">
                 <span className="body1 text-gray-700">{rank.time}</span>
-                <button className="rounded-full bg-gray-800 text-white">
-                  <Plus className="h-6 w-6" />
-                </button>
-                {/* <Minus className="h-6 w-6 rounded-full bg-gray-500" /> */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="shrink-0">
+                      <More className="h-5 w-5 text-gray-700" />
+                    </button>
+                  </DropdownMenuTrigger>
+
+                  <DropdownMenuContent>
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem
+                        disabled={selectedCategories.includes(rank.category)}
+                        onClick={() => onToggle(rank.category)}
+                      >
+                        <Plus />
+                        선호주제 추가
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        disabled={!selectedCategories.includes(rank.category)}
+                        onClick={() => onToggle(rank.category)}
+                        variant="destructive"
+                      >
+                        <Minus />
+                        선호주제 삭제
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           );
