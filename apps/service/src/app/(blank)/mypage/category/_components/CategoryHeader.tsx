@@ -3,10 +3,14 @@ import { Button, Check, LeftArrow } from '@repo/ui';
 import { useRouter } from 'next/navigation';
 
 interface CategoryHeaderProps {
+  selectedCategories: string[];
   onSave: () => void;
 }
 
-const CategoryHeader = ({ onSave }: CategoryHeaderProps) => {
+const CategoryHeader = ({
+  selectedCategories,
+  onSave,
+}: CategoryHeaderProps) => {
   const route = useRouter();
   return (
     <div className="sticky top-0 z-40 flex h-17.5 items-center justify-between border-b border-gray-300 bg-gray-100 px-6">
@@ -20,7 +24,12 @@ const CategoryHeader = ({ onSave }: CategoryHeaderProps) => {
         </button>
         <span className="title2">선호주제 편집</span>
       </div>
-      <Button onClick={onSave} size={'lg'} variant={'default'}>
+      <Button
+        onClick={onSave}
+        size={'lg'}
+        variant={'default'}
+        disabled={selectedCategories.length === 0}
+      >
         <Check />
         저장
       </Button>

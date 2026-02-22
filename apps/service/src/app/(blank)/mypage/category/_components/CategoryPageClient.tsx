@@ -26,7 +26,10 @@ const CategoryPageClient = () => {
   };
   return (
     <>
-      <CategoryHeader onSave={handleSave} />
+      <CategoryHeader
+        selectedCategories={selectedCategories}
+        onSave={handleSave}
+      />
       <div className="flex flex-col gap-8 px-3 py-5">
         <WatchTimeRanking
           selectedCategories={selectedCategories}
