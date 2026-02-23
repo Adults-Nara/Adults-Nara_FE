@@ -27,7 +27,7 @@ const PreferenceEdit = ({
         <div className="flex w-full flex-wrap gap-2">
           {selectedCategories.length === 0 ? (
             <span className="body2 text-primary-400 px-1">
-              선택된 주제가없습니다! 선호주제를 선택해주세요
+              선택된 주제가 없습니다! 선호주제를 선택해주세요.
             </span>
           ) : (
             selectedCategories.map((cat, index) => {

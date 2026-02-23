@@ -8,15 +8,15 @@ const categories = ['건강', '요리', '애완동물'];
 const categoriesRanking = [
   {
     category: '건강',
-    tiem: '5시간 20분',
+    time: '5시간 20분',
   },
   {
     category: '요리',
-    tiem: '3시간 40분',
+    time: '3시간 40분',
   },
   {
     category: '애완동물',
-    tiem: '1시간 50분',
+    time: '1시간 50분',
   },
 ];
 const CategoryBoard = () => {
@@ -47,7 +47,7 @@ const CategoryBoard = () => {
             <div key={index} className="flex gap-4">
               <span className="title3 text-primary-500 w-5">{index + 1}</span>
               <span className="body2 w-20">{rank.category}</span>
-              <span className="body2 text-gray-700">{rank.tiem}</span>
+              <span className="body2 text-gray-700">{rank.time}</span>
             </div>
           );
         })}

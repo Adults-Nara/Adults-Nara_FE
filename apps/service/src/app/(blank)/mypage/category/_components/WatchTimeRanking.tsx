@@ -41,7 +41,7 @@ const MOCK_DATA_RANK = [
     time: '50분',
   },
   {
-    category: '부동산',
+    category: '교육',
     time: '40분',
   },
 ];

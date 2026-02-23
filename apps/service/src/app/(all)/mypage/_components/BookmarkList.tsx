@@ -27,7 +27,7 @@ const BookmarkList = () => {
           </div>
           <div
             className="flex-[0_0_70%]"
-            onClick={() => open('긴 영상 찜한 목록', <SheetPlayList />)}
+            onClick={() => open('긴영상 찜한 목록', <SheetPlayList />)}
           >
             <BookmarkItem data={MOCK_VIDEO_DATA} type="long" />
           </div>

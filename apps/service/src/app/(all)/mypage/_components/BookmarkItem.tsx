@@ -24,7 +24,7 @@ const BookmarkItem = ({ data, type }: BookmarkItemProps) => {
       </div>
       <div className="flex w-full flex-col gap-1 bg-white p-2">
         <span className="title3 line-clamp-2">
-          {type === 'long' ? '긴 영상' : '짧은 영상'} 재생목록
+          {type === 'long' ? '긴영상' : '짧은영상'} 재생목록
         </span>
         <span className="body4 text-gray-700">영상 {data.length}개</span>
       </div>
