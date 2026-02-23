@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: '어르신나라 관리자 페이지.',
+  title: '어르신나라 관리자 페이지',
   description: '어르신나라 관리자 페이지 입니다.',
 };
 
@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} h-dvh bg-gray-100 antialiased`}
       >
         {children}
       </body>

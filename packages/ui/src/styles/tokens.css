@@ -1,5 +1,5 @@
 @theme inline {
-  --font-sans: "Pretendard", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Pretendard', ui-sans-serif, system-ui, sans-serif;
 
   /* Primary Colors */
   --color-primary-100: #fce8ec;
@@ -26,26 +26,29 @@
   --color-gray-700: #7f828c;
   --color-gray-800: #5a5e6a;
   --color-gray-900: #3b3f4a;
+
+  /* Etc Colors */
+  --color-navy: #14181f;
 }
 
 @font-face {
-  font-family: "Pretendard";
-  src: url("./fonts/Pretendard-Bold.otf") format("opentype");
+  font-family: 'Pretendard';
+  src: url('./fonts/Pretendard-Bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Pretendard";
-  src: url("./fonts/Pretendard-SemiBold.otf") format("opentype");
+  font-family: 'Pretendard';
+  src: url('./fonts/Pretendard-SemiBold.otf') format('opentype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Pretendard";
-  src: url("./fonts/Pretendard-Medium.otf") format("opentype");
+  font-family: 'Pretendard';
+  src: url('./fonts/Pretendard-Medium.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
