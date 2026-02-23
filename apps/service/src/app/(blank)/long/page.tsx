@@ -26,9 +26,14 @@ const metadata: DetailedVideoData = {
 
 export default function LongPage() {
   return (
-    <div className="flex flex-col">
-      <VideoPlayer src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" />
-      <VideoInfo data={metadata} />
+    <div className="flex h-screen flex-col">
+      <div className="flex-none shrink-0">
+        <VideoPlayer src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" />
+      </div>
+
+      <div className="scrollbar-hide flex-1 overflow-y-auto">
+        <VideoInfo data={metadata} />
+      </div>
     </div>
   );
 }
