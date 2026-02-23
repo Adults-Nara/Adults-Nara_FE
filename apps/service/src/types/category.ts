@@ -5,10 +5,10 @@ export const MainCategory = [
   { key: 'info', label: '정보' },
 ] as const;
 
-export type ConsultTypeKey = (typeof MainCategory)[number]['key'];
+export type MainCategoryKey = (typeof MainCategory)[number]['key'];
 
 export const CATEGORY_MAP: Record<
-  ConsultTypeKey,
+  MainCategoryKey,
   { label: string; value: string }[]
 > = {
   health: [

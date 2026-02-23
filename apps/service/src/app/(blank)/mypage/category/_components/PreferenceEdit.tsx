@@ -5,10 +5,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  Button,
   Chip,
 } from '@repo/ui';
-import { Check } from 'lucide-react';
 
 interface PreferenceEditProps {
   selectedCategories: string[];
@@ -21,7 +19,7 @@ const PreferenceEdit = ({
 }: PreferenceEditProps) => {
   return (
     <div className="flex flex-col gap-4">
-      <span className="title1">선호주제 </span>
+      <span className="title1">선호주제</span>
 
       <div className="flex flex-col gap-5 px-2">
         <div className="flex w-full flex-wrap gap-2">
