@@ -7,7 +7,22 @@ export interface VideoData {
   likes: number;
   dislikes: number;
   comments: number;
-  status: 'active' | 'inactive';
+  status: 'active' | 'deactived';
+  createdAt: string;
+}
+
+export interface UserData {
+  id: string;
+  email: string;
+  nickname: string;
+  profileImageUrl: string;
+  status:
+    | 'ACTIVE'
+    | 'DEACTIVATED'
+    | 'SUSPENDED_7'
+    | 'SUSPENDED_15'
+    | 'SUSPENDED_30';
+  banReason?: string;
   createdAt: string;
 }
 
@@ -45,7 +60,7 @@ export const MOCK_CONTENTS: VideoData[] = [
     likes: 3400,
     dislikes: 45,
     comments: 89,
-    status: 'inactive',
+    status: 'deactived',
     createdAt: '2026-01-10',
   },
   {
@@ -81,7 +96,7 @@ export const MOCK_CONTENTS: VideoData[] = [
     likes: 720,
     dislikes: 15,
     comments: 42,
-    status: 'inactive',
+    status: 'deactived',
     createdAt: '2026-01-18',
   },
   {
@@ -129,7 +144,7 @@ export const MOCK_CONTENTS: VideoData[] = [
     likes: 2800,
     dislikes: 19,
     comments: 94,
-    status: 'inactive',
+    status: 'deactived',
     createdAt: '2026-01-28',
   },
   {
@@ -189,7 +204,7 @@ export const MOCK_CONTENTS: VideoData[] = [
     likes: 920,
     dislikes: 6,
     comments: 63,
-    status: 'inactive',
+    status: 'deactived',
     createdAt: '2026-02-10',
   },
   {
@@ -249,7 +264,178 @@ export const MOCK_CONTENTS: VideoData[] = [
     likes: 810,
     dislikes: 9,
     comments: 55,
-    status: 'inactive',
+    status: 'deactived',
     createdAt: '2026-02-22',
+  },
+];
+
+export const mockUsers: UserData[] = [
+  {
+    id: 'u1',
+    email: 'alice@example.com',
+    nickname: 'AliceInWonder',
+    profileImageUrl: 'https://picsum.photos/200?random=1',
+    status: 'ACTIVE',
+    createdAt: '2026-01-15',
+  },
+  {
+    id: 'u2',
+    email: 'bob@example.com',
+    nickname: 'BobBuilder',
+    profileImageUrl: 'https://picsum.photos/200?random=2',
+    status: 'ACTIVE',
+    createdAt: '2026-01-18',
+  },
+  {
+    id: 'u3',
+    email: 'charlie@example.com',
+    nickname: 'Chuck',
+    profileImageUrl: 'https://picsum.photos/200?random=3',
+    status: 'DEACTIVATED',
+    banReason: '정지 사유사유사유입니다',
+    createdAt: '2026-01-20',
+  },
+  {
+    id: 'u4',
+    email: 'dana@example.com',
+    nickname: 'DanaSky',
+    profileImageUrl: 'https://picsum.photos/200?random=4',
+    status: 'SUSPENDED_7',
+    banReason: '정지 사유사유사유입니다',
+    createdAt: '2026-01-22',
+  },
+  {
+    id: 'u5',
+    email: 'evan@example.com',
+    nickname: 'EvanFlow',
+    profileImageUrl: 'https://picsum.photos/200?random=5',
+    status: 'ACTIVE',
+    createdAt: '2026-01-25',
+  },
+  {
+    id: 'u6',
+    email: 'fiona@example.com',
+    nickname: 'PrincessFi',
+    profileImageUrl: 'https://picsum.photos/200?random=6',
+    status: 'ACTIVE',
+    createdAt: '2026-01-28',
+  },
+  {
+    id: 'u7',
+    email: 'george@example.com',
+    nickname: 'CuriousGeo',
+    profileImageUrl: 'https://picsum.photos/200?random=7',
+    status: 'SUSPENDED_7',
+    banReason: '정지 사유사유사유입니다',
+    createdAt: '2026-02-01',
+  },
+  {
+    id: 'u8',
+    email: 'hannah@example.com',
+    nickname: 'HanBan',
+    profileImageUrl: 'https://picsum.photos/200?random=8',
+    status: 'ACTIVE',
+    createdAt: '2026-02-03',
+  },
+  {
+    id: 'u9',
+    email: 'ian@example.com',
+    nickname: 'IanZero',
+    profileImageUrl: 'https://picsum.photos/200?random=9',
+    status: 'ACTIVE',
+    createdAt: '2026-02-05',
+  },
+  {
+    id: 'u10',
+    email: 'julia@example.com',
+    nickname: 'Jewels',
+    profileImageUrl: 'https://picsum.photos/200?random=10',
+    status: 'SUSPENDED_15',
+    banReason: '정지 사유사유사유입니다',
+    createdAt: '2026-02-07',
+  },
+  {
+    id: 'u11',
+    email: 'kevin@example.com',
+    nickname: 'KevKev',
+    profileImageUrl: 'https://picsum.photos/200?random=11',
+    status: 'ACTIVE',
+    createdAt: '2026-02-10',
+  },
+  {
+    id: 'u12',
+    email: 'lara@example.com',
+    nickname: 'LaraCraft',
+    profileImageUrl: 'https://picsum.photos/200?random=12',
+    status: 'SUSPENDED_30',
+    banReason: '정지 사유사유사유입니다',
+    createdAt: '2026-02-12',
+  },
+  {
+    id: 'u13',
+    email: 'mike@example.com',
+    nickname: 'MagicMike',
+    profileImageUrl: 'https://picsum.photos/200?random=13',
+    status: 'ACTIVE',
+    createdAt: '2026-02-14',
+  },
+  {
+    id: 'u14',
+    email: 'nina@example.com',
+    nickname: 'NinaNine',
+    profileImageUrl: 'https://picsum.photos/200?random=14',
+    status: 'SUSPENDED_30',
+    banReason: '정지 사유사유사유입니다',
+    createdAt: '2026-02-16',
+  },
+  {
+    id: 'u15',
+    email: 'oscar@example.com',
+    nickname: 'Ozzie',
+    profileImageUrl: 'https://picsum.photos/200?random=15',
+    status: 'ACTIVE',
+    createdAt: '2026-02-18',
+  },
+  {
+    id: 'u16',
+    email: 'paul@example.com',
+    nickname: 'Paulie',
+    profileImageUrl: 'https://picsum.photos/200?random=16',
+    status: 'ACTIVE',
+    createdAt: '2026-02-20',
+  },
+  {
+    id: 'u17',
+    email: 'quinn@example.com',
+    nickname: 'QuinnBee',
+    profileImageUrl: 'https://picsum.photos/200?random=17',
+    status: 'SUSPENDED_15',
+    banReason: '정지 사유사유사유입니다',
+    createdAt: '2026-02-21',
+  },
+  {
+    id: 'u18',
+    email: 'rose@example.com',
+    nickname: 'Rosebud',
+    profileImageUrl: 'https://picsum.photos/200?random=18',
+    status: 'ACTIVE',
+    createdAt: '2026-02-22',
+  },
+  {
+    id: 'u19',
+    email: 'steve@example.com',
+    nickname: 'SteveJobs',
+    profileImageUrl: 'https://picsum.photos/200?random=19',
+    status: 'ACTIVE',
+    createdAt: '2026-02-23',
+  },
+  {
+    id: 'u20',
+    email: 'tina@example.com',
+    nickname: 'TeenyTina',
+    profileImageUrl: 'https://picsum.photos/200?random=20',
+    status: 'SUSPENDED_7',
+    banReason: '정지 사유사유사유입니다',
+    createdAt: '2026-02-24',
   },
 ];

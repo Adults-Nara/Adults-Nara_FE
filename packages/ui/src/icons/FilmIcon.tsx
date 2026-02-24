@@ -1,0 +1,4 @@
+import * as React from "react";
+import type { SVGProps } from "react";
+const SvgFilmIcon = (props: SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M17.833 2H6.167A4.17 4.17 0 0 0 2 6.167v11.666A4.17 4.17 0 0 0 6.167 22h11.666A4.17 4.17 0 0 0 22 17.833V6.167A4.17 4.17 0 0 0 17.833 2m.834 9.167h1.666v1.666h-1.666zm0-1.667V7.833h1.666V9.5zM17 11.167H7v-7.5h10zM5.333 12.833H3.667v-1.666h1.666zm0-3.333H3.667V7.833h1.666zm-1.666 5h1.666v1.667H3.667zM7 12.833h10v7.5H7zM18.667 14.5h1.666v1.667h-1.666zm1.666-8.333h-1.666V3.82a2.5 2.5 0 0 1 1.666 2.347m-15-2.347v2.347H3.667A2.5 2.5 0 0 1 5.333 3.82M3.667 17.833h1.666v2.347a2.5 2.5 0 0 1-1.666-2.347m15 2.347v-2.347h1.666a2.5 2.5 0 0 1-1.666 2.347" /></svg>;
+export default SvgFilmIcon;

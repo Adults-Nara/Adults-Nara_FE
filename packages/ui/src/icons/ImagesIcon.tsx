@@ -1,0 +1,4 @@
+import * as React from "react";
+import type { SVGProps } from "react";
+const SvgImagesIcon = (props: SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M5 22a2.9 2.9 0 0 1-2.125-.875A2.9 2.9 0 0 1 2 19V5q0-1.25.875-2.125A2.9 2.9 0 0 1 5 2h14q1.25 0 2.125.875T22 5v14q0 1.25-.875 2.125A2.9 2.9 0 0 1 19 22zm0-2h14q.424 0 .712-.288A.97.97 0 0 0 20 19V5a.97.97 0 0 0-.288-.713A.97.97 0 0 0 19 4H5a.97.97 0 0 0-.713.287A.97.97 0 0 0 4 5v14q0 .424.287.712Q4.575 20 5 20m1-2 4-4 1.8 1.775L14 13l4 5zm2-8q-.824 0-1.412-.588A1.92 1.92 0 0 1 6 8q0-.824.588-1.412A1.92 1.92 0 0 1 8 6q.825 0 1.413.588Q10 7.175 10 8t-.587 1.412A1.93 1.93 0 0 1 8 10" /></svg>;
+export default SvgImagesIcon;

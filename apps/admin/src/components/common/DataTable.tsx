@@ -44,9 +44,9 @@ export function DataTable<T extends { id: string }>({
   return (
     <div className="max-h-150 w-full overflow-auto rounded-lg border border-gray-500 bg-white">
       <table className="w-full min-w-230 table-fixed text-left">
-        <thead className="body2 h-12.5 border-b border-gray-500 bg-gray-200 text-gray-900">
+        <thead className="body2 sticky top-0 z-10 h-12.5 bg-gray-200 text-gray-900">
           <tr>
-            <th className="w-12.5 p-4 text-center">
+            <th className="w-12.5 content-center p-4 text-center shadow-[inset_0_-1px_0_0_#BEC1C7]">
               <input
                 type="checkbox"
                 className="h-4.5 w-4.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
@@ -58,7 +58,7 @@ export function DataTable<T extends { id: string }>({
               <th
                 key={String(col.key)}
                 style={{ width: col.width }}
-                className={`px-4 ${col.align === 'center' ? 'text-center' : ''}`}
+                className={`px-4 shadow-[inset_0_-1px_0_0_#BEC1C7] ${col.align === 'center' ? 'text-center' : ''}`}
               >
                 {col.label}
               </th>
@@ -83,7 +83,7 @@ export function DataTable<T extends { id: string }>({
                   `transition-colors hover:bg-gray-100 ${selectedIds.includes(item.id) ? 'bg-blue-100 hover:bg-blue-100' : ''}`,
                 )}
               >
-                <td className="w-12.5 p-4">
+                <td className="w-12.5 p-4 text-center">
                   <input
                     type="checkbox"
                     className="h-4.5 w-4.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"

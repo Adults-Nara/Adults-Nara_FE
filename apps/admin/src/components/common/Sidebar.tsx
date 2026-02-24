@@ -1,6 +1,6 @@
 'use client';
 import { ROUTES } from '@/constant/routes';
-import { cn, Logo, UserCheck } from '@repo/ui';
+import { cn, FilmIcon, Logo, Upload, Users } from '@repo/ui';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -26,21 +26,21 @@ const Sidebar = () => {
               href={ROUTES.CONTENT}
               className={getLinkStyle(ROUTES.CONTENT)}
             >
-              <UserCheck />
+              <FilmIcon className="h-6 w-6" />
               <span>콘텐츠 리스트</span>
             </Link>
           </div>
           <div className="flex flex-col gap-1">
             <span className="title3 text-gray-700">사용자 관리</span>
             <Link href={ROUTES.USER} className={getLinkStyle(ROUTES.USER)}>
-              <UserCheck />
+              <Users className="h-6 w-6" />
               <span>사용자 리스트</span>
             </Link>
             <Link
               href={ROUTES.UPLOADER}
               className={getLinkStyle(ROUTES.UPLOADER)}
             >
-              <UserCheck />
+              <Upload className="h-6 w-6" />
               <span>업로더 리스트</span>
             </Link>
           </div>
