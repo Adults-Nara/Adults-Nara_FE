@@ -14,7 +14,11 @@ import {
   Upload,
 } from '@repo/ui';
 
-const ContentListContainer = () => {
+interface ContentListContainerProps {
+  currentPage: number;
+}
+
+const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const totalPages = 150; // 실제로는 서버에서 받아온 totalCount / limit 값으로 계산
 
@@ -88,7 +92,7 @@ const ContentListContainer = () => {
         selectedIds={selectedIds}
         onSelectChange={setSelectedIds}
       />
-      <Pagination totalPages={totalPages} />
+      <Pagination totalPages={totalPages} currentPage={currentPage} />
     </div>
   );
 };

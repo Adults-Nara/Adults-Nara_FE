@@ -6,7 +6,11 @@ import { DataTable, Pagination } from '@components/common';
 import { USER_COLUMNS } from '@components/user';
 import { Button, Delete, Input, SearchIcon, UserCheck, UserX } from '@repo/ui';
 
-const UploaderListContainer = () => {
+interface UploaderListContainerProps {
+  currentPage: number;
+}
+
+const UploaderListContainer = ({ currentPage }: UploaderListContainerProps) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const totalPages = 150; // api연동 필요 없으면 삭제해야됨
 
@@ -80,7 +84,7 @@ const UploaderListContainer = () => {
         selectedIds={selectedIds}
         onSelectChange={setSelectedIds}
       />
-      <Pagination totalPages={totalPages} />
+      <Pagination totalPages={totalPages} currentPage={currentPage} />
     </div>
   );
 };

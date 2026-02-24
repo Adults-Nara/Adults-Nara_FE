@@ -1,9 +1,15 @@
 import { ContentListContainer } from '@components/content';
 
-const ContentListpage = () => {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+const ContentListpage = async ({ searchParams }: PageProps) => {
+  const { page } = await searchParams;
+  const currentPage = Number(page) || 1;
   return (
     <div className="flex flex-1 bg-gray-100 px-9 pt-5">
-      <ContentListContainer />
+      <ContentListContainer currentPage={currentPage} />
     </div>
   );
 };

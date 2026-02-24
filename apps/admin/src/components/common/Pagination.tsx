@@ -5,19 +5,18 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 interface PaginationProps {
   totalPages: number;
+  currentPage: number;
   showMaxSize?: number;
 }
 
 export default function Pagination({
   totalPages,
   showMaxSize = 15,
+  currentPage,
 }: PaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  // 현재 URL에서 'page' 값을 가져옴 (없으면 1)
-  const currentPage = Number(searchParams.get('page')) || 1;
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
