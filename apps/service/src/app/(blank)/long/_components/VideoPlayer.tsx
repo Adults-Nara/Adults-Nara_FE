@@ -88,7 +88,7 @@ export function VideoPlayer({
   }, []);
   // 영상 재생 상태 변경 및 타이머 초기화
   const togglePlay = useCallback(() => {
-    if (isPlaying) {
+    if (isPlayingRef.current) {
       stopHideTimer();
     } else {
       resetHideTimer();
@@ -113,9 +113,13 @@ export function VideoPlayer({
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen();
+      containerRef.current?.requestFullscreen().catch((err) => {
+        console.error('Failed to enter fullscreen mode:', err);
+      });
     } else {
-      document.exitFullscreen();
+      document.exitFullscreen().catch((err) => {
+        console.error('Failed to exit fullscreen mode:', err);
+      });
     }
   }, []);
 
@@ -126,6 +130,15 @@ export function VideoPlayer({
       style={{ aspectRatio: '16/9' }}
       onMouseMove={isPlaying ? resetHideTimer : undefined}
       onTouchStart={isPlaying ? resetHideTimer : undefined}
+      role="region"
+      aria-label="비디오 플레이어"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          togglePlay();
+        }
+      }}
     >
       {/* 영상 재생 */}
       <ReactPlayer

@@ -6,7 +6,7 @@ interface ProgressBarProps {
   currentTime: number;
   duration: number;
   onSeek: (time: number) => void;
-  isDragging: React.MutableRefObject<boolean>;
+  isDragging: React.RefObject<boolean>;
 }
 
 export const ProgressBar = React.memo(function ProgressBar({

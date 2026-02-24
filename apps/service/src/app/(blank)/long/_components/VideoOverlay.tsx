@@ -1,4 +1,3 @@
-import { formatVideoTime } from '@/utils/format';
 import { ControlBar } from './ControlBar';
 import { PlayButton } from './PlayButton';
 import { ProgressBar } from './ProgressBar';
@@ -9,7 +8,7 @@ interface VideoControllerOverlayProps {
   currentTime: number;
   duration: number;
   playbackRate: number;
-  isDragging: React.MutableRefObject<boolean>; // VideoPlayer에서 관리
+  isDragging: React.RefObject<boolean>; // VideoPlayer에서 관리
   onTogglePlay: () => void;
   onShowControls: () => void;
   onSeek: (time: number) => void; // time in seconds

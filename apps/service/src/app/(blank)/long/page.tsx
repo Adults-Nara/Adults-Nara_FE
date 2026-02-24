@@ -28,7 +28,10 @@ export default function LongPage() {
   return (
     <div className="flex h-screen flex-col">
       <div className="flex-none shrink-0">
-        <VideoPlayer src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" />
+        <VideoPlayer
+          src={metadata.videoUrl}
+          thumbnail={metadata.thumbnail ?? undefined}
+        />
       </div>
 
       <div className="scrollbar-hide flex-1 overflow-y-auto">

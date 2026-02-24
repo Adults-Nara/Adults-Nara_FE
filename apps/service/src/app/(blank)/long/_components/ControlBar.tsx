@@ -34,7 +34,10 @@ export function ControlBar({
             {PLAYBACK_RATES.map((rate) => (
               <button
                 key={rate}
+                type="button"
                 onClick={() => onPlaybackRateChange(rate)}
+                aria-pressed={playbackRate === rate}
+                aria-label={`${rate}배속`}
                 className={`rounded px-2 py-1 transition ${
                   playbackRate === rate ? 'bg-white text-black' : 'text-white'
                 }`}
