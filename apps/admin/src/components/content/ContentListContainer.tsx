@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 
-import { CONTENT_COLUMNS } from '@components/content';
+import { CONTENT_COLUMNS } from './contentColumns';
 import { MOCK_CONTENTS } from '@/types/content';
 import { DataTable, Pagination } from '@components/common';
 import {
@@ -39,10 +39,7 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
     console.log('선택삭제', selectedIds);
   };
 
-  const columns = CONTENT_COLUMNS(
-    (id) => handlerEdit(id),
-    (id) => handlerDelete(id),
-  );
+  const columns = CONTENT_COLUMNS(handlerEdit, handlerDelete);
   return (
     <div className="flex flex-col gap-5">
       {/* 제목섹션 */}

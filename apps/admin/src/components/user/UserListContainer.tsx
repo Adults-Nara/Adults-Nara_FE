@@ -35,9 +35,9 @@ const UserListContainer = ({ currentPage }: UserListContainerProps) => {
   };
 
   const columns = USER_COLUMNS(
-    (id) => handlerActive(id),
-    (id) => handlerDeactivated(id),
-    (reason) => handlerReason(reason),
+    handlerActive,
+    handlerDeactivated,
+    handlerReason,
   );
   return (
     <div className="flex flex-col gap-5">

@@ -40,7 +40,8 @@ export function DataTable<T extends { id: string }>({
       onSelectChange?.(data.map((item) => item.id)); // 모두 선택
     }
   };
-  const isAllSelected = data.length > 0 && selectedIds.length === data.length;
+  const isAllSelected =
+    data.length > 0 && data.every((item) => selectedIds.includes(item.id));
   return (
     <div className="max-h-150 w-full overflow-auto rounded-lg border border-gray-500 bg-white">
       <table className="w-full min-w-230 table-fixed text-left">
@@ -69,7 +70,7 @@ export function DataTable<T extends { id: string }>({
           {isLoading ? (
             <tr>
               <td
-                colSpan={columns.length}
+                colSpan={columns.length + 1}
                 className="p-10 text-center text-gray-400"
               >
                 로딩 중...

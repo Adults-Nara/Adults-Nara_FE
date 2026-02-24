@@ -11,7 +11,7 @@ interface PaginationProps {
 
 export default function Pagination({
   totalPages,
-  showMaxSize = 15,
+  showMaxSize = 7,
   currentPage,
 }: PaginationProps) {
   const router = useRouter();
@@ -42,8 +42,9 @@ export default function Pagination({
     if (currentPage > 3) pages.push('...');
 
     // 현재 페이지 주변 번호 계산
-    const start = Math.max(2, currentPage - 1);
-    const end = Math.min(totalPages - 1, currentPage + 1);
+    const half = Math.floor((showMax - 2) / 2); // 첫/마지막 페이지 제외
+    const start = Math.max(2, currentPage - half);
+    const end = Math.min(totalPages - 1, currentPage + half);
 
     for (let i = start; i <= end; i++) {
       pages.push(i);

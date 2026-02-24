@@ -5,6 +5,17 @@ import { Column } from '@components/common';
 import { Button, Comment, UserCheck, UserX } from '@repo/ui';
 import Image from 'next/image';
 
+const STATUS_MAP: Record<
+  UserData['status'],
+  { label: string; className: string }
+> = {
+  ACTIVE: { label: '활성', className: 'bg-green-600 text-white' },
+  DEACTIVATED: { label: '비활성', className: 'bg-gray-600 text-white' },
+  SUSPENDED_7: { label: '정지 7일', className: 'bg-orange-500 text-white' },
+  SUSPENDED_15: { label: '정지 15일', className: 'bg-orange-600 text-white' },
+  SUSPENDED_30: { label: '정지 30일', className: 'bg-red-500 text-white' },
+};
+
 export const USER_COLUMNS = (
   onActive: (id: string) => void,
   onDeactivated: (id: string) => void,
@@ -46,13 +57,9 @@ export const USER_COLUMNS = (
     align: 'center',
     render: (item) => (
       <span
-        className={`body4 rounded-full px-3 py-1.5 ${
-          item.status === 'ACTIVE'
-            ? 'bg-green-600 text-white'
-            : 'bg-gray-600 text-white'
-        }`}
+        className={`body4 rounded-full px-3 py-1.5 ${STATUS_MAP[item.status].className}`}
       >
-        {item.status === 'ACTIVE' ? '활성' : '비활성'}
+        {STATUS_MAP[item.status].label}
       </span>
     ),
   },
