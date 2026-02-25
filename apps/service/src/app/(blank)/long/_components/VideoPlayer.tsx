@@ -1,9 +1,8 @@
 'use client';
 
 import ReactPlayer from 'react-player';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { VideoControllerOverlay } from './VideoOverlay';
-import { ControlBar } from './ControlBar';
 
 interface VideoPlayerProps {
   src: string;

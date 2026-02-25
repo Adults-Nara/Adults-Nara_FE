@@ -1,14 +1,16 @@
-import { VideoData } from '@/types/video';
+import { ShortFormVideoData } from '@/types/video';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { ShortCard } from './ShortCard';
 
 interface HorizontalRowProps {
-  sourceVideo: VideoData;
+  sourceVideo: ShortFormVideoData;
   isActiveRow: boolean;
-  onHorizontalIndexChange: (index: number, video: VideoData) => void;
+  onHorizontalIndexChange: (index: number, video: ShortFormVideoData) => void;
 }
 
-function fetchRelatedVideos(sourceVideo: VideoData): VideoData[] {
+function fetchRelatedVideos(
+  sourceVideo: ShortFormVideoData,
+): ShortFormVideoData[] {
   return Array.from({ length: 5 }, (_, i) => ({
     id: `${sourceVideo.id}-rel-${i}`,
     videoUrl:
@@ -22,7 +24,8 @@ function fetchRelatedVideos(sourceVideo: VideoData): VideoData[] {
     likes: (i + 1) * 80,
     dislikes: (i + 1) * 3,
     comments: (i + 1) * 15,
-    bookmarked: false,
+    isLiked: i % 2 === 0 ? true : false,
+    isBookmarked: false,
     longformUrl: i % 2 === 0 ? `/watch/rel-${i}` : '',
   }));
 }
@@ -34,7 +37,7 @@ export function HorizontalCardsArea({
   onHorizontalIndexChange,
 }: HorizontalRowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [relatedVideos, setRelatedVideos] = useState<VideoData[]>([]); // sourceVideo 관련 영상 리스트
+  const [relatedVideos, setRelatedVideos] = useState<ShortFormVideoData[]>([]); // sourceVideo 관련 영상 리스트
   const [horizontalIndex, setHorizontalIndex] = useState(0); // 가로 스크롤 인덱스 (0: sourceVideo, 1~n: relatedVideos)
   const allVideos = [sourceVideo, ...relatedVideos];
 

@@ -1,6 +1,8 @@
+import { LeftArrow, RightArrow } from '@repo/ui';
 import { ControlBar } from './ControlBar';
 import { PlayButton } from './PlayButton';
 import { ProgressBar } from './ProgressBar';
+import { PageHeader } from './PageHeader';
 
 interface VideoControllerOverlayProps {
   show: boolean;
@@ -37,6 +39,9 @@ export function VideoControllerOverlay({
     >
       {/* 딤 */}
       <div className="absolute inset-0 bg-black/30" />
+
+      {/* 뒤로가기 버튼. Video Overlay와 함께 사라짐. */}
+      <PageHeader />
 
       {/* 영상 중앙 플레이버튼 */}
       <div className="absolute inset-0 flex items-center justify-center">

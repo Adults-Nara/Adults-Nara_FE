@@ -7,7 +7,17 @@ export interface VideoData {
   likes: number;
   dislikes: number;
   comments: number;
-  bookmarked: boolean;
+  isBookmarked: boolean;
+  isLiked?: boolean | null;
+}
+
+export interface LongFormVideoData extends VideoData {
+  description: string;
+  uploadDate: string;
+  viewCount: number;
+  tags: string[];
+}
+export interface ShortFormVideoData extends VideoData {
   longformUrl: string;
 }
 export interface ThumbnailData {
@@ -18,11 +28,4 @@ export interface ThumbnailData {
   progress: number;
   views: number;
   date: string;
-}
-
-export interface DetailedVideoData extends VideoData {
-  description: string;
-  uploadDate: string;
-  viewCount: number;
-  tags: string[];
 }

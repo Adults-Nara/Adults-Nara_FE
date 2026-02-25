@@ -1,23 +1,23 @@
 'use client';
 
-import { VideoData } from '@/types/video';
+import { ShortFormVideoData } from '@/types/video';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { HorizontalCardsArea } from './HorizontalVideoList';
 
 interface ShortsTabProps {
-  algorithmList: VideoData[];
+  algorithmList: ShortFormVideoData[];
 }
 
 // 숏폼 탭
 export default function ShortsTab(props: ShortsTabProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeRowIndex, setActiveRowIndex] = useState(0); // 현재 활성화된 세로 행 인덱스
-  const [verticalList, setVerticalList] = useState<VideoData[]>( // 세로 스크롤 리스트 (사용자 기반 알고리즘 추천 영상)
+  const [verticalList, setVerticalList] = useState<ShortFormVideoData[]>( // 세로 스크롤 리스트 (사용자 기반 알고리즘 추천 영상)
     props.algorithmList,
   );
 
   // 마지막으로 본 영상 저장 (rowIndex -> VideoData)
-  const lastSeenRef = useRef<Map<number, VideoData>>(new Map());
+  const lastSeenRef = useRef<Map<number, ShortFormVideoData>>(new Map());
 
   // activeRowIndexRef와 verticalListRef는 최신 값을 참조하기 위한 ref.
   /* TODO : 가로 스크롤 해도 리랜더링 되는 부분 수정 */
@@ -72,7 +72,7 @@ export default function ShortsTab(props: ShortsTabProps) {
 
   // 가로 스크롤 핸들러
   const handleHorizontalChange = useCallback(
-    (rowIndex: number) => (hIndex: number, video: VideoData) => {
+    (rowIndex: number) => (hIndex: number, video: ShortFormVideoData) => {
       lastSeenRef.current.set(rowIndex, video);
       // window.history.replaceState(null, '', `/shorts/${video.id}`);
     },
