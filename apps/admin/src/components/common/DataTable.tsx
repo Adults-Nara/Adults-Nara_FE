@@ -32,16 +32,16 @@ export function DataTable<T extends { id: string }>({
     onSelectChange?.(newSelection);
   };
 
+  const isAllSelected =
+    data.length > 0 && data.every((item) => selectedIds.includes(item.id));
   // 전체 선택/해제 토글
   const toggleAll = () => {
-    if (selectedIds.length === data.length && data.length > 0) {
+    if (isAllSelected) {
       onSelectChange?.([]); // 모두 해제
     } else {
       onSelectChange?.(data.map((item) => item.id)); // 모두 선택
     }
   };
-  const isAllSelected =
-    data.length > 0 && data.every((item) => selectedIds.includes(item.id));
   return (
     <div className="max-h-150 w-full overflow-auto rounded-lg border border-gray-500 bg-white">
       <table className="w-full min-w-230 table-fixed text-left">

@@ -1,4 +1,4 @@
-import { UploaderListContainer } from '@components/user';
+import { UsersListContainer } from '@components/user';
 
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -9,7 +9,7 @@ const UploaderListpage = async ({ searchParams }: PageProps) => {
   const currentPage = Number(page) || 1;
   return (
     <div className="flex flex-1 bg-gray-100 px-9 pt-5">
-      <UploaderListContainer currentPage={currentPage} />
+      <UsersListContainer type="uploader" currentPage={currentPage} />
     </div>
   );
 };

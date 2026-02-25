@@ -6,13 +6,16 @@ import { DataTable, Pagination } from '@components/common';
 import { USER_COLUMNS } from '@components/user';
 import { Button, Delete, Input, SearchIcon, UserCheck, UserX } from '@repo/ui';
 
-interface UploaderListContainerProps {
+interface UsersListContainerProps {
   currentPage: number;
+  type: 'user' | 'uploader';
 }
 
-const UploaderListContainer = ({ currentPage }: UploaderListContainerProps) => {
+const UsersListContainer = ({ currentPage, type }: UsersListContainerProps) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const totalPages = 150; // api연동 필요 없으면 삭제해야됨
+  const title = type === 'user' ? '사용자 리스트' : '업로더 리스트';
+  const label = type === 'user' ? '사용자' : '업로더';
 
   const handlerActive = (id: string) => {
     console.log('활성화', id);
@@ -43,9 +46,9 @@ const UploaderListContainer = ({ currentPage }: UploaderListContainerProps) => {
     <div className="flex flex-col gap-5">
       {/* 제목섹션 */}
       <div className="flex flex-col">
-        <span className="title1">업로더 리스트</span>
+        <span className="title1">{title}</span>
         <span className="title3 text-gray-700">
-          {`총 ${mockUsers.length}명의 업로더`}
+          {`총 ${mockUsers.length}명의 ${label}`}
         </span>
       </div>
       {/* 검색섹션 */}
@@ -89,4 +92,4 @@ const UploaderListContainer = ({ currentPage }: UploaderListContainerProps) => {
   );
 };
 
-export default UploaderListContainer;
+export default UsersListContainer;
