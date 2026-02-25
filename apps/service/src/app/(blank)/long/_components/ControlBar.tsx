@@ -1,8 +1,6 @@
 import { formatVideoTime } from '@/utils/format';
 
 interface ControlBarProps {
-  show: boolean;
-  isPlaying: boolean;
   currentTime: number;
   duration: number;
   playbackRate: number;

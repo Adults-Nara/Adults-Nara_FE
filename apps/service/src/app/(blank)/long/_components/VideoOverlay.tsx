@@ -1,8 +1,8 @@
-import { LeftArrow, RightArrow } from '@repo/ui';
 import { ControlBar } from './ControlBar';
 import { PlayButton } from './PlayButton';
 import { ProgressBar } from './ProgressBar';
 import { PageHeader } from './PageHeader';
+import { type RefObject } from 'react';
 
 interface VideoControllerOverlayProps {
   show: boolean;
@@ -10,7 +10,7 @@ interface VideoControllerOverlayProps {
   currentTime: number;
   duration: number;
   playbackRate: number;
-  isDragging: React.RefObject<boolean>; // VideoPlayer에서 관리
+  isDragging: RefObject<boolean>; // VideoPlayer에서 관리
   onTogglePlay: () => void;
   onShowControls: () => void;
   onSeek: (time: number) => void; // time in seconds
@@ -51,8 +51,6 @@ export function VideoControllerOverlay({
       {/* 하단 컨트롤바 */}
       <div className="absolute right-0 bottom-0 left-0">
         <ControlBar
-          show={show}
-          isPlaying={isPlaying}
           currentTime={currentTime}
           duration={duration}
           playbackRate={playbackRate}

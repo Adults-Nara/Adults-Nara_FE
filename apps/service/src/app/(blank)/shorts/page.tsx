@@ -1,5 +1,5 @@
-import { ShortFormVideoData, VideoData } from '../../../types/video';
-import ShortsTab from './_components/ShortsTap';
+import { ShortFormVideoData } from '../../../types/video';
+import ShortsTab from './_components/ShortsTab';
 import { ShortsHeader } from './_components/ShortsHeader';
 
 // --- Mock Data ---
