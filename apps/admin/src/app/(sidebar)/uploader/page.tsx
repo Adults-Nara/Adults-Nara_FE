@@ -4,7 +4,7 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-const UploaderListpage = async ({ searchParams }: PageProps) => {
+const UploaderListPage = async ({ searchParams }: PageProps) => {
   const { page } = await searchParams;
   const currentPage = Number(page) || 1;
   return (
@@ -14,4 +14,4 @@ const UploaderListpage = async ({ searchParams }: PageProps) => {
   );
 };
 
-export default UploaderListpage;
+export default UploaderListPage;

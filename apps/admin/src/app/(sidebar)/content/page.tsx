@@ -4,7 +4,7 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-const ContentListpage = async ({ searchParams }: PageProps) => {
+const ContentListPage = async ({ searchParams }: PageProps) => {
   const { page } = await searchParams;
   const currentPage = Number(page) || 1;
   return (
@@ -14,4 +14,4 @@ const ContentListpage = async ({ searchParams }: PageProps) => {
   );
 };
 
-export default ContentListpage;
+export default ContentListPage;
