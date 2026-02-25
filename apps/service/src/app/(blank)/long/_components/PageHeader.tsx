@@ -16,7 +16,7 @@ export function PageHeader() {
   return (
     <div className="absolute top-0 left-0 z-11 p-3">
       <LeftArrow
-        className="text-[20px, 18px] text-white/70"
+        className="h-4.5 w-5 text-white/70"
         onClick={(e) => {
           handleBack();
         }}
