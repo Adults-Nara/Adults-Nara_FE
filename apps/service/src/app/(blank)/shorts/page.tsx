@@ -1,12 +1,11 @@
-import { Close, SearchIcon } from '@repo/ui';
-import { VideoData } from '../../../types/video';
-import ShortsTab from './_components/ShortsTap';
+import { ShortFormVideoData } from '../../../types/video';
+import ShortsTab from './_components/ShortsTab';
 import { ShortsHeader } from './_components/ShortsHeader';
 
 // --- Mock Data ---
 const ALGORITHM_VIDEOS = fetchAlgorithmVideo();
 
-function fetchAlgorithmVideo(): VideoData[] {
+function fetchAlgorithmVideo(): ShortFormVideoData[] {
   return Array.from({ length: 5 }, (_, i) => ({
     id: `s${i}`,
     videoUrl:
@@ -20,7 +19,7 @@ function fetchAlgorithmVideo(): VideoData[] {
     likes: (i + 1) * 100,
     dislikes: (i + 1) * 5,
     comments: (i + 1) * 20,
-    bookmarked: false,
+    isBookmarked: false,
     longformUrl: i % 2 === 0 ? `/watch/rel-${i}` : '',
   }));
 }

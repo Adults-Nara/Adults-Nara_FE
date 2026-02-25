@@ -1,4 +1,4 @@
-import { VideoData } from '@/types/video';
+import { ShortFormVideoData } from '@/types/video';
 import {
   LikeFill,
   Like,
@@ -12,15 +12,14 @@ import {
 import { useEffect, useRef, useState } from 'react';
 
 interface ShortCardProps {
-  data: VideoData;
+  data: ShortFormVideoData;
   isActive: boolean;
 }
 
 export function ShortCard({ data, isActive }: ShortCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
-  const [bookmarked, setBookmarked] = useState(data.bookmarked);
+  const [liked, setLiked] = useState(data.isLiked);
+  const [bookmarked, setBookmarked] = useState(data.isBookmarked);
   const [paused, setPaused] = useState(false);
 
   // isActive이 변경될 때마다 비디오 재생/일시정지 처리
@@ -57,14 +56,12 @@ export function ShortCard({ data, isActive }: ShortCardProps) {
   };
 
   /* TODO : 반응 */
-  const handleLike = () => {
-    setLiked(!liked);
-    if (disliked) setDisliked(false);
-  };
-
-  const handleDislike = () => {
-    setDisliked(!disliked);
-    if (liked) setLiked(false);
+  const handleLike = (changeTo: boolean) => {
+    if (changeTo == liked) {
+      setLiked(null);
+    } else {
+      setLiked(changeTo);
+    }
   };
 
   return (
@@ -101,9 +98,11 @@ export function ShortCard({ data, isActive }: ShortCardProps) {
 
       {/* Right action buttons */}
       <div className="absolute right-3 bottom-[20%] z-10 flex flex-col items-center gap-6 text-[28px] drop-shadow-sm">
-        <button onClick={handleLike}>{liked ? <LikeFill /> : <Like />}</button>
-        <button onClick={handleDislike}>
-          {disliked ? <DislikeFill /> : <Dislike />}
+        <button onClick={() => handleLike(true)}>
+          {liked ? <LikeFill /> : <Like />}
+        </button>
+        <button onClick={() => handleLike(false)}>
+          {liked === false ? <DislikeFill /> : <Dislike />}
         </button>
         <button onClick={() => setBookmarked(!bookmarked)}>
           {bookmarked ? <BookmarkFill /> : <Bookmark />}
