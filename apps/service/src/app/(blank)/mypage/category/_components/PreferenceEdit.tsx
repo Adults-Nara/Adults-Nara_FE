@@ -1,12 +1,6 @@
 'use client';
-import { CATEGORY_MAP, MainCategory } from '@/types/category';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  Chip,
-} from '@repo/ui';
+import CategoryAccordion from '@/components/CategoryAccordion';
+import { Chip } from '@repo/ui';
 
 interface PreferenceEditProps {
   selectedCategories: string[];
@@ -42,46 +36,10 @@ const PreferenceEdit = ({
             })
           )}
         </div>
-        <Accordion
-          type="single"
-          collapsible
-          defaultValue="item-0"
-          className="overflow-hidden rounded-lg border border-gray-400"
-        >
-          {MainCategory.map((mCat, index) => {
-            const subCategories = CATEGORY_MAP[mCat.key];
-
-            const selectedCount = subCategories.filter((sCat) =>
-              selectedCategories.includes(sCat.label),
-            ).length;
-            return (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger>
-                  {mCat.label}
-                  {selectedCount > 0 && (
-                    <div className="body2 ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-gray-800 text-white">
-                      {selectedCount}
-                    </div>
-                  )}
-                </AccordionTrigger>
-                <AccordionContent className="flex w-full flex-wrap items-center justify-between gap-3 px-3 py-2">
-                  {CATEGORY_MAP[mCat.key].map((sCat, index) => {
-                    return (
-                      <Chip
-                        selected={selectedCategories.includes(sCat.label)}
-                        key={index}
-                        size={'lg'}
-                        onClick={() => onToggle(sCat.label)}
-                      >
-                        {sCat.label}
-                      </Chip>
-                    );
-                  })}
-                </AccordionContent>
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
+        <CategoryAccordion
+          selectedCategories={selectedCategories}
+          onToggle={onToggle}
+        />
       </div>
     </div>
   );
