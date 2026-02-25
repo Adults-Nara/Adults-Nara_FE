@@ -1,4 +1,5 @@
 'use client';
+import { ROUTES } from '@/constant/routes';
 import { LeftArrow } from '@repo/ui';
 import { useRouter } from 'next/navigation';
 
@@ -8,7 +9,7 @@ export function PageHeader() {
     if (window.history.length > 1) {
       router.back();
     } else {
-      router.push('/home');
+      router.push(ROUTES.HOME);
     }
   };
 
