@@ -1,6 +1,14 @@
 {
-  "extends": "../../packages/configs/base-paths.json",
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@repo/configs/*": ["../../packages/configs/*"],
+      "@repo/ui": ["../../packages/ui/src/index.ts"],
+      "@components/common": ["./src/components/common/index.ts"],
+      "@components/content": ["./src/components/content/index.ts"],
+      "@components/user": ["./src/components/user/index.ts"]
+    },
     "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,

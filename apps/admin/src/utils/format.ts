@@ -2,17 +2,17 @@
  * 조회수를 단위(만, 억)로 변환합니다.
  */
 export const formatViewCount = (count: number): string => {
-  if (count < 1000) return `${count}회`;
+  if (count < 1000) return `${count}`;
   if (count < 10000) {
     const notched = Math.floor(count / 100) / 10;
-    return `${notched}천회`;
+    return `${notched}천`;
   }
   if (count < 100000000) {
     const notched = Math.floor(count / 1000) / 10;
-    return `${notched}만회`;
+    return `${notched}만`;
   }
   const notched = Math.floor(count / 10000000) / 10;
-  return `${notched}억회`;
+  return `${notched}억`;
 };
 
 /**
@@ -42,14 +42,4 @@ export const formatRelativeTime = (date: string | Date): string => {
 
   const diffInYears = Math.floor(diffInDays / 365);
   return `${diffInYears}년 전`;
-};
-
-export const formatVideoTime = (seconds: number): string => {
-  const m = Math.floor(seconds / 60)
-    .toString()
-    .padStart(2, '0');
-  const s = Math.floor(seconds % 60)
-    .toString()
-    .padStart(2, '0');
-  return `${m}:${s}`;
 };
