@@ -2,3 +2,13 @@
 @plugin 'tailwindcss-animate';
 @import '@repo/ui/styles';
 @source '../../../../packages/ui/src/common/';
+
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 파이어폭스 등에서 스크롤바 숨기기 */
+.custom-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
