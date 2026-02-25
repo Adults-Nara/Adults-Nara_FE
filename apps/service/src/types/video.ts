@@ -28,4 +28,5 @@ export interface ThumbnailData {
   progress: number;
   views: number;
   date: string;
+  type?: 'long' | 'short';
 }

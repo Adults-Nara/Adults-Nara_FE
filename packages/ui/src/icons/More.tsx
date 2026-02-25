@@ -1,0 +1,4 @@
+import * as React from "react";
+import type { SVGProps } from "react";
+const SvgMore = (props: SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 20 20" {...props}><circle cx={10} cy={3.4} r={1.1} stroke="currentColor" strokeLinecap="round" strokeWidth={2.2} transform="rotate(90 10 3.4)" /><circle cx={10} cy={10} r={1.1} stroke="currentColor" strokeLinecap="round" strokeWidth={2.2} transform="rotate(90 10 10)" /><circle cx={10} cy={16.6} r={1.1} stroke="currentColor" strokeLinecap="round" strokeWidth={2.2} transform="rotate(90 10 16.6)" /></svg>;
+export default SvgMore;

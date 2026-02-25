@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import BottomSheet from '@/components/BottomSheet';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -25,9 +26,15 @@ export default function RootLayout({
   return (
     <html lang="ko" className="custom-scrollbar">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} custom-scrollbar mx-auto h-dvh max-w-112.5 overflow-x-hidden overflow-y-auto antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div
+          id="app-container"
+          className="bg-background mx-auto min-h-dvh max-w-112.5"
+        >
+          {children}
+          <BottomSheet />
+        </div>
       </body>
     </html>
   );

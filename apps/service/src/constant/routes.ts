@@ -2,6 +2,7 @@ export const ROUTES = {
   HOME: '/home',
   SHORTS: '/shorts',
   MYPAGE: '/mypage',
+  CATEGORY: '/mypage/category',
   SEARCH: (query?: string) => {
     if (!query?.trim()) return '/search';
     const params = new URLSearchParams({ keyword: query.trim() });
