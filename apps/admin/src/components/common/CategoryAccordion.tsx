@@ -20,14 +20,13 @@ const CategoryAccordion = ({
     <Accordion
       type="single"
       collapsible
-      defaultValue="item-0"
       className="overflow-hidden rounded-lg border border-gray-400"
     >
       {MainCategory.map((mCat, index) => {
         const subCategories = CATEGORY_MAP[mCat.key];
 
         const selectedCount = subCategories.filter((sCat) =>
-          selectedCategories.includes(sCat.label),
+          selectedCategories.includes(sCat.value),
         ).length;
         return (
           <AccordionItem key={index} value={`item-${index}`}>
@@ -39,14 +38,14 @@ const CategoryAccordion = ({
                 </div>
               )}
             </AccordionTrigger>
-            <AccordionContent className="flex w-full flex-wrap items-center justify-between gap-3 px-3 py-2">
+            <AccordionContent className="flex w-full flex-wrap items-center gap-2 px-2 py-2">
               {CATEGORY_MAP[mCat.key].map((sCat, index) => {
                 return (
                   <Chip
-                    selected={selectedCategories.includes(sCat.label)}
+                    selected={selectedCategories.includes(sCat.value)}
                     key={index}
                     size={'lg'}
-                    onClick={() => onToggle(sCat.label)}
+                    onClick={() => onToggle(sCat.value)}
                   >
                     {sCat.label}
                   </Chip>

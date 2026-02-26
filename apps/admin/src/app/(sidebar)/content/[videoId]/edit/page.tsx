@@ -1,5 +1,7 @@
+import { EditContentContainer } from '@/components/content';
+
 const EditContentPage = () => {
-  return <div>컨텐츠 수정</div>;
+  return <EditContentContainer />;
 };
 
 export default EditContentPage;

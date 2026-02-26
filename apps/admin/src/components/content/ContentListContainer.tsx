@@ -65,7 +65,7 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
           className="w-fit"
         >
           <Upload className="h-6 w-6" />
-          콘텐츠 등록
+          콘텐츠 업로드
         </Button>
       </div>
       {/* 다중선택메뉴 */}

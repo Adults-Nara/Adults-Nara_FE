@@ -1,7 +1,7 @@
-import { ContentForm } from '@/components/content';
+import { CreateContentContainer } from '@/components/content';
 
 const NewContentPage = () => {
-  return <ContentForm />;
+  return <CreateContentContainer />;
 };
 
 export default NewContentPage;
