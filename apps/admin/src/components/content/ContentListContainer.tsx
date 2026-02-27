@@ -15,6 +15,7 @@ import {
 } from '@repo/ui';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constant/routes';
+import { useDialogStore } from '@/store/useDialogStore';
 
 interface ContentListContainerProps {
   currentPage: number;
@@ -24,22 +25,31 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const router = useRouter();
   const totalPages = 150; // 실제로는 서버에서 받아온 totalCount / limit 값으로 계산
+  const { openDialog } = useDialogStore();
 
   const handlerEdit = (id: string) => {
     router.push(ROUTES.EDIT_CONTENT(id));
   };
   const handlerDelete = (id: string) => {
-    console.log('삭제', id);
+    openDialog('content', 'delete', {
+      onConfirm: () => console.log(id),
+    });
   };
 
   const handlerAllActive = () => {
-    console.log('선택활성화', selectedIds);
+    openDialog('content', 'activate', {
+      onConfirm: () => console.log(selectedIds),
+    });
   };
   const handlerAllDeactivated = () => {
-    console.log('선택비활성화', selectedIds);
+    openDialog('content', 'deactivate', {
+      onConfirm: () => console.log(selectedIds),
+    });
   };
   const handlerAllDelete = () => {
-    console.log('선택삭제', selectedIds);
+    openDialog('content', 'delete', {
+      onConfirm: () => console.log(selectedIds),
+    });
   };
 
   const columns = CONTENT_COLUMNS(handlerEdit, handlerDelete);

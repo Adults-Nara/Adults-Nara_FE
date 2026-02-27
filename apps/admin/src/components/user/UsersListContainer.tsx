@@ -5,6 +5,7 @@ import { mockUsers } from '@/types/content';
 import { DataTable, Pagination } from '@components/common';
 import { USER_COLUMNS } from '@components/user';
 import { Button, Delete, Input, SearchIcon, UserCheck, UserX } from '@repo/ui';
+import { useDialogStore } from '@/store/useDialogStore';
 
 interface UsersListContainerProps {
   currentPage: number;
@@ -17,24 +18,41 @@ const UsersListContainer = ({ currentPage, type }: UsersListContainerProps) => {
   const title = type === 'user' ? '사용자 리스트' : '업로더 리스트';
   const label = type === 'user' ? '사용자' : '업로더';
 
-  const handlerActive = (id: string) => {
-    console.log('활성화', id);
+  const { openDialog } = useDialogStore();
+
+  const handlerActive = (id: string, name: string) => {
+    openDialog(type, 'activate', {
+      name,
+      onConfirm: () => console.log(id),
+    });
   };
-  const handlerDeactivated = (id: string) => {
-    console.log('비활성화', id);
+  const handlerDeactivated = (id: string, name: string) => {
+    openDialog(type, 'deactivate', {
+      name,
+      onConfirm: (text, period) => console.log(text, id, period),
+    });
   };
-  const handlerReason = (reason: string | undefined) => {
-    console.log('사유', reason);
+  const handlerReason = (reason: string | undefined, name: string) => {
+    openDialog(type, 'reason', {
+      name,
+      reason,
+    });
   };
 
   const handlerAllActive = () => {
-    console.log('선택활성화', selectedIds);
+    openDialog(type, 'activate', {
+      onConfirm: () => console.log(selectedIds),
+    });
   };
   const handlerAllDeactivated = () => {
-    console.log('선택비활성화', selectedIds);
+    openDialog(type, 'deactivate', {
+      onConfirm: (text, period) => console.log(text, selectedIds, period),
+    });
   };
   const handlerAllDelete = () => {
-    console.log('선택삭제', selectedIds);
+    openDialog(type, 'delete', {
+      onConfirm: () => console.log(selectedIds),
+    });
   };
 
   const columns = USER_COLUMNS(
