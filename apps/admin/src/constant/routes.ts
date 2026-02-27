@@ -3,6 +3,6 @@ export const ROUTES = {
   CONTENT: '/content',
   UPLOADER: '/uploader',
   USER: '/user',
-  NEWCONTENT: '/content/new',
-  EDITCONTENT: (videoId: string | number) => `/content/${videoId}/edit`,
+  NEW_CONTENT: '/content/new',
+  EDIT_CONTENT: (videoId: string | number) => `/content/${videoId}/edit`,
 } as const;

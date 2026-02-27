@@ -10,11 +10,7 @@ import {
 import { ContentFormValues } from './content.schema';
 
 const ContentCategorySection = () => {
-  const {
-    control,
-
-    setValue,
-  } = useFormContext<ContentFormValues>();
+  const { control, setValue } = useFormContext<ContentFormValues>();
 
   const { errors } = useFormState({
     control,

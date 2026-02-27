@@ -26,7 +26,7 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
   const totalPages = 150; // 실제로는 서버에서 받아온 totalCount / limit 값으로 계산
 
   const handlerEdit = (id: string) => {
-    router.push(ROUTES.EDITCONTENT(id));
+    router.push(ROUTES.EDIT_CONTENT(id));
   };
   const handlerDelete = (id: string) => {
     console.log('삭제', id);
@@ -60,7 +60,7 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
           className="w-100 bg-white"
         />
         <Button
-          onClick={() => router.push(ROUTES.NEWCONTENT)}
+          onClick={() => router.push(ROUTES.NEW_CONTENT)}
           variant={'outline'}
           className="w-fit"
         >

@@ -1,7 +1,12 @@
 import { EditContentContainer } from '@/components/content';
 
-const EditContentPage = () => {
-  return <EditContentContainer />;
+interface EditContentPageProps {
+  params: Promise<{ videoId: string }>;
+}
+
+const EditContentPage = async ({ params }: EditContentPageProps) => {
+  const { videoId } = await params;
+  return <EditContentContainer videoId={videoId} />;
 };
 
 export default EditContentPage;

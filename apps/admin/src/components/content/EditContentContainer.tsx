@@ -1,10 +1,14 @@
 'use client';
 import Link from 'next/link';
 import ContentForm from './form/ContentForm';
-import { ContentFormValues, mock_videoUpload } from './form/content.schema';
+import { ContentFormValues, mockVideoUpload } from './form/content.schema';
 import { LeftArrow } from '@repo/ui';
 
-const EditContentContainer = () => {
+interface EditContentContainerProps {
+  videoId: string;
+}
+
+const EditContentContainer = ({ videoId }: EditContentContainerProps) => {
   const handleEdit = (data: ContentFormValues, thumbnailFile: File | null) => {
     const formData = new FormData();
 
@@ -22,9 +26,9 @@ const EditContentContainer = () => {
     // API 호출: PUT /api/v1/backoffice/contents/{videoId}
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = () => {
     //api연동필요
-    console.log('컨텐츠삭제', id);
+    console.log('컨텐츠삭제', videoId);
   };
 
   return (
@@ -39,7 +43,7 @@ const EditContentContainer = () => {
       <ContentForm
         mode="edit"
         //api연동 필요
-        defaultValues={mock_videoUpload}
+        defaultValues={mockVideoUpload}
         onDelete={handleDelete}
         onSubmit={handleEdit}
       />

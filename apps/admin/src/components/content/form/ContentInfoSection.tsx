@@ -46,7 +46,8 @@ const ContentInfoSection = ({ isEdit }: ContentInfoSectionProps) => {
                     key={option.value}
                     size="lg"
                     selected={field.value === option.value}
-                    onClick={() => field.onChange(option.value)}
+                    onClick={() => !isEdit && field.onChange(option.value)}
+                    tabIndex={isEdit ? -1 : 0}
                   >
                     {option.label}
                   </Chip>

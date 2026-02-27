@@ -13,7 +13,7 @@ interface ContentFormProps {
   mode: 'create' | 'edit';
   defaultValues?: ContentFormValues;
   onSubmit: (data: ContentFormValues, thumbnail: File | null) => void;
-  onDelete?: (id: string) => void;
+  onDelete?: () => void;
 }
 const ContentForm = ({
   mode,
@@ -47,7 +47,7 @@ const ContentForm = ({
           {/* Upload Section */}
           <ContentUploadSection
             setThumbnailFile={setThumbnailFile}
-            initialThumbnail={defaultValues?.videoLink}
+            initialThumbnail={defaultValues?.thumbnailUrl}
             isEdit={isEdit}
           />
 
@@ -62,7 +62,7 @@ const ContentForm = ({
             {isEdit && (
               <Button
                 type="button"
-                onClick={() => onDelete}
+                onClick={onDelete}
                 variant="default"
                 className="flex w-fit items-center gap-2"
               >

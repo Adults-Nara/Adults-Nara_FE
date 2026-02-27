@@ -10,6 +10,7 @@ export const contentSchema = z.object({
   contentType: z.enum(['SHORT', 'LONG', 'AD']),
   visibility: z.enum(['PUBLIC', 'PRIVATE']),
   videoLink: z.string().optional(),
+  thumbnailUrl: z.string().optional(),
   title: z.string().min(1, '영상 제목을 입력해주세요'),
   description: z.string().min(1, '영상 설명을 입력해주세요'),
   categories: z
@@ -20,10 +21,11 @@ export const contentSchema = z.object({
 
 export type ContentFormValues = z.infer<typeof contentSchema>;
 
-export const mock_videoUpload: ContentFormValues = {
+export const mockVideoUpload: ContentFormValues = {
   contentType: 'LONG',
   visibility: 'PRIVATE',
   videoLink: '',
+  thumbnailUrl: 'https://picsum.photos/200?random=1',
   title: '영상제목',
   description: '영상설명',
   categories: ['yoga', 'ai'],
