@@ -18,8 +18,12 @@ const UserProfile = () => {
       <div className="bg-primary-100 h-15 w-15 shrink-0 rounded-full"></div>
       <div className="flex w-full flex-col">
         <div className="flex w-full justify-between">
-          <span className="title3">유저닉네임</span>
-
+          <div className="flex items-center gap-2">
+            <span className="title3">유저닉네임</span>
+            <span className="body4 bg-uplus rounded-2xl px-2 py-1 text-white">
+              LG U+ 회원
+            </span>
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button>
@@ -46,9 +50,8 @@ const UserProfile = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div>
-          <span className="body3 text-gray-700">example@gmail.com</span>
-        </div>
+
+        <span className="body3 text-gray-700">example@gmail.com</span>
       </div>
     </div>
   );

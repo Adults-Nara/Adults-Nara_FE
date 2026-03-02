@@ -1,7 +1,28 @@
-const RewardSummary = () => {
+'use client';
+
+import { ROUTES } from '@/constant/routes';
+import { useRouter } from 'next/navigation';
+
+interface RewardSummaryProps {
+  isDetail?: boolean;
+}
+
+const RewardSummary = ({ isDetail = true }: RewardSummaryProps) => {
+  const route = useRouter();
   return (
     <div className="bg-primary-900 flex w-full flex-col gap-4 rounded-lg p-4">
-      <span className="title2 text-white">이번 달 혜택</span>
+      <div className="flex w-full justify-between">
+        <span className="title2 text-white">이번 달 혜택</span>
+
+        {isDetail && (
+          <button
+            className="body3 cursor-pointer text-white"
+            onClick={() => route.push(ROUTES.POINT)}
+          >
+            자세히보기{' >'}
+          </button>
+        )}
+      </div>
       <div className="flex flex-col">
         <span className="body2 text-white">
           <span className="title2 text-primary-600 text-4xl">800</span>원 혜택을
