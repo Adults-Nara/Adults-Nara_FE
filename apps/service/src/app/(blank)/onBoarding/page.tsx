@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import ShortsTab from '../shorts/_components/ShortsTab';
 import { ShortsOnBoarding } from './_components/ShortsOnBoarding';
 
 export default function OnBoardingPage() {
