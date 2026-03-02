@@ -1,0 +1,61 @@
+import { ROUTES } from '@/constant/routes';
+import { Button, Input, Logo } from '@repo/ui';
+import Link from 'next/link';
+
+const SignForm = () => {
+  return (
+    <div className="flex w-125 min-w-125 flex-col items-center justify-center gap-8 rounded-lg border border-gray-500 bg-white px-12.5 py-5 shadow-[0_2px_4px_0px_rgba(0,0,0,0.25)]">
+      <div className="flex w-full flex-col items-center gap-5">
+        <Logo className="h-23 w-23" />
+        <div className="flex flex-col items-center gap-3">
+          <span className="title2">회원가입</span>
+          <span className="body2 text-gray-700">업로드 계정을 생성하세요</span>
+        </div>
+      </div>
+
+      <div className="flex w-full flex-col gap-5">
+        <div className="flex items-end gap-0.5">
+          <label>
+            이메일
+            <Input className="mt-2 w-73" placeholder="admin@example.com" />
+          </label>
+          <Button type="button" className="body2">
+            중복 확인
+          </Button>
+        </div>
+        <label>
+          비밀번호
+          <Input
+            className="mt-2"
+            type="password"
+            placeholder="비밀번호를 입력하세요"
+          />
+        </label>
+        <label>
+          비밀번호 확인
+          <Input
+            className="mt-2"
+            type="password"
+            placeholder="동일한 비밀번호를 입력하세요"
+          />
+        </label>
+        <label>
+          닉네임
+          <Input className="mt-2" placeholder="닉네임을 입력하세요" />
+        </label>
+      </div>
+
+      <div className="flex w-full flex-col items-center gap-7">
+        <Button type="submit">회원가입</Button>
+        <span className="title3 text-gray-700">
+          이미 게정이 있으신가요?
+          <Link href={ROUTES.LOGIN} className="text-primary-500 ml-2">
+            로그인
+          </Link>
+        </span>
+      </div>
+    </div>
+  );
+};
+
+export default SignForm;
