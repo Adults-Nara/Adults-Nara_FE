@@ -1,4 +1,4 @@
-import { Point } from '@/types/point';
+import type { Point } from '@/types/point';
 import { ThumbnailData } from '@/types/video';
 
 export const MOCK_VIDEO_DATA: ThumbnailData[] = [

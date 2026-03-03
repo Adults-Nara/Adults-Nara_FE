@@ -1,14 +1,19 @@
 import { MOCK_POINT_DATA } from '@/constant/mockData';
-import { Point } from '@/types/point';
+import type { Point } from '@/types/point';
 import { cn, LeftArrow2, RightArrow } from '@repo/ui';
+
+const TIME_ZONE = 'Asia/Seoul';
 
 const formatTime = (isoString: string) => {
   const date = new Date(isoString);
-  return date.toLocaleTimeString('ko-KR', {
+  if (Number.isNaN(date.getTime())) return '';
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    timeZone: TIME_ZONE,
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
-  });
+  }).format(date);
 };
 
 const PointHistory = () => {

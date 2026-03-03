@@ -4,17 +4,17 @@ import { ROUTES } from '@/constant/routes';
 import { useRouter } from 'next/navigation';
 
 interface RewardSummaryProps {
-  isDetail?: boolean;
+  showDetailLink?: boolean;
 }
 
-const RewardSummary = ({ isDetail = true }: RewardSummaryProps) => {
+const RewardSummary = ({ showDetailLink = true }: RewardSummaryProps) => {
   const route = useRouter();
   return (
     <div className="bg-primary-900 flex w-full flex-col gap-4 rounded-lg p-4">
       <div className="flex w-full justify-between">
         <span className="title2 text-white">이번 달 혜택</span>
 
-        {isDetail && (
+        {showDetailLink && (
           <button
             className="body3 cursor-pointer text-white"
             onClick={() => route.push(ROUTES.POINT)}
