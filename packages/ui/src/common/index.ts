@@ -1,6 +1,7 @@
 export { Button } from './Button';
 export { Input } from './input';
 export { Chip } from './Chip';
+export { Textarea } from './Textarea';
 export {
   Accordion,
   AccordionItem,

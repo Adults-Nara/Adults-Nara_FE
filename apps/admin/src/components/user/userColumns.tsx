@@ -17,9 +17,9 @@ const STATUS_MAP: Record<
 };
 
 export const USER_COLUMNS = (
-  onActive: (id: string) => void,
-  onDeactivated: (id: string) => void,
-  onReason: (reason: string | undefined) => void,
+  onActive: (id: string, name: string) => void,
+  onDeactivated: (id: string, name: string) => void,
+  onReason: (reason: string | undefined, name: string) => void,
 ): Column<UserData>[] => [
   {
     key: 'profileImageUrl',
@@ -79,7 +79,7 @@ export const USER_COLUMNS = (
         {item.status === 'ACTIVE' ? (
           <div>
             <Button
-              onClick={() => onDeactivated(item.id)}
+              onClick={() => onDeactivated(item.id, item.nickname)}
               variant={'outline'}
               size={'lg'}
             >
@@ -89,14 +89,14 @@ export const USER_COLUMNS = (
         ) : (
           <div className="flex items-center justify-center gap-3">
             <button
-              onClick={() => onReason(item.banReason)}
+              onClick={() => onReason(item.banReason, item.nickname)}
               className="body2 hover:text-primary-400 flex cursor-pointer items-center"
             >
               <Comment className="h-5 w-5" />
               사유
             </button>
             <Button
-              onClick={() => onActive(item.id)}
+              onClick={() => onActive(item.id, item.nickname)}
               variant={'outline'}
               size={'lg'}
             >

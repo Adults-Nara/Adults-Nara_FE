@@ -13,6 +13,9 @@ import {
   Unpower,
   Upload,
 } from '@repo/ui';
+import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/constant/routes';
+import { useDialogStore } from '@/store/useDialogStore';
 
 interface ContentListContainerProps {
   currentPage: number;
@@ -20,23 +23,33 @@ interface ContentListContainerProps {
 
 const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const router = useRouter();
   const totalPages = 150; // 실제로는 서버에서 받아온 totalCount / limit 값으로 계산
+  const { openDialog } = useDialogStore();
 
   const handlerEdit = (id: string) => {
-    console.log('수정', id, selectedIds);
+    router.push(ROUTES.EDIT_CONTENT(id));
   };
   const handlerDelete = (id: string) => {
-    console.log('삭제', id);
+    openDialog('content', 'delete', {
+      onConfirm: () => console.log(id),
+    });
   };
 
   const handlerAllActive = () => {
-    console.log('선택활성화', selectedIds);
+    openDialog('content', 'activate', {
+      onConfirm: () => console.log(selectedIds),
+    });
   };
   const handlerAllDeactivated = () => {
-    console.log('선택비활성화', selectedIds);
+    openDialog('content', 'deactivate', {
+      onConfirm: () => console.log(selectedIds),
+    });
   };
   const handlerAllDelete = () => {
-    console.log('선택삭제', selectedIds);
+    openDialog('content', 'delete', {
+      onConfirm: () => console.log(selectedIds),
+    });
   };
 
   const columns = CONTENT_COLUMNS(handlerEdit, handlerDelete);
@@ -56,9 +69,13 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
           placeholder="제목, 설명, 카테고리로 검색"
           className="w-100 bg-white"
         />
-        <Button variant={'outline'} className="w-fit">
+        <Button
+          onClick={() => router.push(ROUTES.NEW_CONTENT)}
+          variant={'outline'}
+          className="w-fit"
+        >
           <Upload className="h-6 w-6" />
-          콘텐츠 등록
+          콘텐츠 업로드
         </Button>
       </div>
       {/* 다중선택메뉴 */}

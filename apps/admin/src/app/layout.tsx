@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { Dialog } from '@/components/common';
 
 export const metadata: Metadata = {
   title: '어신나 관리자 페이지',
@@ -15,6 +16,7 @@ export default function RootLayout({
     <html lang="ko" className="custom-scrollbar">
       <body className={`custom-scrollbar h-dvh bg-gray-100 antialiased`}>
         {children}
+        <Dialog />
       </body>
     </html>
   );
