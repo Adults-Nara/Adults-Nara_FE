@@ -16,11 +16,11 @@ const UserProfile = () => {
     <div className="flex w-full items-center gap-5 rounded-lg bg-gray-100 px-4 py-6 shadow-[0_5px_15px_0px_rgba(0,0,0,0.1)]">
       {/* API연동시 이미지 태그추가 */}
       <div className="bg-primary-100 h-15 w-15 shrink-0 rounded-full"></div>
-      <div className="flex w-full flex-col">
+      <div className="flex w-full flex-col gap-1">
         <div className="flex w-full justify-between">
           <div className="flex items-center gap-2">
-            <span className="title3">유저닉네임</span>
-            <span className="body4 bg-uplus rounded-2xl px-2 py-1 text-white">
+            <span className="title2">유저닉네임</span>
+            <span className="body4 bg-uplus rounded-2xl px-2 py-0.75 text-white">
               LG U+ 회원
             </span>
           </div>
