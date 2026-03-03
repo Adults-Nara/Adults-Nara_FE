@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { ShortsOnBoarding } from './_components/ShortsOnBoarding';
+import { ShortsOnBoarding } from './_components/shorts/ShortsOnBoarding';
+import { TagSettingOnboarding } from './_components/tagSetting/TagSettingOnboarding';
 
 export default function OnBoardingPage() {
   const stepTitle = {
@@ -23,6 +24,6 @@ export default function OnBoardingPage() {
       return <ShortsOnBoarding onCompleteExperience={handleCompleteShorts} />;
     case 2:
       // TODO : 태그 설정 페이지 구현
-      return <></>;
+      return <TagSettingOnboarding selectedCategory={recommendedTags} />;
   }
 }

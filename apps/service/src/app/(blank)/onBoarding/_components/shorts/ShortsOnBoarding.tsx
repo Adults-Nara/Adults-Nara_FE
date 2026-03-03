@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { OnboardingHeader } from './OnboardingHeader';
+import { OnboardingHeader } from '../common/OnboardingHeader';
 import { ShortsTourTab } from './ShortsTourTab';
 import { ShortsExperienceTab } from './ShortsExperienceTab';
 
@@ -21,23 +21,25 @@ export function ShortsOnBoarding({
   return (
     <div className="h-dvh">
       <>
-        <OnboardingHeader>
-          {currentPhase === 'tour' ? (
-            <div />
-          ) : (
-            <div className="flex justify-center">
-              <div className="flex h-13 w-20 flex-col items-center justify-center rounded-lg bg-black/50 text-white">
-                <p className="body1">{videoStep}/6</p>
+        <div className="absolute top-0 left-0 z-50 w-full">
+          <OnboardingHeader>
+            {currentPhase === 'tour' ? (
+              <div />
+            ) : (
+              <div className="flex justify-center">
+                <div className="flex h-13 w-20 flex-col items-center justify-center rounded-lg bg-black/50 text-white">
+                  <p className="body1">{videoStep}/6</p>
+                </div>
               </div>
-            </div>
-          )}
-          <p
-            className="title2 flex cursor-pointer justify-end pr-1.5 text-white drop-shadow-sm"
-            onClick={() => setCurrentPhase('experience')}
-          >
-            건너뛰기
-          </p>
-        </OnboardingHeader>
+            )}
+            <p
+              className="title2 flex cursor-pointer justify-end pr-1.5 text-white drop-shadow-sm"
+              onClick={() => setCurrentPhase('experience')}
+            >
+              건너뛰기
+            </p>
+          </OnboardingHeader>
+        </div>
         {currentPhase === 'tour' ? (
           <ShortsTourTab
             onCompleteOnboarding={() => setCurrentPhase('experience')}
