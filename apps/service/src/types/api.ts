@@ -7,10 +7,8 @@ export type ApiResponse<T> = {
 export type ApiError = {
   code: string;
   message: string;
-  errors: [
-    {
-      field: string;
-      reason: string;
-    },
-  ];
+  errors: Array<{
+    field: string;
+    reason: string;
+  }>;
 };

@@ -8,17 +8,22 @@ export const httpClient = async <T>(
   const { accessToken, setAccessToken } = useAuthStore.getState();
   const url = `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`;
 
-  const headers: Record<string, string> = {
-    ...(options.headers as Record<string, string>),
-  };
+  // const headers: Record<string, string> = {
+  //   ...(options.headers as Record<string, string>),
+  // };
+  const headers = new Headers(options.headers);
 
   //body가 FormData가 아닐 때만 Content-Type을 JSON으로 설정
-  if (!(options.body instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
+  if (
+    options.body &&
+    !(options.body instanceof FormData) &&
+    !headers.has('Content-Type')
+  ) {
+    headers.set('Content-Type', 'application/json');
   }
 
   if (accessToken) {
-    headers['Authorization'] = `Bearer ${accessToken}`;
+    headers.set('Authorization', `Bearer ${accessToken}`);
   }
 
   let response = await fetch(url, {
@@ -40,7 +45,7 @@ export const httpClient = async <T>(
       const { accessToken: newAccessToken } = await refreshRes.json();
       setAccessToken(newAccessToken); // 메모리 갱신
 
-      headers['Authorization'] = `Bearer ${newAccessToken}`;
+      headers.set('Authorization', `Bearer ${newAccessToken}`);
       response = await fetch(url, {
         ...options,
         headers,
