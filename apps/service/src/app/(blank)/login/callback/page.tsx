@@ -1,38 +1,17 @@
-'use client';
+import { KakaoCallback } from '@/components/auth';
 
-import { useEffect } from 'react';
-import { useLoginWithKakao } from '@/lib/tanstack/query/auth.query';
-import { useAuthStore } from '@/store/useAuthStore';
-import { ROUTES } from '@/constant/routes';
-import { useRouter, useSearchParams } from 'next/navigation';
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
-const KakaoCallbackPage = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const code = searchParams.get('code') ?? '';
-  const state = searchParams.get('state') ?? '';
-
-  const { setAccessToken } = useAuthStore();
-
-  const { data, isSuccess, isError } = useLoginWithKakao(code, state);
-
-  useEffect(() => {
-    if (isSuccess) {
-      setAccessToken(data.accessToken);
-      router.replace(ROUTES.HOME);
-    }
-  }, [isSuccess, data, setAccessToken, router]);
-
-  if (isError)
-    return (
-      <div className="flex h-screen items-center justify-center">
-        로그인 실패. 다시 시도해 주세요.
-      </div>
-    );
+const KakaoCallbackPage = async ({ searchParams }: PageProps) => {
+  const { code, state } = await searchParams;
+  const safeCode = Array.isArray(code) ? code[0] : (code ?? '');
+  const safeState = Array.isArray(state) ? state[0] : (state ?? '');
 
   return (
-    <div className="flex h-screen items-center justify-center">
-      <p>로그인 처리 중입니다. 잠시만 기다려주세요...</p>
+    <div className="flex h-screen flex-col items-center justify-center">
+      <KakaoCallback code={safeCode} state={safeState} />
     </div>
   );
 };
