@@ -198,20 +198,6 @@ export function VirtualSwipePlayer({
           />
         )}
       </div>
-
-      {/* 컨트롤러 */}
-      {!isPlaying && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/20">
-          <svg
-            width="72"
-            height="72"
-            viewBox="0 0 24 24"
-            fill="rgba(255, 255, 255, 0.8)"
-          >
-            <polygon points="5,3 19,12 5,21" />
-          </svg>
-        </div>
-      )}
     </div>
   );
 }

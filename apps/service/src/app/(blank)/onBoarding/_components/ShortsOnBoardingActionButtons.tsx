@@ -7,36 +7,24 @@ import {
   Like,
   LikeFill,
 } from '@repo/ui';
-import { useState } from 'react';
-import { FocusWrapper } from './FocusWrapper';
+import { ShortsTourFocusWrapper } from './ShortsTourFocusWrapper';
 
 export type ActionType = 'like' | 'dislike' | 'bookmark' | 'comment' | null;
 
 interface OnboardingActionButtonsProps {
   focusedAction: ActionType;
   onMockAction: (action: ActionType) => void;
+  isLiked?: boolean | null;
+  isBookmarked?: boolean;
 }
 
-export function OnboardingActionButtons({
+export function ShortsOnBoardingActionButtons({
   focusedAction,
   onMockAction,
+  isLiked,
+  isBookmarked,
 }: OnboardingActionButtonsProps) {
-  const [mockedLike, setMockedLike] = useState<boolean | null>(null);
-  const [mockBookmark, setMockBookmark] = useState(false);
-
   const handleAction = (type: ActionType) => {
-    if (type === 'like' || type === 'dislike') {
-      if (mockedLike === null) {
-        setMockedLike(type === 'like');
-      } else {
-        setMockedLike((prev) =>
-          prev === (type === 'like') ? null : type === 'like',
-        );
-      }
-    } else if (type === 'bookmark') {
-      setMockBookmark((prev) => !prev);
-    }
-
     onMockAction(type);
   };
 
@@ -62,11 +50,11 @@ export function OnboardingActionButtons({
     type: ActionType;
     children: React.ReactNode;
   }) => (
-    <FocusWrapper type={type} focusedAction={focusedAction}>
+    <ShortsTourFocusWrapper type={type} focusedAction={focusedAction}>
       <div className="justify-strat relative flex items-center">
         {focusedAction === type && (
-          <div className="pointer-events-none absolute right-full mr-4 w-max animate-pulse rounded-lg bg-black/50 px-4 py-2 text-left">
-            <span className="body1 leading-snug font-bold whitespace-pre-wrap text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          <div className="absolute right-full mr-4 w-max animate-pulse rounded-lg bg-black/50 px-4 py-2 text-left">
+            <span className="body1 leading-snug font-bold whitespace-pre-wrap text-white">
               {getTooltipText(type)}
             </span>
           </div>
@@ -75,20 +63,20 @@ export function OnboardingActionButtons({
         {/* 실제 버튼 내용 */}
         {children}
       </div>
-    </FocusWrapper>
+    </ShortsTourFocusWrapper>
   );
 
   return (
     <div className="flex flex-col items-center gap-6 text-[28px] drop-shadow-sm">
       <ActionItem type="like">
-        <button onClick={() => handleAction('like')} className="">
-          {mockedLike ? <LikeFill /> : <Like />}
+        <button onClick={() => handleAction('like')}>
+          {isLiked ? <LikeFill /> : <Like />}
         </button>
       </ActionItem>
 
       <ActionItem type="dislike">
-        <button onClick={() => handleAction('dislike')} className="">
-          {mockedLike !== null && mockedLike === false ? (
+        <button onClick={() => handleAction('dislike')}>
+          {isLiked !== null && isLiked === false ? (
             <DislikeFill />
           ) : (
             <Dislike />
@@ -97,8 +85,8 @@ export function OnboardingActionButtons({
       </ActionItem>
 
       <ActionItem type="bookmark">
-        <button onClick={() => handleAction('bookmark')} className="">
-          {mockBookmark ? <BookmarkFill /> : <Bookmark />}
+        <button onClick={() => handleAction('bookmark')}>
+          {isBookmarked ? <BookmarkFill /> : <Bookmark />}
         </button>
       </ActionItem>
 

@@ -1,17 +1,17 @@
 import { ReactNode } from 'react';
-import { ActionType } from './OnboardingActionButtons';
+import { ActionType } from './ShortsOnBoardingActionButtons';
 
-interface FocusWrapperProps {
+interface ShortsTourFocusWrapperProps {
   type: ActionType;
   focusedAction: ActionType;
   children: ReactNode;
 }
 
-export function FocusWrapper({
+export function ShortsTourFocusWrapper({
   type,
   focusedAction,
   children,
-}: FocusWrapperProps) {
+}: ShortsTourFocusWrapperProps) {
   const isFocused = focusedAction === type;
 
   return (
