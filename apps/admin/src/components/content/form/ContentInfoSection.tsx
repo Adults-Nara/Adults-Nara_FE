@@ -35,7 +35,7 @@ const ContentInfoSection = ({ isEdit }: ContentInfoSectionProps) => {
             isEdit && 'pointer-events-none opacity-50',
           )}
         >
-          <span className="body2 text-gray-900">컨텐츠 유형</span>
+          <span className="body2 text-gray-900">콘텐츠 유형</span>
           <Controller
             name="contentType"
             control={control}
@@ -58,7 +58,7 @@ const ContentInfoSection = ({ isEdit }: ContentInfoSectionProps) => {
         </div>
         {/* 콘텐츠 상태 (ToggleSwitch 연결) */}
         <div className="flex flex-col gap-4">
-          <span className="body2 text-gray-900">컨텐츠 상태</span>
+          <span className="body2 text-gray-900">콘텐츠 상태</span>
           <Controller
             name="visibility"
             control={control}

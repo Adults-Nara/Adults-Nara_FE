@@ -7,7 +7,8 @@
       "@repo/ui": ["../../packages/ui/src/index.ts"],
       "@components/common": ["./src/components/common/index.ts"],
       "@components/content": ["./src/components/content/index.ts"],
-      "@components/user": ["./src/components/user/index.ts"]
+      "@components/user": ["./src/components/user/index.ts"],
+      "@components/auth": ["./src/components/auth/index.ts"]
     },
     "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
