@@ -48,7 +48,7 @@ const Sidebar = () => {
       </div>
       <div className="flex items-center gap-5 p-3">
         {/* API연동시 이미지 태그추가 */}
-        <div className="bg-primary-100 h-15 w-15 shrink-0 rounded-full"></div>
+        <div className="bg-primary-100 h-12.5 w-12.5 shrink-0 rounded-full"></div>
         <div className="flex w-full flex-col">
           <span className="title3">유저닉네임</span>
           <span className="body3 text-gray-700">example@gmail.com</span>
