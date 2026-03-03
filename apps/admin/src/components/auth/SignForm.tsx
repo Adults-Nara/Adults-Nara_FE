@@ -162,7 +162,7 @@ const SignForm = () => {
       <div className="flex w-full flex-col items-center gap-7">
         <Button type="submit">회원가입</Button>
         <span className="title3 text-gray-700">
-          이미 게정이 있으신가요?
+          이미 계정이 있으신가요?
           <Link href={ROUTES.LOGIN} className="text-primary-500 ml-2">
             로그인
           </Link>
