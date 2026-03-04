@@ -3,7 +3,10 @@ export const API_ENDPOINTS = {
     LOGIN: '/backoffice/auth/login',
     SIGNUP: '/backoffice/auth/signup/uploader',
     ACCOUNT: '/backoffice/auth/account',
-    CHECK_EMAIL: '/backoffice/auth/check-email',
+    CHECK_EMAIL: (query: string) => {
+      const params = new URLSearchParams({ email: query.trim() });
+      return `/backoffice/auth/check-email?${params.toString()}`;
+    },
     LOGOUT: '/auth/token/logout',
     REFRESH: '/auth/token/refresh',
   },
