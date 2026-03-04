@@ -11,14 +11,11 @@ export const loginKakaoUrl = async () => {
 };
 
 export const loginWithKakao = async (code: string, state: string) => {
-  const params = new URLSearchParams({
-    code: code,
-    state: state,
-  }).toString();
-
   const response = await httpClient<ApiResponse<User>>(
-    `${API_ENDPOINTS.AUTH.KAKAO_LOGIN}?${params}`,
+    API_ENDPOINTS.AUTH.KAKAO_LOGIN(code, state),
+    {
+      method: 'POST',
+    },
   );
-
   return response.data;
 };

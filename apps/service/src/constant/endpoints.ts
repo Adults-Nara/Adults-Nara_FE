@@ -1,6 +1,12 @@
 export const API_ENDPOINTS = {
   AUTH: {
-    KAKAO_LOGIN: '/auth/kakao/callback',
+    KAKAO_LOGIN: (code: string, state: string) => {
+      const params = new URLSearchParams({
+        code: code.trim(),
+        state: state.trim(),
+      });
+      return `/auth/kakao/login?${params.toString()}`;
+    },
     KAKAO_LOGIN_URL: '/auth/kakao/login-url',
     LOGOUT: '/auth/token/logout',
     REFRESH: '/auth/token/refresh',
