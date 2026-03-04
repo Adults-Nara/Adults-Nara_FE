@@ -13,7 +13,7 @@ export function ShortsOnBoarding({
   );
   const [videoStep, setVideoStep] = useState<number>(1);
 
-  const handleCompleteExperience = (collectedData: any) => {
+  const handleCompleteExperience = (collectedData: string[]) => {
     // 설정 페이지로 값 전달을 위함.
     onCompleteExperience(collectedData);
   };
@@ -32,8 +32,8 @@ export function ShortsOnBoarding({
                 </div>
               </div>
             )}
-            <p
-              className="title2 flex cursor-pointer justify-end pr-1.5 text-white drop-shadow-sm"
+            <button
+              className="title2 flex cursor-pointer justify-end border-none bg-transparent pr-1.5 text-white drop-shadow-sm"
               onClick={() => {
                 if (currentPhase === 'tour') {
                   setCurrentPhase('experience');
@@ -43,7 +43,7 @@ export function ShortsOnBoarding({
               }}
             >
               건너뛰기
-            </p>
+            </button>
           </OnboardingHeader>
         </div>
         {currentPhase === 'tour' ? (

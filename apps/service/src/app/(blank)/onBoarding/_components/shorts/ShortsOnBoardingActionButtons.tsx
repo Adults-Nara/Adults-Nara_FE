@@ -69,13 +69,13 @@ export function ShortsOnBoardingActionButtons({
   return (
     <div className="flex flex-col items-center gap-6 text-[28px] drop-shadow-sm">
       <ActionItem type="like">
-        <button onClick={() => handleAction('like')}>
+        <button aria-label="like" onClick={() => handleAction('like')}>
           {isLiked ? <LikeFill /> : <Like />}
         </button>
       </ActionItem>
 
       <ActionItem type="dislike">
-        <button onClick={() => handleAction('dislike')}>
+        <button aria-label="dislike" onClick={() => handleAction('dislike')}>
           {isLiked !== null && isLiked === false ? (
             <DislikeFill />
           ) : (
@@ -85,13 +85,14 @@ export function ShortsOnBoardingActionButtons({
       </ActionItem>
 
       <ActionItem type="bookmark">
-        <button onClick={() => handleAction('bookmark')}>
+        <button aria-label="bookmark" onClick={() => handleAction('bookmark')}>
           {isBookmarked ? <BookmarkFill /> : <Bookmark />}
         </button>
       </ActionItem>
 
       <ActionItem type="comment">
         <button
+          aria-label="comment"
           className="flex flex-col items-center gap-1 border-none"
           onClick={() => handleAction('comment')}
         >

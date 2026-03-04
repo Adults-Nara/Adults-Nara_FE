@@ -88,7 +88,9 @@ export function VirtualSwipePlayer({
       return;
     }
 
-    const threshold = window.innerWidth * 0.25;
+    const thresholdX = window.innerWidth * 0.25;
+    const thresholdY = window.innerHeight * 0.25;
+
     let swipedDirection: 'up' | 'down' | 'left' | 'right' | null = null;
 
     // 손가락을 뗀 경우
@@ -97,20 +99,20 @@ export function VirtualSwipePlayer({
     // 스와이프 or 터치인지 판단
 
     if (dragAxis.current === 'x') {
-      if (offset.x < -threshold && rightVideo) {
+      if (offset.x < -thresholdX && rightVideo) {
         setOffset({ x: -window.innerWidth, y: 0 });
         swipedDirection = 'right'; // 손가락은 왼쪽으로 밀었지만, 우측 영상이 나오는 것
-      } else if (offset.x > threshold && leftVideo) {
+      } else if (offset.x > thresholdX && leftVideo) {
         setOffset({ x: window.innerWidth, y: 0 });
         swipedDirection = 'left';
       } else {
         setOffset({ x: 0, y: 0 }); // 제자리 복귀
       }
     } else if (dragAxis.current === 'y') {
-      if (offset.y < -threshold && downVideo) {
+      if (offset.y < -thresholdY && downVideo) {
         setOffset({ x: 0, y: -window.innerHeight });
         swipedDirection = 'down';
-      } else if (offset.y > threshold && upVideo) {
+      } else if (offset.y > thresholdY && upVideo) {
         setOffset({ x: 0, y: window.innerHeight });
         swipedDirection = 'up';
       } else {

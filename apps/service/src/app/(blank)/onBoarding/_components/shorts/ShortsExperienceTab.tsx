@@ -10,7 +10,7 @@ import {
 } from './ShortsOnBoardingActionButtons';
 
 export interface ShortsExperienceTabProps {
-  onCompleteExperience: (collectedData: any) => void;
+  onCompleteExperience: (collectedData: string[]) => void;
   setVideoStep: (videoStep: number) => void;
 }
 
@@ -168,7 +168,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
   ],
   [
     {
-      id: 'exp-5',
+      id: 'exp-7',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       thumbnail: '',
@@ -182,7 +182,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
       tags: ['음악', '건강'],
     },
     {
-      id: 'exp-6',
+      id: 'exp-8',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
       thumbnail: '',
@@ -373,24 +373,24 @@ export const ShortsExperienceTab = React.memo(
 
           // 좋아요/싫어요를 누른 영상
           if (action.isLiked === true) {
-            video.tags!.forEach((tag) => {
+            video.tags?.forEach((tag) => {
               categoryScores.set(tag, (categoryScores.get(tag) || 0) + 2);
             });
           } else if (action.isLiked === false) {
-            video.tags!.forEach((tag) => {
+            video.tags?.forEach((tag) => {
               categoryScores.set(tag, (categoryScores.get(tag) || 0) - 2);
             });
           }
 
           //북마크를 한 영상
           if (action.isBookmarked) {
-            video.tags!.forEach((tag) => {
+            video.tags?.forEach((tag) => {
               categoryScores.set(tag, (categoryScores.get(tag) || 0) + 2);
             });
           }
 
           if (col > 0 && action.isSeen) {
-            EXPERIENCE_DATA[row][col - 1].tags!.forEach((tag) => {
+            EXPERIENCE_DATA[row][col - 1].tags?.forEach((tag) => {
               categoryScores.set(tag, (categoryScores.get(tag) || 0) + 1);
             });
           }

@@ -87,7 +87,9 @@ export const ShortsTourTab = React.memo(
 
     const handlePointerUp = useCallback(() => {
       if (tutorialStep === 3) {
-        setTutorialStep(4);
+        setTimeout(() => {
+          setTutorialStep(4);
+        }, 200); // 터치 후 약간의 딜레이를 주어 자연스럽게 전환
       }
     }, [tutorialStep]);
 
