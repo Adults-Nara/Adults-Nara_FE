@@ -275,11 +275,12 @@ export const ShortsExperienceTab = React.memo(
     // 사용자 반응(좋아요, 북마크) 기록
     const handleAction = useCallback(
       (action: ActionType) => {
-        const targetAction = userActions[rowIndex][colIndex];
         setUserActions((prev) => {
           const newActions = [...prev];
-          let isLiked = targetAction.isLiked;
-          let isBookmarked = targetAction.isBookmarked;
+          const targetAction = prev[rowIndex][colIndex];
+          const current = prev[rowIndex][colIndex];
+          let isLiked = current.isLiked;
+          let isBookmarked = current.isBookmarked;
 
           if (action === 'like' || action === 'dislike') {
             const changeLike = action === 'like';
@@ -297,8 +298,9 @@ export const ShortsExperienceTab = React.memo(
             isBookmarked = !isBookmarked;
           }
 
+          newActions[rowIndex] = [...prev[rowIndex]];
           newActions[rowIndex][colIndex] = {
-            ...newActions[rowIndex][colIndex],
+            ...current,
             isLiked: isLiked,
             isBookmarked: isBookmarked,
             isSeen: true,
