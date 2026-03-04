@@ -1,15 +1,16 @@
 'use client';
 import Link from 'next/link';
 import ContentForm from './form/ContentForm';
-import { ContentFormValues, mockVideoUpload } from './form/content.schema';
+import { UploadRequest } from '@/models/upload.model';
 import { LeftArrow } from '@repo/ui';
+import { mockVideoUpload } from './form/content.schema';
 
 interface EditContentContainerProps {
   videoId: string;
 }
 
 const EditContentContainer = ({ videoId }: EditContentContainerProps) => {
-  const handleEdit = (data: ContentFormValues, thumbnailFile: File | null) => {
+  const handleEdit = (data: UploadRequest, thumbnailFile: File | null) => {
     const formData = new FormData();
 
     formData.append(

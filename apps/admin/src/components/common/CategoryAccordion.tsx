@@ -20,7 +20,7 @@ const CategoryAccordion = ({
     <Accordion
       type="single"
       collapsible
-      className="overflow-hidden rounded-lg border border-gray-400"
+      className="h-full overflow-y-scroll rounded-lg border border-gray-400"
     >
       {MainCategory.map((mCat, index) => {
         const subCategories = CATEGORY_MAP[mCat.key];

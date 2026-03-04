@@ -1,14 +1,11 @@
 'use client';
 import Link from 'next/link';
 import ContentForm from './form/ContentForm';
-import { ContentFormValues } from './form/content.schema';
+import { UploadRequest } from '@/models/upload.model';
 import { LeftArrow } from '@repo/ui';
 
 const CreateContentContainer = () => {
-  const handleCreate = (
-    data: ContentFormValues,
-    thumbnailFile: File | null,
-  ) => {
+  const handleCreate = (data: UploadRequest, thumbnailFile: File | null) => {
     const formData = new FormData();
 
     formData.append(

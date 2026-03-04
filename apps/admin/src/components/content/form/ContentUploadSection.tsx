@@ -54,7 +54,7 @@ const ContentUploadSection = ({
   };
   return (
     <div className="flex w-full gap-2">
-      <div className="flex h-70 w-full flex-col gap-3 rounded-lg border border-gray-500 bg-white px-6 py-4">
+      <div className="flex h-65 w-full flex-col gap-3 rounded-lg border border-gray-500 bg-white px-6 py-4">
         <span className="title2">영상 파일</span>
         {/* TODO:추후 영상업로드 로직 추가예정 */}
         <div className="body2 flex h-full cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-gray-500 bg-gray-100 text-gray-700">
@@ -68,7 +68,7 @@ const ContentUploadSection = ({
           )}
         </div>
       </div>
-      <div className="flex h-70 w-full flex-col gap-3 rounded-lg border border-gray-500 bg-white px-6 py-4">
+      <div className="flex h-65 w-full flex-col gap-3 rounded-lg border border-gray-500 bg-white px-6 py-4">
         <span className="title2">썸네일</span>
         <label className="body2 flex h-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-lg border border-dashed border-gray-500 bg-gray-100 text-gray-700">
           {previewUrl ? (
