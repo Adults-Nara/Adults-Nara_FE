@@ -28,7 +28,7 @@ const EditContentContainer = ({ videoId }: EditContentContainerProps) => {
 
   const handleDelete = () => {
     //api연동필요
-    console.log('컨텐츠삭제', videoId);
+    console.log('콘텐츠삭제', videoId);
   };
 
   return (

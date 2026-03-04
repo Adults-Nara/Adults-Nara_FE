@@ -1,3 +1,4 @@
+import type { Point } from '@/types/point';
 import { ThumbnailData } from '@/types/video';
 
 export const MOCK_VIDEO_DATA: ThumbnailData[] = [
@@ -100,5 +101,148 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     views: 3200,
     date: '2024-03-18 13:30',
     type: 'long',
+  },
+];
+
+export const MOCK_POINT_DATA: Point[] = [
+  {
+    transactionId: 20,
+    amount: 4200,
+    type: 'COST',
+    balanceAfterTransaction: 0,
+    createdAt: '2026-02-28T23:59:59.000Z',
+  },
+  {
+    transactionId: 19,
+    amount: 500,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 4200,
+    createdAt: '2026-02-25T14:20:10.000Z',
+  },
+  {
+    transactionId: 18,
+    amount: 300,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 3700,
+    createdAt: '2026-02-25T09:15:45.000Z',
+  },
+  {
+    transactionId: 17,
+    amount: 1000,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 3400,
+    createdAt: '2026-02-20T18:30:22.000Z',
+  },
+  {
+    transactionId: 16,
+    amount: 200,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 2400,
+    createdAt: '2026-02-18T11:45:12.000Z',
+  },
+  {
+    transactionId: 15,
+    amount: 800,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 2200,
+    createdAt: '2026-02-15T13:17:54.120Z',
+  },
+  {
+    transactionId: 14,
+    amount: 400,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 1400,
+    createdAt: '2026-02-10T16:22:30.000Z',
+  },
+  {
+    transactionId: 13,
+    amount: 300,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 1000,
+    createdAt: '2026-02-10T08:10:05.000Z',
+  },
+  {
+    transactionId: 12,
+    amount: 500,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 700,
+    createdAt: '2026-02-01T19:05:44.000Z',
+  },
+  {
+    transactionId: 11,
+    amount: 200,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 200,
+    createdAt: '2026-02-01T10:00:00.000Z',
+  },
+  {
+    transactionId: 10,
+    amount: 3950,
+    type: 'COST',
+    balanceAfterTransaction: 0,
+    createdAt: '2026-01-31T23:59:59.000Z',
+  },
+  {
+    transactionId: 9,
+    amount: 150,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 3950,
+    createdAt: '2026-01-31T15:40:11.000Z',
+  },
+  {
+    transactionId: 8,
+    amount: 800,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 3800,
+    createdAt: '2026-01-31T11:12:33.000Z',
+  },
+  {
+    transactionId: 7,
+    amount: 1000,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 3000,
+    createdAt: '2026-01-22T09:45:12.000Z',
+  },
+  {
+    transactionId: 6,
+    amount: 500,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 2000,
+    createdAt: '2026-01-18T14:22:55.000Z',
+  },
+  {
+    transactionId: 5,
+    amount: 300,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 1500,
+    createdAt: '2026-01-15T12:00:00.000Z',
+  },
+  {
+    transactionId: 4,
+    amount: 200,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 1200,
+    createdAt: '2026-01-15T17:33:21.000Z',
+  },
+  {
+    transactionId: 3,
+    amount: 500,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 1000,
+    createdAt: '2026-01-08T10:15:44.000Z',
+  },
+  {
+    transactionId: 2,
+    amount: 400,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 500,
+    createdAt: '2026-01-05T08:20:10.000Z',
+  },
+  {
+    transactionId: 1,
+    amount: 100,
+    type: 'AD_REWARD',
+    balanceAfterTransaction: 100,
+    createdAt: '2026-01-05T09:00:00.000Z',
   },
 ];
