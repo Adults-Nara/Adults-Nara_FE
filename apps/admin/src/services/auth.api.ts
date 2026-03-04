@@ -18,6 +18,11 @@ export const BackofficeLogin = async (data: BackofficeLoginRequest) => {
   );
   return response.data;
 };
+export const BackofficeLogout = async () => {
+  await httpClient(API_ENDPOINTS.AUTH.LOGOUT, {
+    method: 'POST',
+  });
+};
 
 export const BackofficeSignUp = async (data: BackofficeSignRequest) => {
   const response = await httpClient<ApiResponse<BackofficeSignResponses>>(

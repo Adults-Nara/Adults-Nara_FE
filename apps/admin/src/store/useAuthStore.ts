@@ -5,7 +5,7 @@ interface AuthState {
   role: 'UPLOADER' | 'ADMIN' | null;
   setAccessToken: (
     token: string | null,
-    role: 'UPLOADER' | 'ADMIN' | null,
+    role?: 'UPLOADER' | 'ADMIN' | null,
   ) => void;
 }
 

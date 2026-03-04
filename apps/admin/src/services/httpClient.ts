@@ -35,7 +35,6 @@ export const httpClient = async <T>(
 ): Promise<T> => {
   const { accessToken, setAccessToken } = useAuthStore.getState();
   const url = `${API_BASE_URL}${endpoint}`;
-
   const headers = new Headers(options.headers);
 
   //body가 FormData가 아닐 때만 Content-Type을 JSON으로 설정
@@ -54,7 +53,7 @@ export const httpClient = async <T>(
   let response = await fetch(url, {
     ...options,
     headers,
-    // credentials: 'include',
+    credentials: 'include',
   });
 
   if (response.status === 401) {
@@ -68,7 +67,8 @@ export const httpClient = async <T>(
         credentials: 'include',
       });
     } else {
-      setAccessToken(null);
+      //TODO:추후 로그아웃 추가
+      setAccessToken(null, null);
       throw new Error('AUTH_REQUIRED');
     }
   }
@@ -76,7 +76,8 @@ export const httpClient = async <T>(
   // 핵심 추가: 응답이 ok가 아니면 에러를 던져서 TanStack Query가 인지하게 함
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'API_ERROR');
+    //TODO: 커스텀에러로 변경해야됨
+    throw new Error(errorData.error?.message || 'API_ERROR');
   }
   if (response.status === 204) return undefined as T;
 

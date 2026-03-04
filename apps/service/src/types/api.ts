@@ -1,5 +1,5 @@
 export type ApiResponse<T> = {
-  success: 'SUCCESS' | 'ERROR';
+  result: 'SUCCESS' | 'ERROR';
   data: T;
   error: ApiError | null;
 };
