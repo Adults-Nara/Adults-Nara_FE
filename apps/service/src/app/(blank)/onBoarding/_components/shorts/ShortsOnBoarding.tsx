@@ -19,7 +19,7 @@ export function ShortsOnBoarding({
   };
 
   return (
-    <div className="h-dvh">
+    <div className="relative h-dvh">
       <>
         <div className="absolute top-0 left-0 z-50 w-full">
           <OnboardingHeader>

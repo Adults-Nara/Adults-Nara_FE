@@ -23,8 +23,8 @@ function fetchRelatedVideos(
     likes: (i + 1) * 80,
     dislikes: (i + 1) * 3,
     comments: (i + 1) * 15,
-    isLiked: false,
-    isBookmarked: false,
+    isLiked: i % 2 === 0,
+    isBookmarked: i % 2 === 0,
     longformUrl: '',
   }));
 }
