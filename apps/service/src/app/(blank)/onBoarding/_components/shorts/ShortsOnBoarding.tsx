@@ -34,7 +34,13 @@ export function ShortsOnBoarding({
             )}
             <p
               className="title2 flex cursor-pointer justify-end pr-1.5 text-white drop-shadow-sm"
-              onClick={() => setCurrentPhase('experience')}
+              onClick={() => {
+                if (currentPhase === 'tour') {
+                  setCurrentPhase('experience');
+                } else {
+                  handleCompleteExperience([]);
+                }
+              }}
             >
               건너뛰기
             </p>

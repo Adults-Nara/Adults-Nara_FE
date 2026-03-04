@@ -13,11 +13,12 @@ export const TagSettingOnboardingTab = ({
   return (
     <>
       <p className="title1 text-center whitespace-pre-wrap">
-        이 주제들에 대해 관심이
-        <br />
-        많으신 것 같아요.
+        {selectedCategories.length >= 3
+          ? '완벽해요!\n다음 버튼을 눌러주세요.'
+          : '선호하는 주제를\n3개 이상 선택해주세요.'}
       </p>
-      <div className="flex w-full flex-col gap-5 px-2">
+
+      <div className="flex w-full flex-col gap-5">
         <div className="flex w-full flex-wrap justify-center gap-2">
           {selectedCategories.length === 0 ? (
             <span className="body2 text-primary-400 px-1">
@@ -38,18 +39,35 @@ export const TagSettingOnboardingTab = ({
             })
           )}
         </div>
+        <p className="title1 text-center">
+          <span
+            className={selectedCategories.length < 3 ? 'text-primary-500' : ''}
+          >
+            {selectedCategories.length}
+          </span>{' '}
+          / 5
+        </p>
         <CategoryAccordion
           selectedCategories={selectedCategories}
-          onToggle={onToggle}
+          onToggle={(cat) => {
+            if (selectedCategories.length >= 5) {
+              if (!selectedCategories.includes(cat)) {
+                return;
+              }
+            }
+            onToggle(cat);
+          }}
         />
         <Button
           onClick={() => {
             onComplete(selectedCategories);
           }}
-          disabled={selectedCategories.length < 5}
+          disabled={
+            selectedCategories.length < 5 && selectedCategories.length < 3
+          }
           className="w-full"
         >
-          저장
+          다음
         </Button>
       </div>
     </>

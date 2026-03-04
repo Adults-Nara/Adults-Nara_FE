@@ -12,7 +12,7 @@ export function TagSettingOnboarding({
   selectedCategory,
 }: TagSettingOnboardingProps) {
   const [settingStep, setSettingStep] = useState<'setting' | 'complete'>(
-    'setting',
+    selectedCategory.length === 0 ? 'setting' : 'complete',
   );
   const [selectedCategories, setSelectedCategories] =
     useState<string[]>(selectedCategory);
@@ -21,17 +21,18 @@ export function TagSettingOnboarding({
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
     );
   };
+  const router = useRouter();
 
   const onComplete = () => {
     // 가입 및 카테고리 저장 api 호출
-    const router = useRouter();
-    router.push('/home');
+
+    router.replace('/home');
   };
 
   return (
-    <div className="flex h-full w-full flex-col gap-20">
+    <div className="flex h-dvh w-full flex-col">
       <OnboardingHeader />
-      <div className="flex h-full w-full flex-col items-center justify-center gap-10">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-10 p-2">
         {settingStep === 'setting' ? (
           <TagSettingOnboardingTab
             selectedCategories={selectedCategories}

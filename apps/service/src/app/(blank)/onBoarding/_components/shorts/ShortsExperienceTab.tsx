@@ -208,6 +208,7 @@ export const ShortsExperienceTab = React.memo(
   ({ onCompleteExperience, setVideoStep }: ShortsExperienceTabProps) => {
     const [rowIndex, setRowIndex] = useState<number>(0);
     const [colIndex, setColIndex] = useState<number>(0);
+    const [isComplete, setIsComplete] = useState<boolean>(false);
 
     // 관심사 분석을 위한 사용자의 반응(좋아요, 싫어요, 북마크) 수집 상태
     const [userActions, setUserActions] = useState<UserAction[][]>(() =>
@@ -252,6 +253,9 @@ export const ShortsExperienceTab = React.memo(
           // 층(Row)이 아래로 내려갔을 때만 Step 증가
           if (nextRow > rowIndex) {
             setVideoStep(nextRow);
+            if (nextRow === EXPERIENCE_DATA.length - 1) {
+              setIsComplete(true);
+            }
           }
 
           setUserActions((prev) => {
@@ -276,9 +280,14 @@ export const ShortsExperienceTab = React.memo(
           const newActions = [...prev];
           let isLiked = targetAction.isLiked;
           let isBookmarked = targetAction.isBookmarked;
+
           if (action === 'like' || action === 'dislike') {
+            const changeLike = action === 'like';
+
             if (isLiked === null) {
-              isLiked = action === 'like' ? true : false;
+              isLiked = changeLike;
+            } else if (isLiked != changeLike) {
+              isLiked = changeLike;
             } else {
               isLiked = null;
             }
@@ -347,12 +356,6 @@ export const ShortsExperienceTab = React.memo(
                 />
               </div>
             }
-            infoSlot={
-              <div className="flex flex-col gap-1">
-                <div className="title3">{video.title}</div>
-                <div className="body2 opacity-80">{video.uploader.name}</div>
-              </div>
-            }
           />
         );
       },
@@ -403,13 +406,12 @@ export const ShortsExperienceTab = React.memo(
 
     return (
       <div className="relative h-dvh w-full bg-black">
-        {/* 임시 완료 버튼 (실제로는 마지막 층 도달 등 특정 조건에서 호출) */}
         <div className="absolute top-20 right-4 z-50">
           <button
             onClick={() => {
               handleComplete();
             }}
-            className="rounded bg-white/20 px-4 py-2 text-white"
+            className={`rounded px-4 py-2 text-white ${isComplete ? 'bg-primary-500' : 'bg-white/20'}`}
           >
             완료
           </button>

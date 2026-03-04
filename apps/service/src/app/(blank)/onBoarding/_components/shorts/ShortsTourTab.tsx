@@ -91,12 +91,9 @@ export const ShortsTourTab = React.memo(
       }
     }, [tutorialStep]);
 
-    const handleMockAction = useCallback(
-      (action: ActionType) => {
-        advanceTutorial();
-      },
-      [advanceTutorial],
-    );
+    const handleMockAction = useCallback(() => {
+      advanceTutorial();
+    }, [advanceTutorial]);
 
     // 현재 포커스된 액션 타입 계산 (memoized)
     const focusedAction = useMemo((): ActionType | null => {
@@ -147,14 +144,6 @@ export const ShortsTourTab = React.memo(
                   />
                 </div>
               }
-              infoSlot={
-                <div
-                  className={`flex flex-col gap-2 transition-opacity duration-300 ${isInteractive ? 'opacity-30' : 'opacity-0'}`}
-                >
-                  <div className="h-6 w-32 animate-pulse rounded bg-gray-500" />
-                  <div className="h-4 w-48 animate-pulse rounded bg-gray-500" />
-                </div>
-              }
             />
           </>
         );
@@ -187,7 +176,7 @@ export const ShortsTourTab = React.memo(
                 관심없는 영상이라면,
                 <br /> 위로 밀어보세요!
               </span>
-              <div className="relative mt-auto h-[50vh] w-24 overflow-hidden rounded-t-full bg-white/30">
+              <div className="relative mt-auto h-[50vh] w-28 overflow-hidden rounded-t-full bg-white/30">
                 <div className="animate-swipe-up absolute right-0 bottom-[35vh] left-0 flex flex-col items-center">
                   <div className="text-4xl text-white">👆</div>
                 </div>
@@ -235,8 +224,9 @@ export const ShortsTourTab = React.memo(
           100% { transform: translateY(-40px); opacity: 0; }
         }
         @keyframes swipeLeft {
-          0%, 100% { transform: translateX(0); }
-          50% { transform: translateX(20px); }
+          0% { transform: translateX(0); opacity: 0.3; }
+          50% { transform: translateX(-20px); opacity: 1; }
+          100% { transform: translateX(-40px); opacity: 0; }
         }
         @keyframes ripple {
           0% { transform: scale(1); opacity: 0.8; }

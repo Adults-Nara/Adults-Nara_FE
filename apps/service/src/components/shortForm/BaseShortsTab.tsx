@@ -3,8 +3,6 @@
 import { ShortFormVideoData } from '@/types/video';
 import { useState, useEffect } from 'react';
 import { BaseShortFormController } from '@/components/shortForm/BaseShortFormController';
-
-import { VideoInfoSection } from '@/components/shortForm/VideoInfoSection';
 import { VirtualSwipePlayer } from './VirtualSwipePlayer'; // 방금 만든 컴포넌트
 import { ShortTabActionButtons } from '@/app/(blank)/shorts/_components/ShortTabActionButtons';
 
@@ -88,22 +86,11 @@ export default function BaseShortsTab({ algorithmList }: BaseShortsTabProps) {
         return (
           <BaseShortFormController
             data={currentVideo}
-            isReady={true} // 애니메이션 깜빡임은 Player가 알아서 opacity로 처리함
-            headerSlot={null}
+            isReady={true}
             actionSlot={
               <ShortTabActionButtons
                 key={`btn-${currentVideo.id}`}
                 videoData={currentVideo}
-              />
-            }
-            infoSlot={
-              <VideoInfoSection
-                title={currentVideo.title}
-                uploader={{
-                  name: currentVideo.uploader.name,
-                  profileImg: currentVideo.uploader.profileImg ?? undefined,
-                }}
-                longformUrl={currentVideo.longformUrl}
               />
             }
           />

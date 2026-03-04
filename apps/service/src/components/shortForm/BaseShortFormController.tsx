@@ -1,20 +1,18 @@
 // components/video/BaseShortFormController.tsx
 import { ReactNode } from 'react';
 import { ShortFormVideoData } from '@/types/video';
+import { VideoInfoSection } from './VideoInfoSection';
 
 interface ControllerProps {
   data: ShortFormVideoData;
   isReady: boolean; // API 로딩 완료 여부
-  headerSlot?: ReactNode; // 로고, 건너뛰기 등
   actionSlot: ReactNode; // 좋아요, 싫어요 등
-  infoSlot: ReactNode; // 업로더, 제목, 해당 영상 시청 버튼 등
 }
 
 export function BaseShortFormController({
   data,
   isReady,
   actionSlot,
-  infoSlot,
 }: ControllerProps) {
   const stopPropagation = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
@@ -38,9 +36,14 @@ export function BaseShortFormController({
         </div>
 
         {/* 2. 하단 정보 및 시청 버튼 */}
-        <div className="pointer-events-auto absolute right-0 bottom-0 left-0 p-4">
-          <div className="flex flex-col gap-3">{infoSlot}</div>
-        </div>
+        <VideoInfoSection
+          title={data.title}
+          uploader={{
+            name: data.uploader.name,
+            profileImg: data.uploader.profileImg || '',
+          }}
+          longformUrl={data.longformUrl}
+        />
       </div>
     </div>
   );

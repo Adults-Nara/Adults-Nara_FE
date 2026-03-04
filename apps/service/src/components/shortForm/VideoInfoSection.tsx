@@ -15,7 +15,7 @@ export function VideoInfoSection({
   longformUrl,
 }: VideoInfoSectionProps) {
   return (
-    <div className="absolute right-0 bottom-0 left-0 z-10 p-4">
+    <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/50 to-transparent p-4">
       {/* 업로더 정보 */}
       <div className="mb-2 flex items-center gap-2.5">
         <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full">
