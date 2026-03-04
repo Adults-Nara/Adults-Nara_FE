@@ -1,5 +1,5 @@
 'use client';
-
+import ReactPlayer from 'react-player';
 import { ShortFormVideoData } from '@/types/video';
 import { useRef, useState, ReactNode, useEffect } from 'react';
 
@@ -80,10 +80,8 @@ export function VirtualSwipePlayer({
       // 짧은 터치: 재생/일시정지 토글
       if (videoRef.current) {
         if (isPlaying) {
-          videoRef.current.pause();
           setIsPlaying(false);
         } else {
-          videoRef.current.play();
           setIsPlaying(true);
         }
       }
@@ -143,16 +141,20 @@ export function VirtualSwipePlayer({
       >
         {/* [중앙] 플레이어 */}
         <div className="absolute inset-0 h-full w-full">
-          <video
-            key={currentVideo.id}
+          <ReactPlayer
             ref={videoRef}
             src={currentVideo.videoUrl}
-            className="h-full w-full object-cover"
-            autoPlay
+            playing={isPlaying}
+            controls={false}
             loop
-            muted
             playsInline
+            width="100%"
+            height="100%"
+            style={{ objectFit: 'cover' }}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
           />
+
           {renderController && renderController(currentVideo)}
         </div>
         {!isPlaying && (
