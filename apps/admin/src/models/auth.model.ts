@@ -9,7 +9,7 @@ export interface BackofficeSignRequest {
   nickname: string;
 }
 export interface BackofficeSignResponses {
-  userId: 9007199254740991;
+  userId: number;
   email: string;
   nickname: string;
   profileImageUrl: string;

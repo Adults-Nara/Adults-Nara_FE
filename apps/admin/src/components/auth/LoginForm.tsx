@@ -23,7 +23,7 @@ const LoginForm = () => {
     mutate(data, {
       onSuccess: (res) => {
         //TODO:추후 토스트 (로그인성공)
-        setAccessToken(res.accessToken);
+        setAccessToken(res.accessToken, res.role);
         router.push(ROUTES.CONTENT);
       },
       onError: (error) => {

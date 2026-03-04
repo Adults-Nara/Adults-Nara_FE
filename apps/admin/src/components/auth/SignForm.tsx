@@ -4,17 +4,12 @@ import {
   useBackofficeCheckEmail,
   useBackofficeSign,
 } from '@/lib/tanstack/mutation/auth.mutation';
+import { BackofficeSignRequest } from '@/models/auth.model';
 import { Button, Input, Logo } from '@repo/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-
-interface BackofficeSignRequest {
-  email: string;
-  password: string;
-  nickname: string;
-}
 
 interface SignFormUIValues extends BackofficeSignRequest {
   passwordConfirm: string;
@@ -23,7 +18,7 @@ interface SignFormUIValues extends BackofficeSignRequest {
 const SignForm = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const router = useRouter();
-  const { mutate: singMutate, isPending: singPending } = useBackofficeSign();
+  const { mutate: signMutate, isPending: signPending } = useBackofficeSign();
   const { mutate: checkMutate, isPending: checkPending } =
     useBackofficeCheckEmail();
 
@@ -90,14 +85,14 @@ const SignForm = () => {
     }
 
     const { passwordConfirm, ...submitData } = data;
-    singMutate(submitData, {
+    signMutate(submitData, {
       onSuccess: () => {
         //TODO:추후 토스트 (회원가입성공)
         router.push(ROUTES.LOGIN);
       },
       onError: (error) => {
         //TODO:추후 토스트
-        console.error('로그인 실패:', error.message);
+        console.error('회원 가입 실패:', error.message);
       },
     });
   };
@@ -185,7 +180,7 @@ const SignForm = () => {
       </div>
 
       <div className="flex w-full flex-col items-center gap-7">
-        <Button disabled={singPending} type="submit">
+        <Button disabled={signPending} type="submit">
           회원가입
         </Button>
         <span className="title3 text-gray-700">

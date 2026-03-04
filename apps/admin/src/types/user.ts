@@ -3,6 +3,6 @@ export interface User {
   email: string;
   nickname: string;
   profileImageUrl: string;
-  role: 'VIEWER' | 'UPLOADER' | 'ADMIN';
+  role: 'UPLOADER' | 'ADMIN';
   accessToken: string;
 }
