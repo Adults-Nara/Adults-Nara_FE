@@ -1,24 +1,35 @@
 'use client';
 import { ROUTES } from '@/constant/routes';
+import { useBackofficeLogin } from '@/lib/tanstack/mutation/auth.mutation';
+import { BackofficeLoginRequest } from '@/models/auth.model';
+import { useAuthStore } from '@/store/useAuthStore';
 import { Button, Input, Logo } from '@repo/ui';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-
-interface LoginFormValues {
-  email: string;
-  password: string;
-}
 
 const LoginForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>();
+  } = useForm<BackofficeLoginRequest>();
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log(data);
-    // API 요청
+  const { mutate, isPending } = useBackofficeLogin();
+  const router = useRouter();
+  const { setAccessToken } = useAuthStore.getState();
+
+  const onSubmit = (data: BackofficeLoginRequest) => {
+    mutate(data, {
+      onSuccess: (res) => {
+        setAccessToken(res.accessToken);
+        router.push(ROUTES.CONTENT);
+      },
+      onError: (error) => {
+        //TODO:추후 토스트
+        console.error('로그인 실패:', error.message);
+      },
+    });
   };
   return (
     <form
@@ -68,7 +79,9 @@ const LoginForm = () => {
       </div>
 
       <div className="flex w-full flex-col items-center gap-7">
-        <Button type="submit">로그인</Button>
+        <Button type="submit" disabled={isPending}>
+          로그인
+        </Button>
         <span className="title3 text-gray-700">
           업로드 계정이 없으신가요?
           <Link href={ROUTES.SIGN_UP} className="text-primary-500 ml-2">
