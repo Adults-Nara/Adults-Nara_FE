@@ -14,4 +14,5 @@ export const ROUTES = {
     const params = new URLSearchParams({ src: query.trim() });
     return `/watch?${params.toString()}`;
   },
+  LOGIN: '/login',
 } as const;
