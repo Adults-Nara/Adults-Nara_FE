@@ -9,13 +9,13 @@ export interface VideoData {
   comments: number;
   isBookmarked: boolean;
   isLiked?: boolean | null;
+  tags?: string[];
 }
 
 export interface LongFormVideoData extends VideoData {
   description: string;
   uploadDate: string;
   viewCount: number;
-  tags: string[];
 }
 export interface ShortFormVideoData extends VideoData {
   longformUrl: string;

@@ -18,7 +18,9 @@ const refreshAccessToken = async (
         },
       );
       if (!refreshRes.ok) return null;
-      const { accessToken } = await refreshRes.json();
+
+      const json = await refreshRes.json();
+      const accessToken = json?.data?.accessToken;
       return accessToken ?? null;
     })().finally(() => {
       refreshPromise = null;
@@ -35,6 +37,7 @@ export const httpClient = async <T>(
 ): Promise<T> => {
   const { accessToken, setAccessToken } = useAuthStore.getState();
   const url = `${API_BASE_URL}${endpoint}`;
+
   const headers = new Headers(options.headers);
 
   //body가 FormData가 아닐 때만 Content-Type을 JSON으로 설정

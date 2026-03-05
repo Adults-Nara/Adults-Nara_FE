@@ -18,7 +18,9 @@ const refreshAccessToken = async (
         },
       );
       if (!refreshRes.ok) return null;
-      const { accessToken } = await refreshRes.json();
+
+      const json = await refreshRes.json();
+      const accessToken = json?.data?.accessToken;
       return accessToken ?? null;
     })().finally(() => {
       refreshPromise = null;
@@ -68,6 +70,7 @@ export const httpClient = async <T>(
         credentials: 'include',
       });
     } else {
+      //TODO: 추후로그아웃 추가
       setAccessToken(null);
       throw new Error('AUTH_REQUIRED');
     }
