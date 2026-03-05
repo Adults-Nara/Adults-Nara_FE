@@ -12,22 +12,34 @@ import {
   Unpower,
   Upload,
 } from '@repo/ui';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ROUTES } from '@/constant/routes';
 import { useDialogStore } from '@/store/useDialogStore';
 import { useContentsList } from '@/lib/tanstack/query/content.query';
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface ContentListContainerProps {
   currentPage: number;
+  currentKeyword: string;
 }
 
-const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
+const ContentListContainer = ({
+  currentPage,
+  currentKeyword,
+}: ContentListContainerProps) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [keyword, setKeyword] = useState('');
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { openDialog } = useDialogStore();
+  const { role } = useAuthStore.getState();
 
-  const { data, isLoading, isError } = useContentsList({ page: currentPage });
-  const totalPages = data?.totalPages;
+  const { data, isLoading, isError } = useContentsList(role, {
+    page: currentPage,
+    keyword: currentKeyword,
+  });
+  const totalPages = data?.totalPages ?? 0;
 
   const handlerEdit = (id: string) => {
     router.push(ROUTES.EDIT_CONTENT(id));
@@ -53,9 +65,12 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
       onConfirm: () => console.log(selectedIds),
     });
   };
-
-  if (!data || isError) return <span>에러에러!</span>;
-  if (isLoading) return <span>로딩로딩!</span>;
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    params.set('keyword', keyword);
+    router.push(`${pathname}?${params.toString()}`);
+  };
 
   const columns = CONTENT_COLUMNS(handlerEdit, handlerDelete);
   return (
@@ -64,7 +79,7 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
       <div className="flex flex-col">
         <span className="title1">콘텐츠 리스트</span>
         <span className="title3 text-gray-700">
-          {`총 ${data.totalElements}개의 콘텐츠`}
+          {`총 ${data?.totalElements ?? 0}개의 콘텐츠`}
         </span>
       </div>
       {/* 검색섹션 */}
@@ -73,6 +88,11 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
           leftIcon={<SearchIcon className="h-7 w-7" />}
           placeholder="제목, 설명, 카테고리로 검색"
           className="w-100 bg-white"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleSearch();
+          }}
         />
         <Button
           onClick={() => router.push(ROUTES.NEW_CONTENT)}
@@ -107,11 +127,15 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
       {/* 테이블 */}
       <DataTable
         columns={columns}
-        data={data.content}
+        data={data?.content ?? []}
+        isLoading={isLoading}
+        isError={isError}
         selectedIds={selectedIds}
         onSelectChange={setSelectedIds}
       />
-      <Pagination totalPages={totalPages ?? 0} currentPage={currentPage + 1} />
+      {!isError && (
+        <Pagination totalPages={totalPages} currentPage={currentPage} />
+      )}
     </div>
   );
 };

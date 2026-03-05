@@ -1,13 +1,16 @@
-import { UploaderConentsList } from '@/services/content.api';
+import { AdminConentsList, UploaderConentsList } from '@/services/content.api';
 import { useQuery } from '@tanstack/react-query';
 
-export function useContentsList(params: {
-  page: number;
-  keyword?: string;
-  size?: number;
-  sortBy?: string;
-  direction?: 'ASC' | 'DESC';
-}) {
+export function useContentsList(
+  role: 'UPLOADER' | 'ADMIN' | null,
+  params: {
+    page: number;
+    keyword?: string;
+    size?: number;
+    sortBy?: string;
+    direction?: 'ASC' | 'DESC';
+  },
+) {
   const {
     page,
     keyword = '',
@@ -16,15 +19,28 @@ export function useContentsList(params: {
     direction = 'DESC',
   } = params;
 
+  const apiPage = page - 1;
   return useQuery({
-    queryKey: ['contents', 'uploader', params],
-    queryFn: () =>
-      UploaderConentsList({
-        keyword,
-        page,
-        size,
-        sortBy,
-        direction,
-      }),
+    queryKey: ['contents', role, params],
+    queryFn: () => {
+      if (role === 'ADMIN') {
+        return AdminConentsList({
+          keyword,
+          page: apiPage,
+          size,
+          sortBy,
+          direction,
+        });
+      } else {
+        return UploaderConentsList({
+          keyword,
+          page: apiPage,
+          size,
+          sortBy,
+          direction,
+        });
+      }
+    },
+    enabled: !!role,
   });
 }

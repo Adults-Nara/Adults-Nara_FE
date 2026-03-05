@@ -142,6 +142,28 @@ export const UploaderConentsList = async (params: {
       method: 'GET',
     },
   );
+  return response.data;
+};
 
+export const AdminConentsList = async (params: {
+  keyword?: string;
+  page: number;
+  size: number;
+  sortBy: string;
+  direction: 'ASC' | 'DESC';
+}) => {
+  const searchParams = new URLSearchParams({
+    keyword: params.keyword ?? '',
+    page: String(params.page),
+    size: String(params.size),
+    sortBy: params.sortBy,
+    direction: params.direction,
+  });
+  const response = await httpClient<ApiResponse<ContentsListResponse>>(
+    `${API_ENDPOINTS.CONTENTS.ADMIN_CONTENTS_LIST}?${searchParams}`,
+    {
+      method: 'GET',
+    },
+  );
   return response.data;
 };

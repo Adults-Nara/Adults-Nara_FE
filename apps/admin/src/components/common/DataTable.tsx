@@ -13,6 +13,7 @@ interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
   isLoading?: boolean;
+  isError?: boolean;
   selectedIds?: string[]; // 선택된 ID 목록
   onSelectChange?: (ids: string[]) => void; // 선택 변경 핸들러
 }
@@ -21,6 +22,7 @@ export function DataTable<T extends { videoId: string }>({
   columns,
   data,
   isLoading,
+  isError,
   selectedIds = [],
   onSelectChange,
 }: DataTableProps<T>) {
@@ -34,12 +36,17 @@ export function DataTable<T extends { videoId: string }>({
 
   const isAllSelected =
     data.length > 0 && data.every((item) => selectedIds.includes(item.videoId));
-  // 전체 선택/해제 토글
   const toggleAll = () => {
+    const pageIds = data.map((item) => item.videoId);
+
     if (isAllSelected) {
-      onSelectChange?.([]); // 모두 해제
+      // 현재 페이지 것만 제거
+      const newSelection = selectedIds.filter((id) => !pageIds.includes(id));
+      onSelectChange?.(newSelection);
     } else {
-      onSelectChange?.(data.map((item) => item.videoId)); // 모두 선택
+      // 기존 선택 + 현재 페이지 추가
+      const newSelection = Array.from(new Set([...selectedIds, ...pageIds]));
+      onSelectChange?.(newSelection);
     }
   };
   return (
@@ -74,6 +81,24 @@ export function DataTable<T extends { videoId: string }>({
                 className="p-10 text-center text-gray-400"
               >
                 로딩 중...
+              </td>
+            </tr>
+          ) : isError ? (
+            <tr>
+              <td
+                colSpan={columns.length + 1}
+                className="p-10 text-center text-red-400"
+              >
+                데이터를 불러오지 못했습니다.
+              </td>
+            </tr>
+          ) : data.length === 0 ? (
+            <tr>
+              <td
+                colSpan={columns.length + 1}
+                className="p-10 text-center text-gray-400"
+              >
+                데이터가 없습니다.
               </td>
             </tr>
           ) : (
