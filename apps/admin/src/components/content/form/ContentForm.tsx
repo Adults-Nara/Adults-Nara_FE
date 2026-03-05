@@ -14,12 +14,14 @@ interface ContentFormProps {
   defaultValues?: UploadRequest;
   onSubmit: (data: UploadRequest, thumbnail: File | null) => void;
   onDelete?: () => void;
+  setVideoId?: (videoId: string) => void;
 }
 const ContentForm = ({
   mode,
   defaultValues,
   onSubmit,
   onDelete,
+  setVideoId,
 }: ContentFormProps) => {
   // 썸네일 파일 상태 (실제 파일 객체)
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
@@ -48,6 +50,7 @@ const ContentForm = ({
           <ContentUploadSection
             setThumbnailFile={setThumbnailFile}
             initialThumbnail={defaultValues?.thumbnailUrl}
+            setVideoId={setVideoId}
             isEdit={isEdit}
           />
 

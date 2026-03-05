@@ -11,4 +11,10 @@ export const API_ENDPOINTS = {
     REFRESH: '/auth/token/refresh',
     ME: '/auth/me',
   },
+  UPLOAD: {
+    INIT: '/videos/upload/multipart/init',
+    COMPLETE: (videoId: string) =>
+      `/videos/${videoId}/upload/multipart/complete`,
+    UPLOAD: (videoId: string) => `/videos/${videoId}/upload`,
+  },
 } as const;
