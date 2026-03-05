@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { LoginResponseRole } from './loginResponseRole';
+import type { LoginResponseRole } from "./loginResponseRole";
 
 export interface LoginResponse {
   userId?: number;

@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type ApiResponseUserPointBalanceResponseResult = typeof ApiResponseUserPointBalanceResponseResult[keyof typeof ApiResponseUserPointBalanceResponseResult];
-
+export type ApiResponseUserPointBalanceResponseResult =
+  (typeof ApiResponseUserPointBalanceResponseResult)[keyof typeof ApiResponseUserPointBalanceResponseResult];
 
 export const ApiResponseUserPointBalanceResponseResult = {
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR',
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
 } as const;

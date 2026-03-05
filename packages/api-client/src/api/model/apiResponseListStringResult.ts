@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type ApiResponseListStringResult = typeof ApiResponseListStringResult[keyof typeof ApiResponseListStringResult];
-
+export type ApiResponseListStringResult =
+  (typeof ApiResponseListStringResult)[keyof typeof ApiResponseListStringResult];
 
 export const ApiResponseListStringResult = {
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR',
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
 } as const;

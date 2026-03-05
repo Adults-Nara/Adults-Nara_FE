@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type GetContentsDirection = typeof GetContentsDirection[keyof typeof GetContentsDirection];
-
+export type GetContentsDirection =
+  (typeof GetContentsDirection)[keyof typeof GetContentsDirection];
 
 export const GetContentsDirection = {
-  ASC: 'ASC',
-  DESC: 'DESC',
+  ASC: "ASC",
+  DESC: "DESC",
 } as const;

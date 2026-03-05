@@ -4,10 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -20,464 +17,736 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
-import type {
-  GetBookmarkListParams
-} from '.././model';
+import type { GetBookmarkListParams } from ".././model";
 
+import { customMutator } from "../../lib/mutator";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * 누를 때마다 찜 상태가 켜지거나 꺼집니다.
  * @summary 찜하기(북마크) 토글
  */
 export type toggleBookmarkResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type toggleBookmarkResponseSuccess = (toggleBookmarkResponse200) & {
+export type toggleBookmarkResponseSuccess = toggleBookmarkResponse200 & {
   headers: Headers;
 };
-;
+export type toggleBookmarkResponse = toggleBookmarkResponseSuccess;
 
-export type toggleBookmarkResponse = (toggleBookmarkResponseSuccess)
+export const getToggleBookmarkUrl = (videoId: number) => {
+  return `/api/v1/bookmarks/${videoId}`;
+};
 
-export const getToggleBookmarkUrl = (videoId: number,) => {
-
-
-  
-
-  return `/api/v1/bookmarks/${videoId}`
-}
-
-export const toggleBookmark = async (videoId: number, options?: RequestInit): Promise<toggleBookmarkResponse> => {
-  
-  const res = await fetch(getToggleBookmarkUrl(videoId),
-  {      
+export const toggleBookmark = async (
+  videoId: number,
+  options?: RequestInit,
+): Promise<toggleBookmarkResponse> => {
+  return customMutator<toggleBookmarkResponse>(getToggleBookmarkUrl(videoId), {
     ...options,
-    method: 'POST'
-    
-    
-  }
-)
+    method: "POST",
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: toggleBookmarkResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as toggleBookmarkResponse
-}
-  
+export const getToggleBookmarkMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof toggleBookmark>>,
+    TError,
+    { videoId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof toggleBookmark>>,
+  TError,
+  { videoId: number },
+  TContext
+> => {
+  const mutationKey = ["toggleBookmark"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof toggleBookmark>>,
+    { videoId: number }
+  > = (props) => {
+    const { videoId } = props ?? {};
 
+    return toggleBookmark(videoId, requestOptions);
+  };
 
-export const getToggleBookmarkMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof toggleBookmark>>, TError,{videoId: number}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof toggleBookmark>>, TError,{videoId: number}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['toggleBookmark'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type ToggleBookmarkMutationResult = NonNullable<
+  Awaited<ReturnType<typeof toggleBookmark>>
+>;
 
-      
+export type ToggleBookmarkMutationError = unknown;
 
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof toggleBookmark>>, {videoId: number}> = (props) => {
-          const {videoId} = props ?? {};
-
-          return  toggleBookmark(videoId,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type ToggleBookmarkMutationResult = NonNullable<Awaited<ReturnType<typeof toggleBookmark>>>
-    
-    export type ToggleBookmarkMutationError = unknown
-
-    /**
+/**
  * @summary 찜하기(북마크) 토글
  */
-export const useToggleBookmark = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof toggleBookmark>>, TError,{videoId: number}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof toggleBookmark>>,
-        TError,
-        {videoId: number},
-        TContext
-      > => {
-      return useMutation(getToggleBookmarkMutationOptions(options), queryClient);
-    }
-    /**
+export const useToggleBookmark = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof toggleBookmark>>,
+      TError,
+      { videoId: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof toggleBookmark>>,
+  TError,
+  { videoId: number },
+  TContext
+> => {
+  return useMutation(getToggleBookmarkMutationOptions(options), queryClient);
+};
+/**
+ * DB의 모든 북마크 데이터를 기반으로 Redis 랭킹(ZSet)을 강제 초기화(복구)합니다.
+ * @summary [관리자] 북마크 랭킹 캐시 웜업
+ */
+export type warmUpBookmarksResponse200 = {
+  data: Blob;
+  status: 200;
+};
+
+export type warmUpBookmarksResponseSuccess = warmUpBookmarksResponse200 & {
+  headers: Headers;
+};
+export type warmUpBookmarksResponse = warmUpBookmarksResponseSuccess;
+
+export const getWarmUpBookmarksUrl = () => {
+  return `/api/v1/bookmarks/admin/warmup`;
+};
+
+export const warmUpBookmarks = async (
+  options?: RequestInit,
+): Promise<warmUpBookmarksResponse> => {
+  return customMutator<warmUpBookmarksResponse>(getWarmUpBookmarksUrl(), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getWarmUpBookmarksMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof warmUpBookmarks>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof warmUpBookmarks>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["warmUpBookmarks"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof warmUpBookmarks>>,
+    void
+  > = () => {
+    return warmUpBookmarks(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type WarmUpBookmarksMutationResult = NonNullable<
+  Awaited<ReturnType<typeof warmUpBookmarks>>
+>;
+
+export type WarmUpBookmarksMutationError = unknown;
+
+/**
+ * @summary [관리자] 북마크 랭킹 캐시 웜업
+ */
+export const useWarmUpBookmarks = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof warmUpBookmarks>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof warmUpBookmarks>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getWarmUpBookmarksMutationOptions(options), queryClient);
+};
+/**
  * 찜한 영상을 videoType으로 필터링하여 페이지네이션으로 조회합니다.
  * @summary 찜한 영상 목록 조회
  */
 export type getBookmarkListResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getBookmarkListResponseSuccess = (getBookmarkListResponse200) & {
+export type getBookmarkListResponseSuccess = getBookmarkListResponse200 & {
   headers: Headers;
 };
-;
+export type getBookmarkListResponse = getBookmarkListResponseSuccess;
 
-export type getBookmarkListResponse = (getBookmarkListResponseSuccess)
-
-export const getGetBookmarkListUrl = (params: GetBookmarkListParams,) => {
+export const getGetBookmarkListUrl = (params: GetBookmarkListParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/bookmarks?${stringifiedParams}` : `/api/v1/bookmarks`
-}
+  return stringifiedParams.length > 0
+    ? `/api/v1/bookmarks?${stringifiedParams}`
+    : `/api/v1/bookmarks`;
+};
 
-export const getBookmarkList = async (params: GetBookmarkListParams, options?: RequestInit): Promise<getBookmarkListResponse> => {
-  
-  const res = await fetch(getGetBookmarkListUrl(params),
-  {      
+export const getBookmarkList = async (
+  params: GetBookmarkListParams,
+  options?: RequestInit,
+): Promise<getBookmarkListResponse> => {
+  return customMutator<getBookmarkListResponse>(getGetBookmarkListUrl(params), {
     ...options,
-    method: 'GET'
-    
-    
-  }
-)
+    method: "GET",
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getBookmarkListResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getBookmarkListResponse
-}
-  
+export const getGetBookmarkListQueryKey = (params?: GetBookmarkListParams) => {
+  return [`/api/v1/bookmarks`, ...(params ? [params] : [])] as const;
+};
 
-
-
-
-export const getGetBookmarkListQueryKey = (params?: GetBookmarkListParams,) => {
-    return [
-    `/api/v1/bookmarks`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-    
-export const getGetBookmarkListQueryOptions = <TData = Awaited<ReturnType<typeof getBookmarkList>>, TError = unknown>(params: GetBookmarkListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkList>>, TError, TData>>, fetch?: RequestInit}
+export const getGetBookmarkListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBookmarkList>>,
+  TError = unknown,
+>(
+  params: GetBookmarkListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetBookmarkListQueryKey(params);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetBookmarkListQueryKey(params);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getBookmarkList>>> = ({
+    signal,
+  }) => getBookmarkList(params, { signal, ...requestOptions });
 
-  
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getBookmarkList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBookmarkList>>> = ({ signal }) => getBookmarkList(params, { signal, ...fetchOptions });
+export type GetBookmarkListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBookmarkList>>
+>;
+export type GetBookmarkListQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBookmarkList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetBookmarkListQueryResult = NonNullable<Awaited<ReturnType<typeof getBookmarkList>>>
-export type GetBookmarkListQueryError = unknown
-
-
-export function useGetBookmarkList<TData = Awaited<ReturnType<typeof getBookmarkList>>, TError = unknown>(
- params: GetBookmarkListParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkList>>, TError, TData>> & Pick<
+export function useGetBookmarkList<
+  TData = Awaited<ReturnType<typeof getBookmarkList>>,
+  TError = unknown,
+>(
+  params: GetBookmarkListParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getBookmarkList>>,
           TError,
           Awaited<ReturnType<typeof getBookmarkList>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetBookmarkList<TData = Awaited<ReturnType<typeof getBookmarkList>>, TError = unknown>(
- params: GetBookmarkListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkList>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetBookmarkList<
+  TData = Awaited<ReturnType<typeof getBookmarkList>>,
+  TError = unknown,
+>(
+  params: GetBookmarkListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getBookmarkList>>,
           TError,
           Awaited<ReturnType<typeof getBookmarkList>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetBookmarkList<TData = Awaited<ReturnType<typeof getBookmarkList>>, TError = unknown>(
- params: GetBookmarkListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkList>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetBookmarkList<
+  TData = Awaited<ReturnType<typeof getBookmarkList>>,
+  TError = unknown,
+>(
+  params: GetBookmarkListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 찜한 영상 목록 조회
  */
 
-export function useGetBookmarkList<TData = Awaited<ReturnType<typeof getBookmarkList>>, TError = unknown>(
- params: GetBookmarkListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkList>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetBookmarkList<
+  TData = Awaited<ReturnType<typeof getBookmarkList>>,
+  TError = unknown,
+>(
+  params: GetBookmarkListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetBookmarkListQueryOptions(params, options);
 
-  const queryOptions = getGetBookmarkListQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
 
 /**
  * 내가 이 영상을 찜했는지 확인합니다.
  * @summary 북마크 여부 조회
  */
 export type getBookmarkStatusResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getBookmarkStatusResponseSuccess = (getBookmarkStatusResponse200) & {
+export type getBookmarkStatusResponseSuccess = getBookmarkStatusResponse200 & {
   headers: Headers;
 };
-;
+export type getBookmarkStatusResponse = getBookmarkStatusResponseSuccess;
 
-export type getBookmarkStatusResponse = (getBookmarkStatusResponseSuccess)
+export const getGetBookmarkStatusUrl = (videoId: number) => {
+  return `/api/v1/bookmarks/${videoId}/status`;
+};
 
-export const getGetBookmarkStatusUrl = (videoId: number,) => {
+export const getBookmarkStatus = async (
+  videoId: number,
+  options?: RequestInit,
+): Promise<getBookmarkStatusResponse> => {
+  return customMutator<getBookmarkStatusResponse>(
+    getGetBookmarkStatusUrl(videoId),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
 
+export const getGetBookmarkStatusQueryKey = (videoId: number) => {
+  return [`/api/v1/bookmarks/${videoId}/status`] as const;
+};
 
-  
-
-  return `/api/v1/bookmarks/${videoId}/status`
-}
-
-export const getBookmarkStatus = async (videoId: number, options?: RequestInit): Promise<getBookmarkStatusResponse> => {
-  
-  const res = await fetch(getGetBookmarkStatusUrl(videoId),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getBookmarkStatusResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getBookmarkStatusResponse
-}
-  
-
-
-
-
-export const getGetBookmarkStatusQueryKey = (videoId: number,) => {
-    return [
-    `/api/v1/bookmarks/${videoId}/status`
-    ] as const;
-    }
-
-    
-export const getGetBookmarkStatusQueryOptions = <TData = Awaited<ReturnType<typeof getBookmarkStatus>>, TError = unknown>(videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkStatus>>, TError, TData>>, fetch?: RequestInit}
+export const getGetBookmarkStatusQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBookmarkStatus>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkStatus>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey =
+    queryOptions?.queryKey ?? getGetBookmarkStatusQueryKey(videoId);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetBookmarkStatusQueryKey(videoId);
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getBookmarkStatus>>
+  > = ({ signal }) => getBookmarkStatus(videoId, { signal, ...requestOptions });
 
-  
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!videoId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getBookmarkStatus>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBookmarkStatus>>> = ({ signal }) => getBookmarkStatus(videoId, { signal, ...fetchOptions });
+export type GetBookmarkStatusQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBookmarkStatus>>
+>;
+export type GetBookmarkStatusQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(videoId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBookmarkStatus>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetBookmarkStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getBookmarkStatus>>>
-export type GetBookmarkStatusQueryError = unknown
-
-
-export function useGetBookmarkStatus<TData = Awaited<ReturnType<typeof getBookmarkStatus>>, TError = unknown>(
- videoId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkStatus>>, TError, TData>> & Pick<
+export function useGetBookmarkStatus<
+  TData = Awaited<ReturnType<typeof getBookmarkStatus>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkStatus>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getBookmarkStatus>>,
           TError,
           Awaited<ReturnType<typeof getBookmarkStatus>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetBookmarkStatus<TData = Awaited<ReturnType<typeof getBookmarkStatus>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkStatus>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetBookmarkStatus<
+  TData = Awaited<ReturnType<typeof getBookmarkStatus>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkStatus>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getBookmarkStatus>>,
           TError,
           Awaited<ReturnType<typeof getBookmarkStatus>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetBookmarkStatus<TData = Awaited<ReturnType<typeof getBookmarkStatus>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkStatus>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetBookmarkStatus<
+  TData = Awaited<ReturnType<typeof getBookmarkStatus>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkStatus>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 북마크 여부 조회
  */
 
-export function useGetBookmarkStatus<TData = Awaited<ReturnType<typeof getBookmarkStatus>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkStatus>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetBookmarkStatus<
+  TData = Awaited<ReturnType<typeof getBookmarkStatus>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkStatus>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetBookmarkStatusQueryOptions(videoId, options);
 
-  const queryOptions = getGetBookmarkStatusQueryOptions(videoId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
 
 /**
  * 찜한 영상의 타입별 개수 요약 정보를 반환합니다.
  * @summary 찜 재생목록 요약 조회
  */
 export type getBookmarkSummaryResponse200 = {
-  data: Blob
-  status: 200
-}
-
-export type getBookmarkSummaryResponseSuccess = (getBookmarkSummaryResponse200) & {
-  headers: Headers;
+  data: Blob;
+  status: 200;
 };
-;
 
-export type getBookmarkSummaryResponse = (getBookmarkSummaryResponseSuccess)
+export type getBookmarkSummaryResponseSuccess =
+  getBookmarkSummaryResponse200 & {
+    headers: Headers;
+  };
+export type getBookmarkSummaryResponse = getBookmarkSummaryResponseSuccess;
 
 export const getGetBookmarkSummaryUrl = () => {
+  return `/api/v1/bookmarks/summary`;
+};
 
-
-  
-
-  return `/api/v1/bookmarks/summary`
-}
-
-export const getBookmarkSummary = async ( options?: RequestInit): Promise<getBookmarkSummaryResponse> => {
-  
-  const res = await fetch(getGetBookmarkSummaryUrl(),
-  {      
+export const getBookmarkSummary = async (
+  options?: RequestInit,
+): Promise<getBookmarkSummaryResponse> => {
+  return customMutator<getBookmarkSummaryResponse>(getGetBookmarkSummaryUrl(), {
     ...options,
-    method: 'GET'
-    
-    
-  }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getBookmarkSummaryResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getBookmarkSummaryResponse
-}
-  
-
-
-
+    method: "GET",
+  });
+};
 
 export const getGetBookmarkSummaryQueryKey = () => {
-    return [
-    `/api/v1/bookmarks/summary`
-    ] as const;
-    }
+  return [`/api/v1/bookmarks/summary`] as const;
+};
 
-    
-export const getGetBookmarkSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getBookmarkSummary>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkSummary>>, TError, TData>>, fetch?: RequestInit}
-) => {
+export const getGetBookmarkSummaryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBookmarkSummary>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getBookmarkSummary>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetBookmarkSummaryQueryKey();
 
-  const queryKey =  queryOptions?.queryKey ?? getGetBookmarkSummaryQueryKey();
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getBookmarkSummary>>
+  > = ({ signal }) => getBookmarkSummary({ signal, ...requestOptions });
 
-  
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getBookmarkSummary>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBookmarkSummary>>> = ({ signal }) => getBookmarkSummary({ signal, ...fetchOptions });
+export type GetBookmarkSummaryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBookmarkSummary>>
+>;
+export type GetBookmarkSummaryQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBookmarkSummary>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetBookmarkSummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getBookmarkSummary>>>
-export type GetBookmarkSummaryQueryError = unknown
-
-
-export function useGetBookmarkSummary<TData = Awaited<ReturnType<typeof getBookmarkSummary>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkSummary>>, TError, TData>> & Pick<
+export function useGetBookmarkSummary<
+  TData = Awaited<ReturnType<typeof getBookmarkSummary>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getBookmarkSummary>>,
           TError,
           Awaited<ReturnType<typeof getBookmarkSummary>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetBookmarkSummary<TData = Awaited<ReturnType<typeof getBookmarkSummary>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkSummary>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetBookmarkSummary<
+  TData = Awaited<ReturnType<typeof getBookmarkSummary>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkSummary>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getBookmarkSummary>>,
           TError,
           Awaited<ReturnType<typeof getBookmarkSummary>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetBookmarkSummary<TData = Awaited<ReturnType<typeof getBookmarkSummary>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkSummary>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetBookmarkSummary<
+  TData = Awaited<ReturnType<typeof getBookmarkSummary>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkSummary>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 찜 재생목록 요약 조회
  */
 
-export function useGetBookmarkSummary<TData = Awaited<ReturnType<typeof getBookmarkSummary>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookmarkSummary>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetBookmarkSummary<
+  TData = Awaited<ReturnType<typeof getBookmarkSummary>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getBookmarkSummary>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetBookmarkSummaryQueryOptions(options);
 
-  const queryOptions = getGetBookmarkSummaryQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
-

@@ -6,5 +6,5 @@
  */
 
 export type DeleteUserParams = {
-reason: string;
+  reason: string;
 };

@@ -4,10 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -20,225 +17,258 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
-import type {
-  PointPolicyUpdateRequest
-} from '.././model';
+import type { PointPolicyUpdateRequest } from ".././model";
 
+import { customMutator } from "../../lib/mutator";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * 시스템에 등록된 모든 포인트 정책의 이름과 값을 조회합니다.
  * @summary 전체 포인트 정책 조회
  */
 export type getAllPoliciesResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getAllPoliciesResponseSuccess = (getAllPoliciesResponse200) & {
+export type getAllPoliciesResponseSuccess = getAllPoliciesResponse200 & {
   headers: Headers;
 };
-;
-
-export type getAllPoliciesResponse = (getAllPoliciesResponseSuccess)
+export type getAllPoliciesResponse = getAllPoliciesResponseSuccess;
 
 export const getGetAllPoliciesUrl = () => {
+  return `/api/v1/admin/point/policies`;
+};
 
-
-  
-
-  return `/api/v1/admin/point/policies`
-}
-
-export const getAllPolicies = async ( options?: RequestInit): Promise<getAllPoliciesResponse> => {
-  
-  const res = await fetch(getGetAllPoliciesUrl(),
-  {      
+export const getAllPolicies = async (
+  options?: RequestInit,
+): Promise<getAllPoliciesResponse> => {
+  return customMutator<getAllPoliciesResponse>(getGetAllPoliciesUrl(), {
     ...options,
-    method: 'GET'
-    
-    
-  }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getAllPoliciesResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getAllPoliciesResponse
-}
-  
-
-
-
+    method: "GET",
+  });
+};
 
 export const getGetAllPoliciesQueryKey = () => {
-    return [
-    `/api/v1/admin/point/policies`
-    ] as const;
-    }
+  return [`/api/v1/admin/point/policies`] as const;
+};
 
-    
-export const getGetAllPoliciesQueryOptions = <TData = Awaited<ReturnType<typeof getAllPolicies>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllPolicies>>, TError, TData>>, fetch?: RequestInit}
-) => {
+export const getGetAllPoliciesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAllPolicies>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getAllPolicies>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetAllPoliciesQueryKey();
 
-  const queryKey =  queryOptions?.queryKey ?? getGetAllPoliciesQueryKey();
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAllPolicies>>> = ({
+    signal,
+  }) => getAllPolicies({ signal, ...requestOptions });
 
-  
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAllPolicies>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAllPolicies>>> = ({ signal }) => getAllPolicies({ signal, ...fetchOptions });
+export type GetAllPoliciesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAllPolicies>>
+>;
+export type GetAllPoliciesQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAllPolicies>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetAllPoliciesQueryResult = NonNullable<Awaited<ReturnType<typeof getAllPolicies>>>
-export type GetAllPoliciesQueryError = unknown
-
-
-export function useGetAllPolicies<TData = Awaited<ReturnType<typeof getAllPolicies>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllPolicies>>, TError, TData>> & Pick<
+export function useGetAllPolicies<
+  TData = Awaited<ReturnType<typeof getAllPolicies>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAllPolicies>>, TError, TData>
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAllPolicies>>,
           TError,
           Awaited<ReturnType<typeof getAllPolicies>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAllPolicies<TData = Awaited<ReturnType<typeof getAllPolicies>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllPolicies>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAllPolicies<
+  TData = Awaited<ReturnType<typeof getAllPolicies>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAllPolicies>>, TError, TData>
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAllPolicies>>,
           TError,
           Awaited<ReturnType<typeof getAllPolicies>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAllPolicies<TData = Awaited<ReturnType<typeof getAllPolicies>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllPolicies>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAllPolicies<
+  TData = Awaited<ReturnType<typeof getAllPolicies>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAllPolicies>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 전체 포인트 정책 조회
  */
 
-export function useGetAllPolicies<TData = Awaited<ReturnType<typeof getAllPolicies>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllPolicies>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetAllPolicies<
+  TData = Awaited<ReturnType<typeof getAllPolicies>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAllPolicies>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAllPoliciesQueryOptions(options);
 
-  const queryOptions = getGetAllPoliciesQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
 
 /**
  * 특정 포인트 정책(예: 리뷰 작성 포인트 등)의 부여량을 수정합니다.
  * @summary 포인트 정책 수정
  */
 export type updatePolicyResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type updatePolicyResponseSuccess = (updatePolicyResponse200) & {
+export type updatePolicyResponseSuccess = updatePolicyResponse200 & {
   headers: Headers;
 };
-;
-
-export type updatePolicyResponse = (updatePolicyResponseSuccess)
+export type updatePolicyResponse = updatePolicyResponseSuccess;
 
 export const getUpdatePolicyUrl = () => {
+  return `/api/v1/admin/point/policies`;
+};
 
-
-  
-
-  return `/api/v1/admin/point/policies`
-}
-
-export const updatePolicy = async (pointPolicyUpdateRequest: PointPolicyUpdateRequest, options?: RequestInit): Promise<updatePolicyResponse> => {
-  
-  const res = await fetch(getUpdatePolicyUrl(),
-  {      
+export const updatePolicy = async (
+  pointPolicyUpdateRequest: PointPolicyUpdateRequest,
+  options?: RequestInit,
+): Promise<updatePolicyResponse> => {
+  return customMutator<updatePolicyResponse>(getUpdatePolicyUrl(), {
     ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      pointPolicyUpdateRequest,)
-  }
-)
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(pointPolicyUpdateRequest),
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: updatePolicyResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as updatePolicyResponse
-}
-  
+export const getUpdatePolicyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updatePolicy>>,
+    TError,
+    { data: PointPolicyUpdateRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updatePolicy>>,
+  TError,
+  { data: PointPolicyUpdateRequest },
+  TContext
+> => {
+  const mutationKey = ["updatePolicy"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updatePolicy>>,
+    { data: PointPolicyUpdateRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
+    return updatePolicy(data, requestOptions);
+  };
 
-export const getUpdatePolicyMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePolicy>>, TError,{data: PointPolicyUpdateRequest}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof updatePolicy>>, TError,{data: PointPolicyUpdateRequest}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['updatePolicy'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type UpdatePolicyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updatePolicy>>
+>;
+export type UpdatePolicyMutationBody = PointPolicyUpdateRequest;
+export type UpdatePolicyMutationError = unknown;
 
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePolicy>>, {data: PointPolicyUpdateRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  updatePolicy(data,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdatePolicyMutationResult = NonNullable<Awaited<ReturnType<typeof updatePolicy>>>
-    export type UpdatePolicyMutationBody = PointPolicyUpdateRequest
-    export type UpdatePolicyMutationError = unknown
-
-    /**
+/**
  * @summary 포인트 정책 수정
  */
-export const useUpdatePolicy = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePolicy>>, TError,{data: PointPolicyUpdateRequest}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updatePolicy>>,
-        TError,
-        {data: PointPolicyUpdateRequest},
-        TContext
-      > => {
-      return useMutation(getUpdatePolicyMutationOptions(options), queryClient);
-    }
-    
+export const useUpdatePolicy = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updatePolicy>>,
+      TError,
+      { data: PointPolicyUpdateRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updatePolicy>>,
+  TError,
+  { data: PointPolicyUpdateRequest },
+  TContext
+> => {
+  return useMutation(getUpdatePolicyMutationOptions(options), queryClient);
+};

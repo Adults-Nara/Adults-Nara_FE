@@ -4,9 +4,9 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { ApiResponseListDiscountHistoryResponseResult } from './apiResponseListDiscountHistoryResponseResult';
-import type { DiscountHistoryResponse } from './discountHistoryResponse';
-import type { ErrorMessage } from './errorMessage';
+import type { ApiResponseListDiscountHistoryResponseResult } from "./apiResponseListDiscountHistoryResponseResult";
+import type { DiscountHistoryResponse } from "./discountHistoryResponse";
+import type { ErrorMessage } from "./errorMessage";
 
 export interface ApiResponseListDiscountHistoryResponse {
   result?: ApiResponseListDiscountHistoryResponseResult;

@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { UploadRequest } from './uploadRequest';
+import type { UploadRequest } from "./uploadRequest";
 
 export interface VideoUploadMultipart {
   /** 썸네일 이미지 파일 */

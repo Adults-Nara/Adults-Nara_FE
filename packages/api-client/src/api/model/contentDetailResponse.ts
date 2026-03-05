@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { ContentDetailResponseVisibility } from './contentDetailResponseVisibility';
+import type { ContentDetailResponseVisibility } from "./contentDetailResponseVisibility";
 
 export interface ContentDetailResponse {
   videoId?: string;

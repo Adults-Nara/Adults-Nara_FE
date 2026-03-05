@@ -4,23 +4,21 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import {
-  useMutation
-} from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 import type {
   MutationFunction,
   QueryClient,
   UseMutationOptions,
-  UseMutationResult
-} from '@tanstack/react-query';
+  UseMutationResult,
+} from "@tanstack/react-query";
 
+import { customMutator } from "../../lib/mutator";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * PostgreSQL에 저장된 모든 비디오 및 태그 메타데이터를 엘라스틱서치로 벌크 인덱싱(Bulk Indexing)합니다.<br>
@@ -29,87 +27,89 @@ type AwaitedInput<T> = PromiseLike<T> | T;
  * @summary DB ➔ 엘라스틱서치 전체 데이터 동기화
  */
 export type syncDataResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type syncDataResponseSuccess = (syncDataResponse200) & {
+export type syncDataResponseSuccess = syncDataResponse200 & {
   headers: Headers;
 };
-;
-
-export type syncDataResponse = (syncDataResponseSuccess)
+export type syncDataResponse = syncDataResponseSuccess;
 
 export const getSyncDataUrl = () => {
+  return `/api/v1/search/admin/sync`;
+};
 
-
-  
-
-  return `/api/v1/search/admin/sync`
-}
-
-export const syncData = async ( options?: RequestInit): Promise<syncDataResponse> => {
-  
-  const res = await fetch(getSyncDataUrl(),
-  {      
+export const syncData = async (
+  options?: RequestInit,
+): Promise<syncDataResponse> => {
+  return customMutator<syncDataResponse>(getSyncDataUrl(), {
     ...options,
-    method: 'POST'
-    
-    
-  }
-)
+    method: "POST",
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: syncDataResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as syncDataResponse
-}
-  
+export const getSyncDataMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof syncData>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof syncData>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["syncData"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof syncData>>,
+    void
+  > = () => {
+    return syncData(requestOptions);
+  };
 
+  return { mutationFn, ...mutationOptions };
+};
 
-export const getSyncDataMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof syncData>>, TError,void, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof syncData>>, TError,void, TContext> => {
+export type SyncDataMutationResult = NonNullable<
+  Awaited<ReturnType<typeof syncData>>
+>;
 
-const mutationKey = ['syncData'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type SyncDataMutationError = unknown;
 
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof syncData>>, void> = () => {
-          
-
-          return  syncData(fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SyncDataMutationResult = NonNullable<Awaited<ReturnType<typeof syncData>>>
-    
-    export type SyncDataMutationError = unknown
-
-    /**
+/**
  * @summary DB ➔ 엘라스틱서치 전체 데이터 동기화
  */
-export const useSyncData = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof syncData>>, TError,void, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof syncData>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getSyncDataMutationOptions(options), queryClient);
-    }
-    
+export const useSyncData = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof syncData>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof syncData>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getSyncDataMutationOptions(options), queryClient);
+};

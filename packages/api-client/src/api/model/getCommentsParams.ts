@@ -6,6 +6,6 @@
  */
 
 export type GetCommentsParams = {
-page?: number;
-size?: number;
+  page?: number;
+  size?: number;
 };

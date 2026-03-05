@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type UploaderContentResponseVisibility = typeof UploaderContentResponseVisibility[keyof typeof UploaderContentResponseVisibility];
-
+export type UploaderContentResponseVisibility =
+  (typeof UploaderContentResponseVisibility)[keyof typeof UploaderContentResponseVisibility];
 
 export const UploaderContentResponseVisibility = {
-  PRIVATE: 'PRIVATE',
-  PUBLIC: 'PUBLIC',
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
 } as const;

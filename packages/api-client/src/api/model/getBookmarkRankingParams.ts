@@ -6,5 +6,8 @@
  */
 
 export type GetBookmarkRankingParams = {
-limit?: number;
+  /**
+   * 조회할 랭킹 개수 (기본값: 10, 최대 노출 개수 지정)
+   */
+  limit?: number;
 };

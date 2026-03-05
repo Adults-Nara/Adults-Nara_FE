@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type ApiResponseBookmarkStatusResponseDtoResult = typeof ApiResponseBookmarkStatusResponseDtoResult[keyof typeof ApiResponseBookmarkStatusResponseDtoResult];
-
+export type ApiResponseBookmarkStatusResponseDtoResult =
+  (typeof ApiResponseBookmarkStatusResponseDtoResult)[keyof typeof ApiResponseBookmarkStatusResponseDtoResult];
 
 export const ApiResponseBookmarkStatusResponseDtoResult = {
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR',
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
 } as const;

@@ -4,9 +4,9 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { ApiResponseBookmarkStatusResponseDtoResult } from './apiResponseBookmarkStatusResponseDtoResult';
-import type { BookmarkStatusResponseDto } from './bookmarkStatusResponseDto';
-import type { ErrorMessage } from './errorMessage';
+import type { ApiResponseBookmarkStatusResponseDtoResult } from "./apiResponseBookmarkStatusResponseDtoResult";
+import type { BookmarkStatusResponseDto } from "./bookmarkStatusResponseDto";
+import type { ErrorMessage } from "./errorMessage";
 
 export interface ApiResponseBookmarkStatusResponseDto {
   result?: ApiResponseBookmarkStatusResponseDtoResult;

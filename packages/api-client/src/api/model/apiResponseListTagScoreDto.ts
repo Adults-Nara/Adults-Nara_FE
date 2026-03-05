@@ -4,9 +4,9 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { ApiResponseListTagScoreDtoResult } from './apiResponseListTagScoreDtoResult';
-import type { ErrorMessage } from './errorMessage';
-import type { TagScoreDto } from './tagScoreDto';
+import type { ApiResponseListTagScoreDtoResult } from "./apiResponseListTagScoreDtoResult";
+import type { ErrorMessage } from "./errorMessage";
+import type { TagScoreDto } from "./tagScoreDto";
 
 export interface ApiResponseListTagScoreDto {
   result?: ApiResponseListTagScoreDtoResult;

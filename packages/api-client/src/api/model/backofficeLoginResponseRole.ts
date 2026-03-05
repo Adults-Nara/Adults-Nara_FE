@@ -5,11 +5,11 @@
  * OpenAPI spec version: v0
  */
 
-export type BackofficeLoginResponseRole = typeof BackofficeLoginResponseRole[keyof typeof BackofficeLoginResponseRole];
-
+export type BackofficeLoginResponseRole =
+  (typeof BackofficeLoginResponseRole)[keyof typeof BackofficeLoginResponseRole];
 
 export const BackofficeLoginResponseRole = {
-  VIEWER: 'VIEWER',
-  UPLOADER: 'UPLOADER',
-  ADMIN: 'ADMIN',
+  VIEWER: "VIEWER",
+  UPLOADER: "UPLOADER",
+  ADMIN: "ADMIN",
 } as const;

@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type ApiResponseSliceResponseVideoFeedResponseDtoResult = typeof ApiResponseSliceResponseVideoFeedResponseDtoResult[keyof typeof ApiResponseSliceResponseVideoFeedResponseDtoResult];
-
+export type ApiResponseSliceResponseVideoFeedResponseDtoResult =
+  (typeof ApiResponseSliceResponseVideoFeedResponseDtoResult)[keyof typeof ApiResponseSliceResponseVideoFeedResponseDtoResult];
 
 export const ApiResponseSliceResponseVideoFeedResponseDtoResult = {
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR',
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
 } as const;

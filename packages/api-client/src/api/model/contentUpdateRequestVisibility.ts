@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type ContentUpdateRequestVisibility = typeof ContentUpdateRequestVisibility[keyof typeof ContentUpdateRequestVisibility];
-
+export type ContentUpdateRequestVisibility =
+  (typeof ContentUpdateRequestVisibility)[keyof typeof ContentUpdateRequestVisibility];
 
 export const ContentUpdateRequestVisibility = {
-  PRIVATE: 'PRIVATE',
-  PUBLIC: 'PUBLIC',
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
 } as const;

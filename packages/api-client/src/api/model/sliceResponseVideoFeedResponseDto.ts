@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { VideoFeedResponseDto } from './videoFeedResponseDto';
+import type { VideoFeedResponseDto } from "./videoFeedResponseDto";
 
 export interface SliceResponseVideoFeedResponseDto {
   content?: VideoFeedResponseDto[];

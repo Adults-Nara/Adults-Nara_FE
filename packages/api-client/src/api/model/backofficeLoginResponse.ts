@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { BackofficeLoginResponseRole } from './backofficeLoginResponseRole';
+import type { BackofficeLoginResponseRole } from "./backofficeLoginResponseRole";
 
 export interface BackofficeLoginResponse {
   userId?: number;

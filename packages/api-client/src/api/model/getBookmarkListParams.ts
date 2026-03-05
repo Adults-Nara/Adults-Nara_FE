@@ -4,10 +4,10 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { GetBookmarkListVideoType } from './getBookmarkListVideoType';
+import type { GetBookmarkListVideoType } from "./getBookmarkListVideoType";
 
 export type GetBookmarkListParams = {
-videoType: GetBookmarkListVideoType;
-page?: number;
-size?: number;
+  videoType: GetBookmarkListVideoType;
+  page?: number;
+  size?: number;
 };

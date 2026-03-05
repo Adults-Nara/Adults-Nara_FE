@@ -4,9 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -16,124 +14,148 @@ import type {
   QueryKey,
   UndefinedInitialDataOptions,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
+import { customMutator } from "../../lib/mutator";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 export type getAdResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getAdResponseSuccess = (getAdResponse200) & {
+export type getAdResponseSuccess = getAdResponse200 & {
   headers: Headers;
 };
-;
-
-export type getAdResponse = (getAdResponseSuccess)
+export type getAdResponse = getAdResponseSuccess;
 
 export const getGetAdUrl = () => {
+  return `/api/v1/ads`;
+};
 
-
-  
-
-  return `/api/v1/ads`
-}
-
-export const getAd = async ( options?: RequestInit): Promise<getAdResponse> => {
-  
-  const res = await fetch(getGetAdUrl(),
-  {      
+export const getAd = async (options?: RequestInit): Promise<getAdResponse> => {
+  return customMutator<getAdResponse>(getGetAdUrl(), {
     ...options,
-    method: 'GET'
-    
-    
-  }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getAdResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getAdResponse
-}
-  
-
-
-
+    method: "GET",
+  });
+};
 
 export const getGetAdQueryKey = () => {
-    return [
-    `/api/v1/ads`
-    ] as const;
-    }
+  return [`/api/v1/ads`] as const;
+};
 
-    
-export const getGetAdQueryOptions = <TData = Awaited<ReturnType<typeof getAd>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAd>>, TError, TData>>, fetch?: RequestInit}
-) => {
+export const getGetAdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAd>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getAd>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetAdQueryKey();
 
-  const queryKey =  queryOptions?.queryKey ?? getGetAdQueryKey();
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAd>>> = ({
+    signal,
+  }) => getAd({ signal, ...requestOptions });
 
-  
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAd>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAd>>> = ({ signal }) => getAd({ signal, ...fetchOptions });
+export type GetAdQueryResult = NonNullable<Awaited<ReturnType<typeof getAd>>>;
+export type GetAdQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAd>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetAdQueryResult = NonNullable<Awaited<ReturnType<typeof getAd>>>
-export type GetAdQueryError = unknown
-
-
-export function useGetAd<TData = Awaited<ReturnType<typeof getAd>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAd>>, TError, TData>> & Pick<
+export function useGetAd<
+  TData = Awaited<ReturnType<typeof getAd>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAd>>, TError, TData>
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAd>>,
           TError,
           Awaited<ReturnType<typeof getAd>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAd<TData = Awaited<ReturnType<typeof getAd>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAd>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAd<
+  TData = Awaited<ReturnType<typeof getAd>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAd>>, TError, TData>
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getAd>>,
           TError,
           Awaited<ReturnType<typeof getAd>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAd<TData = Awaited<ReturnType<typeof getAd>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAd>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetAd<
+  TData = Awaited<ReturnType<typeof getAd>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAd>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 
-export function useGetAd<TData = Awaited<ReturnType<typeof getAd>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAd>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetAd<
+  TData = Awaited<ReturnType<typeof getAd>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAd>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetAdQueryOptions(options);
 
-  const queryOptions = getGetAdQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
-

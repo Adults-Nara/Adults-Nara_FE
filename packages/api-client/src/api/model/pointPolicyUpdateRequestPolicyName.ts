@@ -5,11 +5,11 @@
  * OpenAPI spec version: v0
  */
 
-export type PointPolicyUpdateRequestPolicyName = typeof PointPolicyUpdateRequestPolicyName[keyof typeof PointPolicyUpdateRequestPolicyName];
-
+export type PointPolicyUpdateRequestPolicyName =
+  (typeof PointPolicyUpdateRequestPolicyName)[keyof typeof PointPolicyUpdateRequestPolicyName];
 
 export const PointPolicyUpdateRequestPolicyName = {
-  AD_REWARD: 'AD_REWARD',
-  PURCHASE_RATE: 'PURCHASE_RATE',
-  DAILY_AD_LIMIT: 'DAILY_AD_LIMIT',
+  AD_REWARD: "AD_REWARD",
+  PURCHASE_RATE: "PURCHASE_RATE",
+  DAILY_AD_LIMIT: "DAILY_AD_LIMIT",
 } as const;

@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { PointTransactionHistoryResponseType } from './pointTransactionHistoryResponseType';
+import type { PointTransactionHistoryResponseType } from "./pointTransactionHistoryResponseType";
 
 export interface PointTransactionHistoryResponse {
   transactionId?: number;

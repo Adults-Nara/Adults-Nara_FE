@@ -4,9 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -16,154 +14,212 @@ import type {
   QueryKey,
   UndefinedInitialDataOptions,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import type {
   GetFeedParams,
   GetRelatedFeedParams,
-  GetVerticalFeedParams
-} from '.././model';
+  GetVerticalFeedParams,
+} from ".././model";
 
+import { customMutator } from "../../lib/mutator";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * 현재 시청 중인 영상과 태그가 비슷한 연관 영상을 추천합니다.
  * @summary 연관 영상 추천 조회
  */
 export type getRelatedFeedResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getRelatedFeedResponseSuccess = (getRelatedFeedResponse200) & {
+export type getRelatedFeedResponseSuccess = getRelatedFeedResponse200 & {
   headers: Headers;
 };
-;
+export type getRelatedFeedResponse = getRelatedFeedResponseSuccess;
 
-export type getRelatedFeedResponse = (getRelatedFeedResponseSuccess)
-
-export const getGetRelatedFeedUrl = (videoId: number,
-    params?: GetRelatedFeedParams,) => {
+export const getGetRelatedFeedUrl = (
+  videoId: number,
+  params?: GetRelatedFeedParams,
+) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/recommendations/${videoId}/related?${stringifiedParams}` : `/api/v1/recommendations/${videoId}/related`
-}
+  return stringifiedParams.length > 0
+    ? `/api/v1/recommendations/${videoId}/related?${stringifiedParams}`
+    : `/api/v1/recommendations/${videoId}/related`;
+};
 
-export const getRelatedFeed = async (videoId: number,
-    params?: GetRelatedFeedParams, options?: RequestInit): Promise<getRelatedFeedResponse> => {
-  
-  const res = await fetch(getGetRelatedFeedUrl(videoId,params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-)
+export const getRelatedFeed = async (
+  videoId: number,
+  params?: GetRelatedFeedParams,
+  options?: RequestInit,
+): Promise<getRelatedFeedResponse> => {
+  return customMutator<getRelatedFeedResponse>(
+    getGetRelatedFeedUrl(videoId, params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getRelatedFeedResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getRelatedFeedResponse
-}
-  
-
-
-
-
-export const getGetRelatedFeedQueryKey = (videoId: number,
-    params?: GetRelatedFeedParams,) => {
-    return [
-    `/api/v1/recommendations/${videoId}/related`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-    
-export const getGetRelatedFeedQueryOptions = <TData = Awaited<ReturnType<typeof getRelatedFeed>>, TError = unknown>(videoId: number,
-    params?: GetRelatedFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRelatedFeed>>, TError, TData>>, fetch?: RequestInit}
+export const getGetRelatedFeedQueryKey = (
+  videoId: number,
+  params?: GetRelatedFeedParams,
 ) => {
+  return [
+    `/api/v1/recommendations/${videoId}/related`,
+    ...(params ? [params] : []),
+  ] as const;
+};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+export const getGetRelatedFeedQueryOptions = <
+  TData = Awaited<ReturnType<typeof getRelatedFeed>>,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetRelatedFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getRelatedFeed>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetRelatedFeedQueryKey(videoId,params);
+  const queryKey =
+    queryOptions?.queryKey ?? getGetRelatedFeedQueryKey(videoId, params);
 
-  
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getRelatedFeed>>> = ({
+    signal,
+  }) => getRelatedFeed(videoId, params, { signal, ...requestOptions });
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRelatedFeed>>> = ({ signal }) => getRelatedFeed(videoId,params, { signal, ...fetchOptions });
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!videoId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getRelatedFeed>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-      
+export type GetRelatedFeedQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getRelatedFeed>>
+>;
+export type GetRelatedFeedQueryError = unknown;
 
-      
-
-   return  { queryKey, queryFn, enabled: !!(videoId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRelatedFeed>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetRelatedFeedQueryResult = NonNullable<Awaited<ReturnType<typeof getRelatedFeed>>>
-export type GetRelatedFeedQueryError = unknown
-
-
-export function useGetRelatedFeed<TData = Awaited<ReturnType<typeof getRelatedFeed>>, TError = unknown>(
- videoId: number,
-    params: undefined |  GetRelatedFeedParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRelatedFeed>>, TError, TData>> & Pick<
+export function useGetRelatedFeed<
+  TData = Awaited<ReturnType<typeof getRelatedFeed>>,
+  TError = unknown,
+>(
+  videoId: number,
+  params: undefined | GetRelatedFeedParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getRelatedFeed>>, TError, TData>
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getRelatedFeed>>,
           TError,
           Awaited<ReturnType<typeof getRelatedFeed>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetRelatedFeed<TData = Awaited<ReturnType<typeof getRelatedFeed>>, TError = unknown>(
- videoId: number,
-    params?: GetRelatedFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRelatedFeed>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetRelatedFeed<
+  TData = Awaited<ReturnType<typeof getRelatedFeed>>,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetRelatedFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getRelatedFeed>>, TError, TData>
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getRelatedFeed>>,
           TError,
           Awaited<ReturnType<typeof getRelatedFeed>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetRelatedFeed<TData = Awaited<ReturnType<typeof getRelatedFeed>>, TError = unknown>(
- videoId: number,
-    params?: GetRelatedFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRelatedFeed>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetRelatedFeed<
+  TData = Awaited<ReturnType<typeof getRelatedFeed>>,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetRelatedFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getRelatedFeed>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 연관 영상 추천 조회
  */
 
-export function useGetRelatedFeed<TData = Awaited<ReturnType<typeof getRelatedFeed>>, TError = unknown>(
- videoId: number,
-    params?: GetRelatedFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRelatedFeed>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetRelatedFeed<
+  TData = Awaited<ReturnType<typeof getRelatedFeed>>,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetRelatedFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getRelatedFeed>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetRelatedFeedQueryOptions(videoId, params, options);
 
-  const queryOptions = getGetRelatedFeedQueryOptions(videoId,params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
 
 /**
  * 사용자의 시청 이력(Redis 취향 점수)을 기반으로 Elasticsearch 기반 개인화 추천 목록을 반환합니다.<br>
@@ -173,246 +229,352 @@ export function useGetRelatedFeed<TData = Awaited<ReturnType<typeof getRelatedFe
  * @summary 메인 홈 맞춤형 추천 피드 조회
  */
 export type getFeedResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getFeedResponseSuccess = (getFeedResponse200) & {
+export type getFeedResponseSuccess = getFeedResponse200 & {
   headers: Headers;
 };
-;
+export type getFeedResponse = getFeedResponseSuccess;
 
-export type getFeedResponse = (getFeedResponseSuccess)
-
-export const getGetFeedUrl = (params?: GetFeedParams,) => {
+export const getGetFeedUrl = (params?: GetFeedParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/recommendations/feed?${stringifiedParams}` : `/api/v1/recommendations/feed`
-}
+  return stringifiedParams.length > 0
+    ? `/api/v1/recommendations/feed?${stringifiedParams}`
+    : `/api/v1/recommendations/feed`;
+};
 
-export const getFeed = async (params?: GetFeedParams, options?: RequestInit): Promise<getFeedResponse> => {
-  
-  const res = await fetch(getGetFeedUrl(params),
-  {      
+export const getFeed = async (
+  params?: GetFeedParams,
+  options?: RequestInit,
+): Promise<getFeedResponse> => {
+  return customMutator<getFeedResponse>(getGetFeedUrl(params), {
     ...options,
-    method: 'GET'
-    
-    
-  }
-)
+    method: "GET",
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getFeedResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getFeedResponse
-}
-  
+export const getGetFeedQueryKey = (params?: GetFeedParams) => {
+  return [`/api/v1/recommendations/feed`, ...(params ? [params] : [])] as const;
+};
 
-
-
-
-export const getGetFeedQueryKey = (params?: GetFeedParams,) => {
-    return [
-    `/api/v1/recommendations/feed`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-    
-export const getGetFeedQueryOptions = <TData = Awaited<ReturnType<typeof getFeed>>, TError = unknown>(params?: GetFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeed>>, TError, TData>>, fetch?: RequestInit}
+export const getGetFeedQueryOptions = <
+  TData = Awaited<ReturnType<typeof getFeed>>,
+  TError = unknown,
+>(
+  params?: GetFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFeed>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetFeedQueryKey(params);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetFeedQueryKey(params);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getFeed>>> = ({
+    signal,
+  }) => getFeed(params, { signal, ...requestOptions });
 
-  
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getFeed>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getFeed>>> = ({ signal }) => getFeed(params, { signal, ...fetchOptions });
+export type GetFeedQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getFeed>>
+>;
+export type GetFeedQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getFeed>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetFeedQueryResult = NonNullable<Awaited<ReturnType<typeof getFeed>>>
-export type GetFeedQueryError = unknown
-
-
-export function useGetFeed<TData = Awaited<ReturnType<typeof getFeed>>, TError = unknown>(
- params: undefined |  GetFeedParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeed>>, TError, TData>> & Pick<
+export function useGetFeed<
+  TData = Awaited<ReturnType<typeof getFeed>>,
+  TError = unknown,
+>(
+  params: undefined | GetFeedParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFeed>>, TError, TData>
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getFeed>>,
           TError,
           Awaited<ReturnType<typeof getFeed>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetFeed<TData = Awaited<ReturnType<typeof getFeed>>, TError = unknown>(
- params?: GetFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeed>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetFeed<
+  TData = Awaited<ReturnType<typeof getFeed>>,
+  TError = unknown,
+>(
+  params?: GetFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFeed>>, TError, TData>
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getFeed>>,
           TError,
           Awaited<ReturnType<typeof getFeed>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetFeed<TData = Awaited<ReturnType<typeof getFeed>>, TError = unknown>(
- params?: GetFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeed>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetFeed<
+  TData = Awaited<ReturnType<typeof getFeed>>,
+  TError = unknown,
+>(
+  params?: GetFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFeed>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 메인 홈 맞춤형 추천 피드 조회
  */
 
-export function useGetFeed<TData = Awaited<ReturnType<typeof getFeed>>, TError = unknown>(
- params?: GetFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeed>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetFeed<
+  TData = Awaited<ReturnType<typeof getFeed>>,
+  TError = unknown,
+>(
+  params?: GetFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getFeed>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetFeedQueryOptions(params, options);
 
-  const queryOptions = getGetFeedQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
 
 /**
  * 취향(70%), 인기(20%), 랜덤(10%) 비율로 섞인 지루하지 않은 피드를 반환합니다.
  * @summary 세로 믹스 피드 조회 (7:2:1)
  */
 export type getVerticalFeedResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getVerticalFeedResponseSuccess = (getVerticalFeedResponse200) & {
+export type getVerticalFeedResponseSuccess = getVerticalFeedResponse200 & {
   headers: Headers;
 };
-;
+export type getVerticalFeedResponse = getVerticalFeedResponseSuccess;
 
-export type getVerticalFeedResponse = (getVerticalFeedResponseSuccess)
-
-export const getGetVerticalFeedUrl = (params?: GetVerticalFeedParams,) => {
+export const getGetVerticalFeedUrl = (params?: GetVerticalFeedParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/recommendations/feed/vertical?${stringifiedParams}` : `/api/v1/recommendations/feed/vertical`
-}
+  return stringifiedParams.length > 0
+    ? `/api/v1/recommendations/feed/vertical?${stringifiedParams}`
+    : `/api/v1/recommendations/feed/vertical`;
+};
 
-export const getVerticalFeed = async (params?: GetVerticalFeedParams, options?: RequestInit): Promise<getVerticalFeedResponse> => {
-  
-  const res = await fetch(getGetVerticalFeedUrl(params),
-  {      
+export const getVerticalFeed = async (
+  params?: GetVerticalFeedParams,
+  options?: RequestInit,
+): Promise<getVerticalFeedResponse> => {
+  return customMutator<getVerticalFeedResponse>(getGetVerticalFeedUrl(params), {
     ...options,
-    method: 'GET'
-    
-    
-  }
-)
+    method: "GET",
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getVerticalFeedResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getVerticalFeedResponse
-}
-  
+export const getGetVerticalFeedQueryKey = (params?: GetVerticalFeedParams) => {
+  return [
+    `/api/v1/recommendations/feed/vertical`,
+    ...(params ? [params] : []),
+  ] as const;
+};
 
-
-
-
-export const getGetVerticalFeedQueryKey = (params?: GetVerticalFeedParams,) => {
-    return [
-    `/api/v1/recommendations/feed/vertical`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-    
-export const getGetVerticalFeedQueryOptions = <TData = Awaited<ReturnType<typeof getVerticalFeed>>, TError = unknown>(params?: GetVerticalFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVerticalFeed>>, TError, TData>>, fetch?: RequestInit}
+export const getGetVerticalFeedQueryOptions = <
+  TData = Awaited<ReturnType<typeof getVerticalFeed>>,
+  TError = unknown,
+>(
+  params?: GetVerticalFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVerticalFeed>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetVerticalFeedQueryKey(params);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetVerticalFeedQueryKey(params);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getVerticalFeed>>> = ({
+    signal,
+  }) => getVerticalFeed(params, { signal, ...requestOptions });
 
-  
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getVerticalFeed>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getVerticalFeed>>> = ({ signal }) => getVerticalFeed(params, { signal, ...fetchOptions });
+export type GetVerticalFeedQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getVerticalFeed>>
+>;
+export type GetVerticalFeedQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getVerticalFeed>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetVerticalFeedQueryResult = NonNullable<Awaited<ReturnType<typeof getVerticalFeed>>>
-export type GetVerticalFeedQueryError = unknown
-
-
-export function useGetVerticalFeed<TData = Awaited<ReturnType<typeof getVerticalFeed>>, TError = unknown>(
- params: undefined |  GetVerticalFeedParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVerticalFeed>>, TError, TData>> & Pick<
+export function useGetVerticalFeed<
+  TData = Awaited<ReturnType<typeof getVerticalFeed>>,
+  TError = unknown,
+>(
+  params: undefined | GetVerticalFeedParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVerticalFeed>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getVerticalFeed>>,
           TError,
           Awaited<ReturnType<typeof getVerticalFeed>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetVerticalFeed<TData = Awaited<ReturnType<typeof getVerticalFeed>>, TError = unknown>(
- params?: GetVerticalFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVerticalFeed>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVerticalFeed<
+  TData = Awaited<ReturnType<typeof getVerticalFeed>>,
+  TError = unknown,
+>(
+  params?: GetVerticalFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVerticalFeed>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getVerticalFeed>>,
           TError,
           Awaited<ReturnType<typeof getVerticalFeed>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetVerticalFeed<TData = Awaited<ReturnType<typeof getVerticalFeed>>, TError = unknown>(
- params?: GetVerticalFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVerticalFeed>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVerticalFeed<
+  TData = Awaited<ReturnType<typeof getVerticalFeed>>,
+  TError = unknown,
+>(
+  params?: GetVerticalFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVerticalFeed>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 세로 믹스 피드 조회 (7:2:1)
  */
 
-export function useGetVerticalFeed<TData = Awaited<ReturnType<typeof getVerticalFeed>>, TError = unknown>(
- params?: GetVerticalFeedParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVerticalFeed>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetVerticalFeed<
+  TData = Awaited<ReturnType<typeof getVerticalFeed>>,
+  TError = unknown,
+>(
+  params?: GetVerticalFeedParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getVerticalFeed>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetVerticalFeedQueryOptions(params, options);
 
-  const queryOptions = getGetVerticalFeedQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
-

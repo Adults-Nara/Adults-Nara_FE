@@ -4,8 +4,8 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { UploadRequestVideoType } from './uploadRequestVideoType';
-import type { UploadRequestVisibility } from './uploadRequestVisibility';
+import type { UploadRequestVideoType } from "./uploadRequestVideoType";
+import type { UploadRequestVisibility } from "./uploadRequestVisibility";
 
 export interface UploadRequest {
   title?: string;

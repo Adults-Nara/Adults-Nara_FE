@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type GetBookmarkListVideoType = typeof GetBookmarkListVideoType[keyof typeof GetBookmarkListVideoType];
-
+export type GetBookmarkListVideoType =
+  (typeof GetBookmarkListVideoType)[keyof typeof GetBookmarkListVideoType];
 
 export const GetBookmarkListVideoType = {
-  SHORT: 'SHORT',
-  LONG: 'LONG',
+  SHORT: "SHORT",
+  LONG: "LONG",
 } as const;

@@ -1,0 +1,5123 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "https://api.asinna.store"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "인증 API",
+      "description": "카카오 OAuth 로그인 및 토큰 관리"
+    },
+    {
+      "name": "Recommendation API",
+      "description": "사용자 맞춤형 추천 피드 및 영상 탐색 API"
+    },
+    {
+      "name": "태그 API",
+      "description": "태그 조회 및 태그별 영상 조회 API"
+    },
+    {
+      "name": "포인트 정책 관리 API (Admin)",
+      "description": "포인트 정책 조회 및 수정 API"
+    },
+    {
+      "name": "시청 기록 API",
+      "description": "시청 위치 조회/업데이트 및 시청 이력 조회 API"
+    },
+    {
+      "name": "유저 API",
+      "description": "사용자 정보 조회 및 수정 API"
+    },
+    {
+      "name": "포인트 API",
+      "description": "사용자 포인트 조회, 내역 확인 및 적립 관련 API"
+    },
+    {
+      "name": "상호작용 API",
+      "description": "좋아요/싫어요 기능"
+    },
+    {
+      "name": "Backoffice API",
+      "description": "어드민/업로더 콘텐츠 및 유저 관리 API"
+    },
+    {
+      "name": "댓글 API",
+      "description": "댓글 조회, 작성, 수정, 삭제 API"
+    },
+    {
+      "name": "검색 API",
+      "description": "Elasticsearch 기반 영상 검색 및 실시간 자동완성 기능"
+    },
+    {
+      "name": "백오피스 인증 API",
+      "description": "업로더/관리자 로그인 및 회원가입"
+    },
+    {
+      "name": "랭킹 API",
+      "description": "실시간 북마크(찜) 기반 인기 영상 랭킹 기능"
+    },
+    {
+      "name": "Search Admin API",
+      "description": "검색 엔진(Elasticsearch) 관리자 전용 API"
+    },
+    {
+      "name": "유저 선호 태그 API",
+      "description": "사용자 취향 태그 조회"
+    },
+    {
+      "name": "북마크 API",
+      "description": "찜하기 기능"
+    },
+    {
+      "name": "Video API",
+      "description": "비디오 업로드/재생 API"
+    },
+    {
+      "name": "유저 태그 API",
+      "description": "사용자 관심 태그 설정 및 태그별 시청 통계 API"
+    },
+    {
+      "name": "U+ 구독 API",
+      "description": "U+ 가입 정보 등록, 요금제 조회 및 포인트 할인 이력 API"
+    }
+  ],
+  "paths": {
+    "/api/v1/user-tag": {
+      "put": {
+        "tags": [
+          "유저 태그 API"
+        ],
+        "summary": "관심 태그 수정",
+        "description": "사용자의 관심 태그 목록을 새로운 목록으로 교체합니다.",
+        "operationId": "updateUserTags",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserTagRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backoffice/contents/{videoId}": {
+      "get": {
+        "tags": [
+          "Backoffice API"
+        ],
+        "summary": "콘텐츠 상세 조회",
+        "description": "업로더가 특정 콘텐츠의 상세 정보를 조회합니다.",
+        "operationId": "getContentDetail",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseContentDetailResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Backoffice API"
+        ],
+        "summary": "콘텐츠 수정",
+        "description": "업로더가 콘텐츠의 썸네일 이미지 및 메타데이터를 수정합니다.",
+        "operationId": "updateContent",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentUpdateMultipart"
+              },
+              "encoding": {
+                "data": {
+                  "contentType": "application/json"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseContentUpdateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/point/policies": {
+      "get": {
+        "tags": [
+          "포인트 정책 관리 API (Admin)"
+        ],
+        "summary": "전체 포인트 정책 조회",
+        "description": "시스템에 등록된 모든 포인트 정책의 이름과 값을 조회합니다.",
+        "operationId": "getAllPolicies",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPointPolicyResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "포인트 정책 관리 API (Admin)"
+        ],
+        "summary": "포인트 정책 수정",
+        "description": "특정 포인트 정책(예: 리뷰 작성 포인트 등)의 부여량을 수정합니다.",
+        "operationId": "updatePolicy",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PointPolicyUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/watch/{videoId}/stop": {
+      "post": {
+        "tags": [
+          "시청 기록 API"
+        ],
+        "summary": "시청 종료",
+        "description": "영상 시청 종료 시 최종 위치를 저장합니다.",
+        "operationId": "stopWatching",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WatchPositionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/videos/{videoId}/upload": {
+      "post": {
+        "tags": [
+          "Video API"
+        ],
+        "summary": "비디오 업로드 (썸네일 + 메타데이터)",
+        "description": "multipart/form-data로 image(파일)과 data(JSON)를 함께 전송합니다.",
+        "operationId": "upload",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/VideoUploadMultipart"
+              },
+              "encoding": {
+                "data": {
+                  "contentType": "application/json"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/videos/{videoId}/upload/multipart/complete": {
+      "post": {
+        "tags": [
+          "Video API"
+        ],
+        "summary": "Multipart 업로드 완료",
+        "description": "클라이언트가 업로드한 parts 정보를 바탕으로 Multipart Upload를 Complete 합니다.",
+        "operationId": "completeMultipartUpload",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MultipartCompleteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/videos/{videoId}/upload/multipart/abort": {
+      "post": {
+        "tags": [
+          "Video API"
+        ],
+        "summary": "Multipart 업로드 중단(Abort)",
+        "description": "업로드를 중단하고 MultipartUploadId 기준으로 abort 처리합니다.",
+        "operationId": "abortMultipartUpload",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "uploadId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/videos/upload/multipart/init": {
+      "post": {
+        "tags": [
+          "Video API"
+        ],
+        "summary": "Multipart 업로드 초기화",
+        "description": "S3 Multipart Upload를 시작하고, uploadId/videoId/Presigned URL 발급 등 필요한 정보를 생성합니다.",
+        "operationId": "initMultipartUpload",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MultipartInitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMultipartInitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/{userId}/deactivate": {
+      "post": {
+        "tags": [
+          "유저 API"
+        ],
+        "summary": "사용자 비활성화",
+        "description": "본인이 계정을 일시적으로 비활성화합니다.",
+        "operationId": "deactivateUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user-tag/onboarding": {
+      "post": {
+        "tags": [
+          "유저 태그 API"
+        ],
+        "summary": "온보딩 태그 저장",
+        "description": "온보딩 시 사용자가 선택한 관심 태그를 저장합니다.",
+        "operationId": "saveOnboardingTags",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardingTagRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/uplus/subscription": {
+      "get": {
+        "tags": [
+          "U+ 구독 API"
+        ],
+        "summary": "내 U+ 가입 정보 조회",
+        "description": "현재 로그인한 사용자의 U+ 가입 정보를 반환합니다.",
+        "operationId": "getMySubscription",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSubscriptionResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "U+ 구독 API"
+        ],
+        "summary": "U+ 가입 정보 등록",
+        "description": "전화번호 입력 시 U+ API에서 가입 여부와 요금제를 자동 조회하여 등록합니다.",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseRegisterResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "U+ 구독 API"
+        ],
+        "summary": "U+ 구독 해지",
+        "description": "U+ 가입 정보를 해지(soft delete) 처리합니다.",
+        "operationId": "deactivate",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search/admin/sync": {
+      "post": {
+        "tags": [
+          "Search Admin API"
+        ],
+        "summary": "DB ➔ 엘라스틱서치 전체 데이터 동기화",
+        "description": "PostgreSQL에 저장된 모든 비디오 및 태그 메타데이터를 엘라스틱서치로 벌크 인덱싱(Bulk Indexing)합니다.<br>\n- <b>안전장치:</b> 1,000건 단위 분할 처리(Paging) 및 N+1 쿼리 최적화 적용됨.\n",
+        "operationId": "syncData",
+        "responses": {
+          "200": {
+            "description": "동기화 성공 메시지 반환",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/point/reward/purchase": {
+      "post": {
+        "tags": [
+          "포인트 API"
+        ],
+        "summary": "상품 구매 보상 포인트 적립 (보너스 지급)",
+        "description": "상품을 구매한 사용자에게 거래 내역에 따른 보상 포인트를 즉시 적립합니다.",
+        "operationId": "rewardPurchasePoint",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductPurchaseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interactions/{videoId}/superlike": {
+      "post": {
+        "tags": [
+          "상호작용 API"
+        ],
+        "summary": "슈퍼라이크(왕따봉) 누르기",
+        "description": "해당 영상에 최고예요를 표시합니다.",
+        "operationId": "superLikeVideo",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interactions/{videoId}/like": {
+      "post": {
+        "tags": [
+          "상호작용 API"
+        ],
+        "summary": "좋아요 누르기",
+        "description": "해당 영상에 좋아요를 표시합니다.",
+        "operationId": "likeVideo",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interactions/{videoId}/dislike": {
+      "post": {
+        "tags": [
+          "상호작용 API"
+        ],
+        "summary": "싫어요 누르기",
+        "description": "해당 영상에 싫어요를 표시합니다.",
+        "operationId": "dislikeVideo",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interactions/admin/warmup": {
+      "post": {
+        "tags": [
+          "상호작용 API"
+        ],
+        "summary": "[관리자] 인터랙션 캐시 웜업",
+        "description": "DB의 모든 좋아요/싫어요 데이터를 Redis에 강제 동기화(복구)합니다.",
+        "operationId": "warmUpInteractions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/comment/videos/{videoId}": {
+      "get": {
+        "tags": [
+          "댓글 API"
+        ],
+        "summary": "댓글 목록 조회",
+        "description": "특정 영상의 댓글 목록을 페이지네이션으로 조회합니다. 비로그인 사용자도 조회 가능합니다.",
+        "operationId": "getComments",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseCommentPageResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "댓글 API"
+        ],
+        "summary": "댓글 작성",
+        "description": "특정 영상에 댓글을 작성합니다.",
+        "operationId": "createComment",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMyCommentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookmarks/{videoId}": {
+      "post": {
+        "tags": [
+          "북마크 API"
+        ],
+        "summary": "찜하기(북마크) 토글",
+        "description": "누를 때마다 찜 상태가 켜지거나 꺼집니다.",
+        "operationId": "toggleBookmark",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookmarks/admin/warmup": {
+      "post": {
+        "tags": [
+          "북마크 API"
+        ],
+        "summary": "[관리자] 북마크 랭킹 캐시 웜업",
+        "description": "DB의 모든 북마크 데이터를 기반으로 Redis 랭킹(ZSet)을 강제 초기화(복구)합니다.",
+        "operationId": "warmUpBookmarks",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backoffice/auth/signup/uploader": {
+      "post": {
+        "tags": [
+          "백오피스 인증 API"
+        ],
+        "summary": "업로더 회원가입",
+        "description": "이메일, 비밀번호, 닉네임으로 업로더 계정을 생성합니다. 이메일 중복 체크를 수행합니다.",
+        "operationId": "signupUploader",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackofficeSignupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backoffice/auth/login": {
+      "post": {
+        "tags": [
+          "백오피스 인증 API"
+        ],
+        "summary": "백오피스 로그인",
+        "description": "이메일과 비밀번호로 백오피스에 로그인합니다. UPLOADER 또는 ADMIN 계정만 가능합니다.",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackofficeLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBackofficeLoginResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/token/refresh": {
+      "post": {
+        "tags": [
+          "인증 API"
+        ],
+        "summary": "Access Token 재발급",
+        "description": "쿠키의 RefreshToken으로 새로운 AccessToken을 발급합니다.",
+        "operationId": "refreshToken",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTokenRefreshResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/token/logout": {
+      "post": {
+        "tags": [
+          "인증 API"
+        ],
+        "summary": "로그아웃",
+        "description": "서버의 RefreshToken을 무효화하고 쿠키를 삭제합니다.",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/onboarding/complete": {
+      "post": {
+        "tags": [
+          "인증 API"
+        ],
+        "summary": "온보딩 완료 처리",
+        "description": "사용자가 온보딩을 완료했을 때 호출합니다. 태그를 1개 이상 선택해야 합니다. 이후 로그인 시 onboardingCompleted=true가 반환됩니다.",
+        "operationId": "completeOnboarding",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/kakao/login": {
+      "post": {
+        "tags": [
+          "인증 API"
+        ],
+        "summary": "카카오 로그인 (인가코드 → JWT 발급)",
+        "description": "프론트에서 카카오로부터 받은 인가코드와 state를 전달하면 JWT를 발급합니다. AccessToken은 body에, RefreshToken은 HttpOnly 쿠키로 전달됩니다. onboardingCompleted=false면 온보딩 화면으로, true면 메인으로 이동하세요.",
+        "operationId": "kakaoLogin",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "description": "카카오 인가코드",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "CSRF 방지용 state 토큰",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseLoginResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/watch/{videoId}/position": {
+      "patch": {
+        "tags": [
+          "시청 기록 API"
+        ],
+        "summary": "시청 위치 업데이트",
+        "description": "영상 재생 중 10초마다 현재 시청 위치를 업데이트합니다.",
+        "operationId": "updateWatchPosition",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WatchPositionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/{userId}": {
+      "get": {
+        "tags": [
+          "유저 API"
+        ],
+        "summary": "사용자 상세 조회",
+        "description": "본인 또는 관리자가 사용자 상세 정보를 조회합니다.",
+        "operationId": "getUserDetail",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserDetailResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "유저 API"
+        ],
+        "summary": "사용자 탈퇴",
+        "description": "본인 또는 관리자가 사용자를 삭제(soft delete)합니다.",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "reason",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "유저 API"
+        ],
+        "summary": "사용자 정보 수정",
+        "description": "본인만 닉네임, 비밀번호, 프로필 이미지, 관심 태그를 수정할 수 있습니다.",
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/uplus/subscription/plan": {
+      "patch": {
+        "tags": [
+          "U+ 구독 API"
+        ],
+        "summary": "요금제 동기화",
+        "description": "U+ API를 재조회하여 최신 요금제로 업데이트합니다.",
+        "operationId": "syncPlan",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSubscriptionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/comment/{commentId}": {
+      "delete": {
+        "tags": [
+          "댓글 API"
+        ],
+        "summary": "댓글 삭제",
+        "description": "내가 작성한 댓글을 삭제합니다.",
+        "operationId": "deleteComment",
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "댓글 API"
+        ],
+        "summary": "댓글 수정",
+        "description": "내가 작성한 댓글을 수정합니다.",
+        "operationId": "editComment",
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentEditRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMyCommentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backoffice/users/status": {
+      "patch": {
+        "tags": [
+          "Backoffice API"
+        ],
+        "summary": "유저 상태 변경",
+        "description": "어드민이 특정 유저의 활성/정지 상태를 변경합니다.",
+        "operationId": "updateUserStatus",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserStatusUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserStatusUpdateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/watch/{videoId}": {
+      "get": {
+        "tags": [
+          "시청 기록 API"
+        ],
+        "summary": "시청 위치 조회",
+        "description": "영상 재생 시작 전 마지막으로 시청한 위치를 반환합니다.",
+        "operationId": "getWatchHistory",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseWatchHistoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/watch/history/recent": {
+      "get": {
+        "tags": [
+          "시청 기록 API"
+        ],
+        "summary": "최근 시청 이력 조회",
+        "description": "최근 3개월간의 시청 이력을 페이지네이션으로 조회합니다.",
+        "operationId": "getRecentWatchHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseWatchHistoryPageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/videos/{videoId}": {
+      "get": {
+        "tags": [
+          "Video API"
+        ],
+        "summary": "영상 단일 조회",
+        "description": "영상 정보를 단일 조회합니다.",
+        "operationId": "getVideoInfo",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVideoInfoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/videos/{videoId}/play": {
+      "get": {
+        "tags": [
+          "Video API"
+        ],
+        "summary": "비디오 재생",
+        "description": "재생에 필요한 정보(m3u8 URL)를 반환합니다. 응답 헤더에 쿠키를 함께 내려줍니다.",
+        "operationId": "play",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePlayResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user-tag/tag-watch-stats": {
+      "get": {
+        "tags": [
+          "유저 태그 API"
+        ],
+        "summary": "태그별 시청 통계 조회",
+        "description": "사용자가 관심 설정한 태그별 시청 횟수 통계를 반환합니다.",
+        "operationId": "getTagWatchStats",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTagWatchStatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/uplus/plans": {
+      "get": {
+        "tags": [
+          "U+ 구독 API"
+        ],
+        "summary": "요금제 목록 조회",
+        "description": "비로그인 사용자도 조회 가능한 U+ 요금제 목록을 반환합니다.",
+        "operationId": "getPlans",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPlanInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/uplus/discount/history": {
+      "get": {
+        "tags": [
+          "U+ 구독 API"
+        ],
+        "summary": "포인트 할인 이력 조회",
+        "description": "현재 로그인한 사용자의 U+ 포인트 할인 이력을 최근 순으로 반환합니다.",
+        "operationId": "getDiscountHistory",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListDiscountHistoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tags/{tagId}/videos": {
+      "get": {
+        "tags": [
+          "태그 API"
+        ],
+        "summary": "태그별 영상 목록 조회",
+        "description": "특정 태그에 속한 영상 목록을 반환합니다.",
+        "operationId": "getVideosByTag",
+        "parameters": [
+          {
+            "name": "tagId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTagVideoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tags/parent-with-child": {
+      "get": {
+        "tags": [
+          "태그 API"
+        ],
+        "summary": "부모 태그 + 자식 태그 목록 조회",
+        "description": "부모 태그와 그에 속한 자식 태그를 함께 반환합니다.",
+        "operationId": "getParentTagsWithChild",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListParentTagWithChildResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tags/my-child-tags": {
+      "get": {
+        "tags": [
+          "태그 API"
+        ],
+        "summary": "내 관심 태그(자식) 목록 조회",
+        "description": "로그인한 사용자가 설정한 관심 자식 태그 목록을 반환합니다.",
+        "operationId": "getMyChildTags",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListChildTagResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search": {
+      "get": {
+        "tags": [
+          "검색 API"
+        ],
+        "summary": "메인 영상 검색",
+        "description": "키워드, 영상 타입, 태그를 조합하여 영상을 검색합니다. (주의: 깊은 페이징 방지를 위해 최대 10,000번째 결과까지만 조회 가능합니다.)",
+        "operationId": "searchVideos",
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "검색어 (제목, 설명, 태그에 포함된 단어)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "아이언맨"
+          },
+          {
+            "name": "videoType",
+            "in": "query",
+            "description": "영상 타입 필터링 (예: LONG, SHORT)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SHORT",
+                "LONG"
+              ]
+            },
+            "example": "LONG"
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "특정 태그로 필터링",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "액션"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "요청할 페이지 번호 (0부터 시작)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "example": 0
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "페이지당 데이터 개수",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            },
+            "example": 20
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageVideoSearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search/autocomplete": {
+      "get": {
+        "tags": [
+          "검색 API"
+        ],
+        "summary": "검색어 자동완성 (실시간 추천)",
+        "description": "사용자가 검색창에 타이핑을 할 때 실시간으로 호출되어 추천 검색어(자동완성 목록)를 반환합니다.",
+        "operationId": "autocomplete",
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "현재까지 입력된 부분 검색어",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "아이"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/recommendations/{videoId}/related": {
+      "get": {
+        "tags": [
+          "Recommendation API"
+        ],
+        "summary": "연관 영상 추천 조회",
+        "description": "현재 시청 중인 영상과 태그가 비슷한 연관 영상을 추천합니다.",
+        "operationId": "getRelatedFeed",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "description": "현재 영상의 물리적 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "페이지 번호 (0부터 시작)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            },
+            "example": 0
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "가져올 개수 (기본 10)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10,
+              "maximum": 20,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSliceResponseVideoFeedResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/recommendations/feed": {
+      "get": {
+        "tags": [
+          "Recommendation API"
+        ],
+        "summary": "메인 홈 맞춤형 추천 피드 조회",
+        "description": "사용자의 시청 이력(Redis 취향 점수)을 기반으로 Elasticsearch 기반 개인화 추천 목록을 반환합니다.<br>\n- <b>기존 유저:</b> 내 선호 태그 가중치 + 인기(조회수) 종합 점수순 정렬<br>\n- <b>신규 유저:</b> 인기 및 최신순 기본 피드 제공 (Fallback)\n",
+        "operationId": "getFeed",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "페이지 번호 (0부터 시작)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            },
+            "example": 0
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "한 페이지당 가져올 비디오 개수",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "추천 피드 조회 성공 (데이터가 없으면 빈 배열 반환)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSliceResponseVideoFeedResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/recommendations/feed/vertical": {
+      "get": {
+        "tags": [
+          "Recommendation API"
+        ],
+        "summary": "세로 믹스 피드 조회 (7:2:1)",
+        "description": "취향(70%), 인기(20%), 랜덤(10%) 비율로 섞인 지루하지 않은 피드를 반환합니다.",
+        "operationId": "getVerticalFeed",
+        "parameters": [
+          {
+            "name": "size",
+            "in": "query",
+            "description": "가져올 개수 (기본 10)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSliceResponseVideoFeedResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ranking": {
+      "get": {
+        "tags": [
+          "랭킹 API"
+        ],
+        "summary": "실시간 인기 영상 랭킹 조회",
+        "description": "Redis에 캐싱된 북마크 개수를 기준으로 가장 인기 있는 영상들의 랭킹 리스트를 반환합니다.",
+        "operationId": "getBookmarkRanking",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "조회할 랭킹 개수 (기본값: 10, 최대 노출 개수 지정)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListRankingResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/preferences/{userId}": {
+      "get": {
+        "tags": [
+          "유저 선호 태그 API"
+        ],
+        "summary": "특정 유저 선호 태그 조회 (관리자)",
+        "description": "관리자만 접근 가능합니다. 특정 사용자의 상위 N개 선호 태그와 점수를 반환합니다.",
+        "operationId": "getUserPreferences",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTagScoreDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/preferences/me": {
+      "get": {
+        "tags": [
+          "유저 선호 태그 API"
+        ],
+        "summary": "내 선호 태그 조회",
+        "description": "현재 로그인한 사용자의 상위 N개 선호 태그와 점수를 반환합니다.",
+        "operationId": "getMyPreferences",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTagScoreDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/point": {
+      "get": {
+        "tags": [
+          "포인트 API"
+        ],
+        "summary": "사용자 포인트 잔액 조회",
+        "description": "현재 인증된 사용자의 가용 포인트 밸런스를 조회합니다.",
+        "operationId": "getMyPointBalance",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserPointBalanceResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/point/history": {
+      "get": {
+        "tags": [
+          "포인트 API"
+        ],
+        "summary": "사용자 포인트 이력 조회",
+        "description": "사용자의 지난 포인트 적립/차감/사용 내역을 최신순으로 조회합니다.",
+        "operationId": "getMyPointTransactionHistory",
+        "parameters": [
+          {
+            "name": "req",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PointTransactionHistoryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPointTransactionHistoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interactions/{videoId}/my-status": {
+      "get": {
+        "tags": [
+          "상호작용 API"
+        ],
+        "summary": "내 반응 조회",
+        "description": "내가 이 영상에 좋아요/싫어요를 했는지 확인합니다.",
+        "operationId": "getMyInteractionStatus",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseInteractionStatusResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/comment/videos/{videoId}/me": {
+      "get": {
+        "tags": [
+          "댓글 API"
+        ],
+        "summary": "내 댓글 조회",
+        "description": "특정 영상에 내가 작성한 댓글을 조회합니다.",
+        "operationId": "getMyComment",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMyCommentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookmarks": {
+      "get": {
+        "tags": [
+          "북마크 API"
+        ],
+        "summary": "찜한 영상 목록 조회",
+        "description": "찜한 영상을 videoType으로 필터링하여 페이지네이션으로 조회합니다.",
+        "operationId": "getBookmarkList",
+        "parameters": [
+          {
+            "name": "videoType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SHORT",
+                "LONG"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBookmarkPageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookmarks/{videoId}/status": {
+      "get": {
+        "tags": [
+          "북마크 API"
+        ],
+        "summary": "북마크 여부 조회",
+        "description": "내가 이 영상을 찜했는지 확인합니다.",
+        "operationId": "getBookmarkStatus",
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBookmarkStatusResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookmarks/summary": {
+      "get": {
+        "tags": [
+          "북마크 API"
+        ],
+        "summary": "찜 재생목록 요약 조회",
+        "description": "찜한 영상의 타입별 개수 요약 정보를 반환합니다.",
+        "operationId": "getBookmarkSummary",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBookmarkSummaryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backoffice/users": {
+      "get": {
+        "tags": [
+          "Backoffice API"
+        ],
+        "summary": "유저 목록 조회",
+        "description": "어드민이 역할(userRole) 및 키워드로 유저 목록을 페이지네이션으로 조회합니다.",
+        "operationId": "getUsers",
+        "parameters": [
+          {
+            "name": "userRole",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "VIEWER",
+                "UPLOADER",
+                "ADMIN"
+              ]
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "createdAt"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "DESC",
+              "enum": [
+                "ASC",
+                "DESC"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageResponseAdminUserResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Backoffice API"
+        ],
+        "summary": "유저 삭제",
+        "description": "어드민이 특정 유저를 삭제합니다.",
+        "operationId": "deleteUser_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backoffice/uploader/contents": {
+      "get": {
+        "tags": [
+          "Backoffice API"
+        ],
+        "summary": "업로더 콘텐츠 목록 조회",
+        "description": "로그인한 업로더 본인의 콘텐츠 목록을 페이지네이션으로 조회합니다.",
+        "operationId": "getMyContents",
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "createdAt"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "DESC",
+              "enum": [
+                "ASC",
+                "DESC"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageResponseUploaderContentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backoffice/auth/check-email": {
+      "get": {
+        "tags": [
+          "백오피스 인증 API"
+        ],
+        "summary": "이메일 중복 체크",
+        "description": "회원가입 전 이메일 사용 가능 여부를 확인합니다. true = 사용 가능, false = 이미 존재",
+        "operationId": "checkEmailAvailable",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBoolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backoffice/admin/contents": {
+      "get": {
+        "tags": [
+          "Backoffice API"
+        ],
+        "summary": "어드민 콘텐츠 목록 조회",
+        "description": "어드민이 전체 콘텐츠 목록을 키워드 검색 및 페이지네이션으로 조회합니다.",
+        "operationId": "getContents",
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "createdAt"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "DESC",
+              "enum": [
+                "ASC",
+                "DESC"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageResponseAdminContentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "인증 API"
+        ],
+        "summary": "현재 로그인 사용자 정보 조회",
+        "description": "JWT 토큰으로 인증된 현재 사용자의 정보를 반환합니다.",
+        "operationId": "getCurrentUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserDetailResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/kakao/login-url": {
+      "get": {
+        "tags": [
+          "인증 API"
+        ],
+        "summary": "카카오 로그인 URL 조회",
+        "description": "프론트엔드에서 카카오 로그인 페이지로 이동할 URL을 반환합니다.",
+        "operationId": "kakaoLogin",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ads": {
+      "get": {
+        "tags": [
+          "ads-controller"
+        ],
+        "operationId": "getAd",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseAdResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actuator/health": {
+      "get": {
+        "tags": [
+          "health-controller"
+        ],
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/backoffice/contents": {
+      "delete": {
+        "tags": [
+          "Backoffice API"
+        ],
+        "summary": "콘텐츠 삭제",
+        "description": "업로더는 본인 콘텐츠만, 어드민은 모든 콘텐츠를 삭제할 수 있습니다.",
+        "operationId": "deleteContent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentDeleteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backoffice/auth/account": {
+      "delete": {
+        "tags": [
+          "백오피스 인증 API"
+        ],
+        "summary": "업로더 계정 탈퇴",
+        "description": "업로더 본인이 계정을 탈퇴합니다. Soft Delete로 처리됩니다.",
+        "operationId": "deleteAccount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UpdateUserTagRequest": {
+        "type": "object",
+        "properties": {
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        "required": [
+          "tagIds"
+        ]
+      },
+      "ApiResponseObject": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "object"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "ErrorMessage": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldError"
+            }
+          }
+        }
+      },
+      "FieldError": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "ContentUpdateMultipart": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string",
+            "format": "binary",
+            "description": "썸네일 이미지 파일"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ContentUpdateRequest",
+            "description": "업로드 메타데이터(JSON)"
+          }
+        }
+      },
+      "ContentUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "PRIVATE",
+              "PUBLIC"
+            ]
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "ApiResponseContentUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/ContentUpdateResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "ContentUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          }
+        }
+      },
+      "PointPolicyUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "policyName": {
+            "type": "string",
+            "enum": [
+              "AD_REWARD",
+              "PURCHASE_RATE",
+              "DAILY_AD_LIMIT"
+            ]
+          },
+          "policyValue": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseVoid": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "object"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "WatchPositionRequest": {
+        "type": "object",
+        "properties": {
+          "lastPosition": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "UploadRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "videoType": {
+            "type": "string",
+            "enum": [
+              "SHORT",
+              "LONG"
+            ]
+          },
+          "otherVideoUrl": {
+            "type": "string"
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "PRIVATE",
+              "PUBLIC"
+            ]
+          }
+        }
+      },
+      "VideoUploadMultipart": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string",
+            "format": "binary",
+            "description": "썸네일 이미지 파일"
+          },
+          "data": {
+            "$ref": "#/components/schemas/UploadRequest",
+            "description": "업로드 메타데이터(JSON)"
+          }
+        }
+      },
+      "CompletedPartDto": {
+        "type": "object",
+        "properties": {
+          "partNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eTag": {
+            "type": "string"
+          }
+        }
+      },
+      "MultipartCompleteRequest": {
+        "type": "object",
+        "properties": {
+          "uploadId": {
+            "type": "string"
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompletedPartDto"
+            }
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "MultipartInitRequest": {
+        "type": "object",
+        "properties": {
+          "contentType": {
+            "type": "string"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ApiResponseMultipartInitResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/MultipartInitResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "MultipartInitResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "objectKey": {
+            "type": "string"
+          },
+          "uploadId": {
+            "type": "string"
+          },
+          "partSizeBytes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "presignedParts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PresignedPart"
+            }
+          },
+          "expiresAtEpochSeconds": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PresignedPart": {
+        "type": "object",
+        "properties": {
+          "partNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "OnboardingTagRequest": {
+        "type": "object",
+        "properties": {
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "maxItems": 5,
+            "minItems": 5
+          }
+        },
+        "required": [
+          "tagIds"
+        ]
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "pattern": "^01[016789]-?\\d{3,4}-?\\d{4}$"
+          }
+        },
+        "required": [
+          "phoneNumber"
+        ]
+      },
+      "ApiResponseRegisterResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/RegisterResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "properties": {
+          "registered": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "subscription": {
+            "$ref": "#/components/schemas/SubscriptionResponse"
+          }
+        }
+      },
+      "SubscriptionResponse": {
+        "type": "object",
+        "properties": {
+          "maskedPhoneNumber": {
+            "type": "string"
+          },
+          "plan": {
+            "type": "string"
+          },
+          "planDisplayName": {
+            "type": "string"
+          },
+          "monthlyFee": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiResponseString": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "string"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "ProductPurchaseRequest": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "price": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "CommentCreateRequest": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "ApiResponseMyCommentResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/MyCommentResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "MyCommentResponse": {
+        "type": "object",
+        "properties": {
+          "commentId": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BackofficeSignupRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 8
+          },
+          "nickname": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 2
+          }
+        },
+        "required": [
+          "email",
+          "nickname",
+          "password"
+        ]
+      },
+      "ApiResponseUserResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "profileImageUrl": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "VIEWER",
+              "UPLOADER",
+              "ADMIN"
+            ]
+          },
+          "banned": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DEACTIVATED",
+              "SUSPENDED_7",
+              "SUSPENDED_15",
+              "SUSPENDED_30",
+              "DELETED"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BackofficeLoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "ApiResponseBackofficeLoginResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/BackofficeLoginResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "BackofficeLoginResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "profileImageUrl": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "VIEWER",
+              "UPLOADER",
+              "ADMIN"
+            ]
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseTokenRefreshResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/TokenRefreshResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "TokenRefreshResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseLoginResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/LoginResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "profileImageUrl": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "VIEWER",
+              "UPLOADER",
+              "ADMIN"
+            ]
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "isNewUser": {
+            "type": "boolean"
+          },
+          "onboardingCompleted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "nickname": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 2
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 8
+          },
+          "profileImageUrl": {
+            "type": "string"
+          },
+          "preferredTagIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "ApiResponseSubscriptionResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/SubscriptionResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "CommentEditRequest": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "UserStatusUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "banStatus": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DEACTIVATED",
+              "SUSPENDED_7",
+              "SUSPENDED_15",
+              "SUSPENDED_30",
+              "DELETED"
+            ]
+          },
+          "banReason": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseUserStatusUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserStatusUpdateResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "UserStatusUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ApiResponseWatchHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/WatchHistoryResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "WatchHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "lastPosition": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseWatchHistoryPageResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/WatchHistoryPageResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "WatchHistoryItemResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uploaderName": {
+            "type": "string"
+          },
+          "watchProgressPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "watchedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "WatchHistoryPageResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WatchHistoryItemResponse"
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiResponseVideoInfoResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/VideoInfoResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "VideoInfoResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "PRIVATE",
+              "PUBLIC"
+            ]
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "otherVideoUrl": {
+            "type": "string"
+          },
+          "userProfile": {
+            "type": "string"
+          },
+          "userNickname": {
+            "type": "string"
+          },
+          "watchHistory": {
+            "$ref": "#/components/schemas/WatchHistoryResponse"
+          }
+        }
+      },
+      "ApiResponsePlayResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/PlayResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "PlayResponse": {
+        "type": "object",
+        "properties": {
+          "masterUrl": {
+            "type": "string"
+          },
+          "expiresAtEpochSeconds": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ApiResponseUserDetailResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserDetailResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "UserDetailResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "profileImageUrl": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "VIEWER",
+              "UPLOADER",
+              "ADMIN"
+            ]
+          },
+          "oauthProvider": {
+            "type": "string"
+          },
+          "oauthId": {
+            "type": "string"
+          },
+          "banned": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DEACTIVATED",
+              "SUSPENDED_7",
+              "SUSPENDED_15",
+              "SUSPENDED_30",
+              "DELETED"
+            ]
+          },
+          "bannedUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "banReason": {
+            "type": "string"
+          },
+          "bannedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiResponseListTagWatchStatsResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagWatchStatsResponse"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "TagWatchStatsResponse": {
+        "type": "object",
+        "properties": {
+          "tagId": {
+            "type": "string"
+          },
+          "tagName": {
+            "type": "string"
+          },
+          "totalWatchSeconds": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ApiResponseListPlanInfo": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanInfo"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "PlanInfo": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "monthlyFee": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseListDiscountHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountHistoryResponse"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "DiscountHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "billingYearMonth": {
+            "type": "string"
+          },
+          "planDisplayName": {
+            "type": "string"
+          },
+          "discountAmount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseListTagVideoResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagVideoResponse"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "TagVideoResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uploaderName": {
+            "type": "string"
+          },
+          "watchProgressPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "uploadedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseListParentTagWithChildResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParentTagWithChildResponse"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "ChildTagResponse": {
+        "type": "object",
+        "properties": {
+          "tagId": {
+            "type": "string"
+          },
+          "tagName": {
+            "type": "string"
+          }
+        }
+      },
+      "ParentTagWithChildResponse": {
+        "type": "object",
+        "properties": {
+          "tagId": {
+            "type": "string"
+          },
+          "tagName": {
+            "type": "string"
+          },
+          "childTagList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChildTagResponse"
+            }
+          }
+        }
+      },
+      "ApiResponseListChildTagResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChildTagResponse"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "ApiResponsePageVideoSearchResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/PageVideoSearchResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "PageVideoSearchResponse": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VideoSearchResponse"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "paged": {
+            "type": "boolean"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "unpaged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "sorted": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VideoSearchResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiResponseListString": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "ApiResponseSliceResponseVideoFeedResponseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/SliceResponseVideoFeedResponseDto"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "SliceResponseVideoFeedResponseDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VideoFeedResponseDto"
+            }
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasNext": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VideoFeedResponseDto": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uploaderNickname": {
+            "type": "string"
+          },
+          "uploaderProfileImageUrl": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "likeCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uploadDate": {
+            "type": "string"
+          },
+          "videoType": {
+            "type": "string",
+            "enum": [
+              "SHORT",
+              "LONG"
+            ]
+          },
+          "watchProgress": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseListRankingResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RankingResponse"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "RankingResponse": {
+        "type": "object",
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "videoId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "rankingScore": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ApiResponseListTagScoreDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagScoreDto"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "TagScoreDto": {
+        "type": "object",
+        "properties": {
+          "tagName": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ApiResponseUserPointBalanceResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserPointBalanceResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "UserPointBalanceResponse": {
+        "type": "object",
+        "properties": {
+          "currentBalance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PointTransactionHistoryRequest": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "description": "조회 시작일",
+            "example": "2026-02-01"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "조회 종료일",
+            "example": "2026-03-24"
+          }
+        }
+      },
+      "ApiResponseListPointTransactionHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PointTransactionHistoryResponse"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "PointTransactionHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "AD_REWARD",
+              "PURCHASE_BONUS",
+              "GIFTICON_PURCHASE",
+              "UPLUS_DISCOUNT"
+            ]
+          },
+          "balanceAfterTransaction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiResponseInteractionStatusResponseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/InteractionStatusResponseDto"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "InteractionStatusResponseDto": {
+        "type": "object",
+        "properties": {
+          "interactionType": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseCommentPageResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/CommentPageResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "CommentItemResponse": {
+        "type": "object",
+        "properties": {
+          "commentId": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "profileImageUrl": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CommentPageResponse": {
+        "type": "object",
+        "properties": {
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentItemResponse"
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "myComment": {
+            "$ref": "#/components/schemas/CommentItemResponse"
+          }
+        }
+      },
+      "ApiResponseBookmarkPageResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/BookmarkPageResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "BookmarkListResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uploaderName": {
+            "type": "string"
+          },
+          "watchProgressPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uploadDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BookmarkPageResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookmarkListResponse"
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiResponseBookmarkStatusResponseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/BookmarkStatusResponseDto"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "BookmarkStatusResponseDto": {
+        "type": "object",
+        "properties": {
+          "isBookmarked": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiResponseBookmarkSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/BookmarkSummaryResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "BookmarkPlaylistResponse": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "thumbnails": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "BookmarkSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "shortForm": {
+            "$ref": "#/components/schemas/BookmarkPlaylistResponse"
+          },
+          "longForm": {
+            "$ref": "#/components/schemas/BookmarkPlaylistResponse"
+          }
+        }
+      },
+      "AdminUserResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "profileImageUrl": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "banStatus": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DEACTIVATED",
+              "SUSPENDED_7",
+              "SUSPENDED_15",
+              "SUSPENDED_30",
+              "DELETED"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiResponsePageResponseAdminUserResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/PageResponseAdminUserResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "PageResponseAdminUserResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUserResponse"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponsePageResponseUploaderContentResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/PageResponseUploaderContentResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "PageResponseUploaderContentResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UploaderContentResponse"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "UploaderContentResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "otherVideoUrl": {
+            "type": "string"
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "likeCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dislikeCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commentCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "PRIVATE",
+              "PUBLIC"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiResponseContentDetailResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/ContentDetailResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "ContentDetailResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "PRIVATE",
+              "PUBLIC"
+            ]
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "otherVideoUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseBoolean": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "boolean"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "AdminContentResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "otherVideoUrl": {
+            "type": "string"
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "likeCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dislikeCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commentCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "PRIVATE",
+              "PUBLIC"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiResponsePageResponseAdminContentResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/PageResponseAdminContentResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "PageResponseAdminContentResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminContentResponse"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AdResponse": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseAdResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/AdResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "ApiResponseListPointPolicyResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ERROR"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PointPolicyResponse"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        }
+      },
+      "PointPolicyResponse": {
+        "type": "object",
+        "properties": {
+          "policyName": {
+            "type": "string",
+            "enum": [
+              "AD_REWARD",
+              "PURCHASE_RATE",
+              "DAILY_AD_LIMIT"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "policyValue": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "DeleteUserRequest": {
+        "type": "object",
+        "properties": {
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "ContentDeleteRequest": {
+        "type": "object",
+        "properties": {
+          "videoIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { ChildTagResponse } from './childTagResponse';
+import type { ChildTagResponse } from "./childTagResponse";
 
 export interface ParentTagWithChildResponse {
   tagId?: string;

@@ -6,5 +6,8 @@
  */
 
 export type AutocompleteParams = {
-keyword: string;
+  /**
+   * 현재까지 입력된 부분 검색어
+   */
+  keyword: string;
 };

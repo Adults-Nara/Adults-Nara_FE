@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { VideoFeedResponseDtoVideoType } from './videoFeedResponseDtoVideoType';
+import type { VideoFeedResponseDtoVideoType } from "./videoFeedResponseDtoVideoType";
 
 export interface VideoFeedResponseDto {
   videoId?: number;

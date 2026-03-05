@@ -4,12 +4,27 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { SearchVideosVideoType } from './searchVideosVideoType';
+import type { SearchVideosVideoType } from "./searchVideosVideoType";
 
 export type SearchVideosParams = {
-keyword?: string;
-videoType?: SearchVideosVideoType;
-tag?: string;
-page?: number;
-size?: number;
+  /**
+   * 검색어 (제목, 설명, 태그에 포함된 단어)
+   */
+  keyword?: string;
+  /**
+   * 영상 타입 필터링 (예: LONG, SHORT)
+   */
+  videoType?: SearchVideosVideoType;
+  /**
+   * 특정 태그로 필터링
+   */
+  tag?: string;
+  /**
+   * 요청할 페이지 번호 (0부터 시작)
+   */
+  page?: number;
+  /**
+   * 페이지당 데이터 개수
+   */
+  size?: number;
 };

@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type AdminContentResponseVisibility = typeof AdminContentResponseVisibility[keyof typeof AdminContentResponseVisibility];
-
+export type AdminContentResponseVisibility =
+  (typeof AdminContentResponseVisibility)[keyof typeof AdminContentResponseVisibility];
 
 export const AdminContentResponseVisibility = {
-  PRIVATE: 'PRIVATE',
-  PUBLIC: 'PUBLIC',
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
 } as const;

@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { BookmarkListResponse } from './bookmarkListResponse';
+import type { BookmarkListResponse } from "./bookmarkListResponse";
 
 export interface BookmarkPageResponse {
   items?: BookmarkListResponse[];

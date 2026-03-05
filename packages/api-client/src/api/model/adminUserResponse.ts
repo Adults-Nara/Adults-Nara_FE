@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { AdminUserResponseBanStatus } from './adminUserResponseBanStatus';
+import type { AdminUserResponseBanStatus } from "./adminUserResponseBanStatus";
 
 export interface AdminUserResponse {
   userId?: string;

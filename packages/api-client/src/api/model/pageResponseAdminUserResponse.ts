@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { AdminUserResponse } from './adminUserResponse';
+import type { AdminUserResponse } from "./adminUserResponse";
 
 export interface PageResponseAdminUserResponse {
   content?: AdminUserResponse[];

@@ -5,14 +5,14 @@
  * OpenAPI spec version: v0
  */
 
-export type UserDetailResponseBanned = typeof UserDetailResponseBanned[keyof typeof UserDetailResponseBanned];
-
+export type UserDetailResponseBanned =
+  (typeof UserDetailResponseBanned)[keyof typeof UserDetailResponseBanned];
 
 export const UserDetailResponseBanned = {
-  ACTIVE: 'ACTIVE',
-  DEACTIVATED: 'DEACTIVATED',
-  SUSPENDED_7: 'SUSPENDED_7',
-  SUSPENDED_15: 'SUSPENDED_15',
-  SUSPENDED_30: 'SUSPENDED_30',
-  DELETED: 'DELETED',
+  ACTIVE: "ACTIVE",
+  DEACTIVATED: "DEACTIVATED",
+  SUSPENDED_7: "SUSPENDED_7",
+  SUSPENDED_15: "SUSPENDED_15",
+  SUSPENDED_30: "SUSPENDED_30",
+  DELETED: "DELETED",
 } as const;

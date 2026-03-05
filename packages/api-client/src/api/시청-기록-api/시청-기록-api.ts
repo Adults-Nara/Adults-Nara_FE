@@ -4,10 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -20,440 +17,599 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import type {
   GetRecentWatchHistoryParams,
-  WatchPositionRequest
-} from '.././model';
+  WatchPositionRequest,
+} from ".././model";
 
+import { customMutator } from "../../lib/mutator";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * 영상 시청 종료 시 최종 위치를 저장합니다.
  * @summary 시청 종료
  */
 export type stopWatchingResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type stopWatchingResponseSuccess = (stopWatchingResponse200) & {
+export type stopWatchingResponseSuccess = stopWatchingResponse200 & {
   headers: Headers;
 };
-;
+export type stopWatchingResponse = stopWatchingResponseSuccess;
 
-export type stopWatchingResponse = (stopWatchingResponseSuccess)
+export const getStopWatchingUrl = (videoId: number) => {
+  return `/api/v1/watch/${videoId}/stop`;
+};
 
-export const getStopWatchingUrl = (videoId: number,) => {
-
-
-  
-
-  return `/api/v1/watch/${videoId}/stop`
-}
-
-export const stopWatching = async (videoId: number,
-    watchPositionRequest: WatchPositionRequest, options?: RequestInit): Promise<stopWatchingResponse> => {
-  
-  const res = await fetch(getStopWatchingUrl(videoId),
-  {      
+export const stopWatching = async (
+  videoId: number,
+  watchPositionRequest: WatchPositionRequest,
+  options?: RequestInit,
+): Promise<stopWatchingResponse> => {
+  return customMutator<stopWatchingResponse>(getStopWatchingUrl(videoId), {
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      watchPositionRequest,)
-  }
-)
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(watchPositionRequest),
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: stopWatchingResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as stopWatchingResponse
-}
-  
+export const getStopWatchingMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof stopWatching>>,
+    TError,
+    { videoId: number; data: WatchPositionRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof stopWatching>>,
+  TError,
+  { videoId: number; data: WatchPositionRequest },
+  TContext
+> => {
+  const mutationKey = ["stopWatching"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof stopWatching>>,
+    { videoId: number; data: WatchPositionRequest }
+  > = (props) => {
+    const { videoId, data } = props ?? {};
 
+    return stopWatching(videoId, data, requestOptions);
+  };
 
-export const getStopWatchingMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof stopWatching>>, TError,{videoId: number;data: WatchPositionRequest}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof stopWatching>>, TError,{videoId: number;data: WatchPositionRequest}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['stopWatching'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type StopWatchingMutationResult = NonNullable<
+  Awaited<ReturnType<typeof stopWatching>>
+>;
+export type StopWatchingMutationBody = WatchPositionRequest;
+export type StopWatchingMutationError = unknown;
 
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof stopWatching>>, {videoId: number;data: WatchPositionRequest}> = (props) => {
-          const {videoId,data} = props ?? {};
-
-          return  stopWatching(videoId,data,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type StopWatchingMutationResult = NonNullable<Awaited<ReturnType<typeof stopWatching>>>
-    export type StopWatchingMutationBody = WatchPositionRequest
-    export type StopWatchingMutationError = unknown
-
-    /**
+/**
  * @summary 시청 종료
  */
-export const useStopWatching = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof stopWatching>>, TError,{videoId: number;data: WatchPositionRequest}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof stopWatching>>,
-        TError,
-        {videoId: number;data: WatchPositionRequest},
-        TContext
-      > => {
-      return useMutation(getStopWatchingMutationOptions(options), queryClient);
-    }
-    /**
+export const useStopWatching = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof stopWatching>>,
+      TError,
+      { videoId: number; data: WatchPositionRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof stopWatching>>,
+  TError,
+  { videoId: number; data: WatchPositionRequest },
+  TContext
+> => {
+  return useMutation(getStopWatchingMutationOptions(options), queryClient);
+};
+/**
  * 영상 재생 중 10초마다 현재 시청 위치를 업데이트합니다.
  * @summary 시청 위치 업데이트
  */
 export type updateWatchPositionResponse200 = {
-  data: Blob
-  status: 200
-}
-
-export type updateWatchPositionResponseSuccess = (updateWatchPositionResponse200) & {
-  headers: Headers;
+  data: Blob;
+  status: 200;
 };
-;
 
-export type updateWatchPositionResponse = (updateWatchPositionResponseSuccess)
+export type updateWatchPositionResponseSuccess =
+  updateWatchPositionResponse200 & {
+    headers: Headers;
+  };
+export type updateWatchPositionResponse = updateWatchPositionResponseSuccess;
 
-export const getUpdateWatchPositionUrl = (videoId: number,) => {
+export const getUpdateWatchPositionUrl = (videoId: number) => {
+  return `/api/v1/watch/${videoId}/position`;
+};
 
+export const updateWatchPosition = async (
+  videoId: number,
+  watchPositionRequest: WatchPositionRequest,
+  options?: RequestInit,
+): Promise<updateWatchPositionResponse> => {
+  return customMutator<updateWatchPositionResponse>(
+    getUpdateWatchPositionUrl(videoId),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(watchPositionRequest),
+    },
+  );
+};
 
-  
+export const getUpdateWatchPositionMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateWatchPosition>>,
+    TError,
+    { videoId: number; data: WatchPositionRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateWatchPosition>>,
+  TError,
+  { videoId: number; data: WatchPositionRequest },
+  TContext
+> => {
+  const mutationKey = ["updateWatchPosition"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
-  return `/api/v1/watch/${videoId}/position`
-}
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateWatchPosition>>,
+    { videoId: number; data: WatchPositionRequest }
+  > = (props) => {
+    const { videoId, data } = props ?? {};
 
-export const updateWatchPosition = async (videoId: number,
-    watchPositionRequest: WatchPositionRequest, options?: RequestInit): Promise<updateWatchPositionResponse> => {
-  
-  const res = await fetch(getUpdateWatchPositionUrl(videoId),
-  {      
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      watchPositionRequest,)
-  }
-)
+    return updateWatchPosition(videoId, data, requestOptions);
+  };
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: updateWatchPositionResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as updateWatchPositionResponse
-}
-  
+  return { mutationFn, ...mutationOptions };
+};
 
+export type UpdateWatchPositionMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateWatchPosition>>
+>;
+export type UpdateWatchPositionMutationBody = WatchPositionRequest;
+export type UpdateWatchPositionMutationError = unknown;
 
-
-export const getUpdateWatchPositionMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWatchPosition>>, TError,{videoId: number;data: WatchPositionRequest}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof updateWatchPosition>>, TError,{videoId: number;data: WatchPositionRequest}, TContext> => {
-
-const mutationKey = ['updateWatchPosition'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateWatchPosition>>, {videoId: number;data: WatchPositionRequest}> = (props) => {
-          const {videoId,data} = props ?? {};
-
-          return  updateWatchPosition(videoId,data,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdateWatchPositionMutationResult = NonNullable<Awaited<ReturnType<typeof updateWatchPosition>>>
-    export type UpdateWatchPositionMutationBody = WatchPositionRequest
-    export type UpdateWatchPositionMutationError = unknown
-
-    /**
+/**
  * @summary 시청 위치 업데이트
  */
-export const useUpdateWatchPosition = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWatchPosition>>, TError,{videoId: number;data: WatchPositionRequest}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateWatchPosition>>,
-        TError,
-        {videoId: number;data: WatchPositionRequest},
-        TContext
-      > => {
-      return useMutation(getUpdateWatchPositionMutationOptions(options), queryClient);
-    }
-    /**
+export const useUpdateWatchPosition = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateWatchPosition>>,
+      TError,
+      { videoId: number; data: WatchPositionRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateWatchPosition>>,
+  TError,
+  { videoId: number; data: WatchPositionRequest },
+  TContext
+> => {
+  return useMutation(
+    getUpdateWatchPositionMutationOptions(options),
+    queryClient,
+  );
+};
+/**
  * 영상 재생 시작 전 마지막으로 시청한 위치를 반환합니다.
  * @summary 시청 위치 조회
  */
 export type getWatchHistoryResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getWatchHistoryResponseSuccess = (getWatchHistoryResponse200) & {
+export type getWatchHistoryResponseSuccess = getWatchHistoryResponse200 & {
   headers: Headers;
 };
-;
+export type getWatchHistoryResponse = getWatchHistoryResponseSuccess;
 
-export type getWatchHistoryResponse = (getWatchHistoryResponseSuccess)
+export const getGetWatchHistoryUrl = (videoId: number) => {
+  return `/api/v1/watch/${videoId}`;
+};
 
-export const getGetWatchHistoryUrl = (videoId: number,) => {
+export const getWatchHistory = async (
+  videoId: number,
+  options?: RequestInit,
+): Promise<getWatchHistoryResponse> => {
+  return customMutator<getWatchHistoryResponse>(
+    getGetWatchHistoryUrl(videoId),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
 
+export const getGetWatchHistoryQueryKey = (videoId: number) => {
+  return [`/api/v1/watch/${videoId}`] as const;
+};
 
-  
-
-  return `/api/v1/watch/${videoId}`
-}
-
-export const getWatchHistory = async (videoId: number, options?: RequestInit): Promise<getWatchHistoryResponse> => {
-  
-  const res = await fetch(getGetWatchHistoryUrl(videoId),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getWatchHistoryResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getWatchHistoryResponse
-}
-  
-
-
-
-
-export const getGetWatchHistoryQueryKey = (videoId: number,) => {
-    return [
-    `/api/v1/watch/${videoId}`
-    ] as const;
-    }
-
-    
-export const getGetWatchHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getWatchHistory>>, TError = unknown>(videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWatchHistory>>, TError, TData>>, fetch?: RequestInit}
+export const getGetWatchHistoryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWatchHistory>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWatchHistory>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey =
+    queryOptions?.queryKey ?? getGetWatchHistoryQueryKey(videoId);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetWatchHistoryQueryKey(videoId);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWatchHistory>>> = ({
+    signal,
+  }) => getWatchHistory(videoId, { signal, ...requestOptions });
 
-  
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!videoId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWatchHistory>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWatchHistory>>> = ({ signal }) => getWatchHistory(videoId, { signal, ...fetchOptions });
+export type GetWatchHistoryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWatchHistory>>
+>;
+export type GetWatchHistoryQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(videoId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getWatchHistory>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetWatchHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof getWatchHistory>>>
-export type GetWatchHistoryQueryError = unknown
-
-
-export function useGetWatchHistory<TData = Awaited<ReturnType<typeof getWatchHistory>>, TError = unknown>(
- videoId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWatchHistory>>, TError, TData>> & Pick<
+export function useGetWatchHistory<
+  TData = Awaited<ReturnType<typeof getWatchHistory>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWatchHistory>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWatchHistory>>,
           TError,
           Awaited<ReturnType<typeof getWatchHistory>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetWatchHistory<TData = Awaited<ReturnType<typeof getWatchHistory>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWatchHistory>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWatchHistory<
+  TData = Awaited<ReturnType<typeof getWatchHistory>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWatchHistory>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWatchHistory>>,
           TError,
           Awaited<ReturnType<typeof getWatchHistory>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetWatchHistory<TData = Awaited<ReturnType<typeof getWatchHistory>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWatchHistory>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetWatchHistory<
+  TData = Awaited<ReturnType<typeof getWatchHistory>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWatchHistory>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 시청 위치 조회
  */
 
-export function useGetWatchHistory<TData = Awaited<ReturnType<typeof getWatchHistory>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWatchHistory>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetWatchHistory<
+  TData = Awaited<ReturnType<typeof getWatchHistory>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getWatchHistory>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetWatchHistoryQueryOptions(videoId, options);
 
-  const queryOptions = getGetWatchHistoryQueryOptions(videoId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
 
 /**
  * 최근 3개월간의 시청 이력을 페이지네이션으로 조회합니다.
  * @summary 최근 시청 이력 조회
  */
 export type getRecentWatchHistoryResponse200 = {
-  data: Blob
-  status: 200
-}
-
-export type getRecentWatchHistoryResponseSuccess = (getRecentWatchHistoryResponse200) & {
-  headers: Headers;
+  data: Blob;
+  status: 200;
 };
-;
 
-export type getRecentWatchHistoryResponse = (getRecentWatchHistoryResponseSuccess)
+export type getRecentWatchHistoryResponseSuccess =
+  getRecentWatchHistoryResponse200 & {
+    headers: Headers;
+  };
+export type getRecentWatchHistoryResponse =
+  getRecentWatchHistoryResponseSuccess;
 
-export const getGetRecentWatchHistoryUrl = (params?: GetRecentWatchHistoryParams,) => {
+export const getGetRecentWatchHistoryUrl = (
+  params?: GetRecentWatchHistoryParams,
+) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/watch/history/recent?${stringifiedParams}` : `/api/v1/watch/history/recent`
-}
+  return stringifiedParams.length > 0
+    ? `/api/v1/watch/history/recent?${stringifiedParams}`
+    : `/api/v1/watch/history/recent`;
+};
 
-export const getRecentWatchHistory = async (params?: GetRecentWatchHistoryParams, options?: RequestInit): Promise<getRecentWatchHistoryResponse> => {
-  
-  const res = await fetch(getGetRecentWatchHistoryUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-)
+export const getRecentWatchHistory = async (
+  params?: GetRecentWatchHistoryParams,
+  options?: RequestInit,
+): Promise<getRecentWatchHistoryResponse> => {
+  return customMutator<getRecentWatchHistoryResponse>(
+    getGetRecentWatchHistoryUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getRecentWatchHistoryResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getRecentWatchHistoryResponse
-}
-  
-
-
-
-
-export const getGetRecentWatchHistoryQueryKey = (params?: GetRecentWatchHistoryParams,) => {
-    return [
-    `/api/v1/watch/history/recent`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-    
-export const getGetRecentWatchHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getRecentWatchHistory>>, TError = unknown>(params?: GetRecentWatchHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRecentWatchHistory>>, TError, TData>>, fetch?: RequestInit}
+export const getGetRecentWatchHistoryQueryKey = (
+  params?: GetRecentWatchHistoryParams,
 ) => {
+  return [`/api/v1/watch/history/recent`, ...(params ? [params] : [])] as const;
+};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+export const getGetRecentWatchHistoryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getRecentWatchHistory>>,
+  TError = unknown,
+>(
+  params?: GetRecentWatchHistoryParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getRecentWatchHistory>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetRecentWatchHistoryQueryKey(params);
+  const queryKey =
+    queryOptions?.queryKey ?? getGetRecentWatchHistoryQueryKey(params);
 
-  
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getRecentWatchHistory>>
+  > = ({ signal }) =>
+    getRecentWatchHistory(params, { signal, ...requestOptions });
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRecentWatchHistory>>> = ({ signal }) => getRecentWatchHistory(params, { signal, ...fetchOptions });
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getRecentWatchHistory>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-      
+export type GetRecentWatchHistoryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getRecentWatchHistory>>
+>;
+export type GetRecentWatchHistoryQueryError = unknown;
 
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRecentWatchHistory>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetRecentWatchHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof getRecentWatchHistory>>>
-export type GetRecentWatchHistoryQueryError = unknown
-
-
-export function useGetRecentWatchHistory<TData = Awaited<ReturnType<typeof getRecentWatchHistory>>, TError = unknown>(
- params: undefined |  GetRecentWatchHistoryParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRecentWatchHistory>>, TError, TData>> & Pick<
+export function useGetRecentWatchHistory<
+  TData = Awaited<ReturnType<typeof getRecentWatchHistory>>,
+  TError = unknown,
+>(
+  params: undefined | GetRecentWatchHistoryParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getRecentWatchHistory>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getRecentWatchHistory>>,
           TError,
           Awaited<ReturnType<typeof getRecentWatchHistory>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetRecentWatchHistory<TData = Awaited<ReturnType<typeof getRecentWatchHistory>>, TError = unknown>(
- params?: GetRecentWatchHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRecentWatchHistory>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetRecentWatchHistory<
+  TData = Awaited<ReturnType<typeof getRecentWatchHistory>>,
+  TError = unknown,
+>(
+  params?: GetRecentWatchHistoryParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getRecentWatchHistory>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getRecentWatchHistory>>,
           TError,
           Awaited<ReturnType<typeof getRecentWatchHistory>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetRecentWatchHistory<TData = Awaited<ReturnType<typeof getRecentWatchHistory>>, TError = unknown>(
- params?: GetRecentWatchHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRecentWatchHistory>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetRecentWatchHistory<
+  TData = Awaited<ReturnType<typeof getRecentWatchHistory>>,
+  TError = unknown,
+>(
+  params?: GetRecentWatchHistoryParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getRecentWatchHistory>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 최근 시청 이력 조회
  */
 
-export function useGetRecentWatchHistory<TData = Awaited<ReturnType<typeof getRecentWatchHistory>>, TError = unknown>(
- params?: GetRecentWatchHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRecentWatchHistory>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetRecentWatchHistory<
+  TData = Awaited<ReturnType<typeof getRecentWatchHistory>>,
+  TError = unknown,
+>(
+  params?: GetRecentWatchHistoryParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getRecentWatchHistory>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetRecentWatchHistoryQueryOptions(params, options);
 
-  const queryOptions = getGetRecentWatchHistoryQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
-

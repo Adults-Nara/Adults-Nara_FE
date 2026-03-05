@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type ContentDetailResponseVisibility = typeof ContentDetailResponseVisibility[keyof typeof ContentDetailResponseVisibility];
-
+export type ContentDetailResponseVisibility =
+  (typeof ContentDetailResponseVisibility)[keyof typeof ContentDetailResponseVisibility];
 
 export const ContentDetailResponseVisibility = {
-  PRIVATE: 'PRIVATE',
-  PUBLIC: 'PUBLIC',
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
 } as const;

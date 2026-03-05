@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { AdminContentResponseVisibility } from './adminContentResponseVisibility';
+import type { AdminContentResponseVisibility } from "./adminContentResponseVisibility";
 
 export interface AdminContentResponse {
   videoId?: string;

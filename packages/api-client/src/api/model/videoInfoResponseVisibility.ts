@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type VideoInfoResponseVisibility = typeof VideoInfoResponseVisibility[keyof typeof VideoInfoResponseVisibility];
-
+export type VideoInfoResponseVisibility =
+  (typeof VideoInfoResponseVisibility)[keyof typeof VideoInfoResponseVisibility];
 
 export const VideoInfoResponseVisibility = {
-  PRIVATE: 'PRIVATE',
-  PUBLIC: 'PUBLIC',
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
 } as const;

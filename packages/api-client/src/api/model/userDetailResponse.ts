@@ -4,8 +4,8 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { UserDetailResponseBanned } from './userDetailResponseBanned';
-import type { UserDetailResponseRole } from './userDetailResponseRole';
+import type { UserDetailResponseBanned } from "./userDetailResponseBanned";
+import type { UserDetailResponseRole } from "./userDetailResponseRole";
 
 export interface UserDetailResponse {
   userId?: number;

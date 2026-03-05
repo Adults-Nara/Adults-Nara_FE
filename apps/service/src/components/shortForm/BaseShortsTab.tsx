@@ -7,6 +7,7 @@ import { VirtualSwipePlayer } from './VirtualSwipePlayer'; // 방금 만든 컴�
 import { ShortTabActionButtons } from '@/app/(blank)/shorts/_components/ShortTabActionButtons';
 
 interface BaseShortsTabProps {
+  isLoading?: boolean;
   algorithmList: ShortFormVideoData[];
 }
 
@@ -29,7 +30,14 @@ function fetchRelatedVideos(
   }));
 }
 
-export default function BaseShortsTab({ algorithmList }: BaseShortsTabProps) {
+export default function BaseShortsTab({
+  algorithmList,
+  isLoading,
+}: BaseShortsTabProps) {
+  if (isLoading) {
+    return <div>로딩중</div>;
+  }
+
   const [vList, setVList] = useState<ShortFormVideoData[]>(algorithmList);
   const [rowIndex, setRowIndex] = useState(0);
   const [colIndex, setColIndex] = useState(0);

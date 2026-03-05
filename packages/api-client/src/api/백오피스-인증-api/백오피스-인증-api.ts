@@ -4,10 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -20,411 +17,502 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import type {
   BackofficeLoginRequest,
   BackofficeSignupRequest,
-  CheckEmailAvailableParams
-} from '.././model';
+  CheckEmailAvailableParams,
+} from ".././model";
 
+import { customMutator } from "../../lib/mutator";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * 이메일, 비밀번호, 닉네임으로 업로더 계정을 생성합니다. 이메일 중복 체크를 수행합니다.
  * @summary 업로더 회원가입
  */
 export type signupUploaderResponse201 = {
-  data: Blob
-  status: 201
-}
+  data: Blob;
+  status: 201;
+};
 
-export type signupUploaderResponseSuccess = (signupUploaderResponse201) & {
+export type signupUploaderResponseSuccess = signupUploaderResponse201 & {
   headers: Headers;
 };
-;
-
-export type signupUploaderResponse = (signupUploaderResponseSuccess)
+export type signupUploaderResponse = signupUploaderResponseSuccess;
 
 export const getSignupUploaderUrl = () => {
+  return `/api/v1/backoffice/auth/signup/uploader`;
+};
 
-
-  
-
-  return `/api/v1/backoffice/auth/signup/uploader`
-}
-
-export const signupUploader = async (backofficeSignupRequest: BackofficeSignupRequest, options?: RequestInit): Promise<signupUploaderResponse> => {
-  
-  const res = await fetch(getSignupUploaderUrl(),
-  {      
+export const signupUploader = async (
+  backofficeSignupRequest: BackofficeSignupRequest,
+  options?: RequestInit,
+): Promise<signupUploaderResponse> => {
+  return customMutator<signupUploaderResponse>(getSignupUploaderUrl(), {
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      backofficeSignupRequest,)
-  }
-)
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(backofficeSignupRequest),
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: signupUploaderResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as signupUploaderResponse
-}
-  
+export const getSignupUploaderMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof signupUploader>>,
+    TError,
+    { data: BackofficeSignupRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof signupUploader>>,
+  TError,
+  { data: BackofficeSignupRequest },
+  TContext
+> => {
+  const mutationKey = ["signupUploader"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof signupUploader>>,
+    { data: BackofficeSignupRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
+    return signupUploader(data, requestOptions);
+  };
 
-export const getSignupUploaderMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signupUploader>>, TError,{data: BackofficeSignupRequest}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof signupUploader>>, TError,{data: BackofficeSignupRequest}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['signupUploader'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type SignupUploaderMutationResult = NonNullable<
+  Awaited<ReturnType<typeof signupUploader>>
+>;
+export type SignupUploaderMutationBody = BackofficeSignupRequest;
+export type SignupUploaderMutationError = unknown;
 
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof signupUploader>>, {data: BackofficeSignupRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  signupUploader(data,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SignupUploaderMutationResult = NonNullable<Awaited<ReturnType<typeof signupUploader>>>
-    export type SignupUploaderMutationBody = BackofficeSignupRequest
-    export type SignupUploaderMutationError = unknown
-
-    /**
+/**
  * @summary 업로더 회원가입
  */
-export const useSignupUploader = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signupUploader>>, TError,{data: BackofficeSignupRequest}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof signupUploader>>,
-        TError,
-        {data: BackofficeSignupRequest},
-        TContext
-      > => {
-      return useMutation(getSignupUploaderMutationOptions(options), queryClient);
-    }
-    /**
+export const useSignupUploader = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof signupUploader>>,
+      TError,
+      { data: BackofficeSignupRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof signupUploader>>,
+  TError,
+  { data: BackofficeSignupRequest },
+  TContext
+> => {
+  return useMutation(getSignupUploaderMutationOptions(options), queryClient);
+};
+/**
  * 이메일과 비밀번호로 백오피스에 로그인합니다. UPLOADER 또는 ADMIN 계정만 가능합니다.
  * @summary 백오피스 로그인
  */
 export type loginResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type loginResponseSuccess = (loginResponse200) & {
+export type loginResponseSuccess = loginResponse200 & {
   headers: Headers;
 };
-;
-
-export type loginResponse = (loginResponseSuccess)
+export type loginResponse = loginResponseSuccess;
 
 export const getLoginUrl = () => {
+  return `/api/v1/backoffice/auth/login`;
+};
 
-
-  
-
-  return `/api/v1/backoffice/auth/login`
-}
-
-export const login = async (backofficeLoginRequest: BackofficeLoginRequest, options?: RequestInit): Promise<loginResponse> => {
-  
-  const res = await fetch(getLoginUrl(),
-  {      
+export const login = async (
+  backofficeLoginRequest: BackofficeLoginRequest,
+  options?: RequestInit,
+): Promise<loginResponse> => {
+  return customMutator<loginResponse>(getLoginUrl(), {
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      backofficeLoginRequest,)
-  }
-)
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(backofficeLoginRequest),
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: loginResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as loginResponse
-}
-  
+export const getLoginMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof login>>,
+    TError,
+    { data: BackofficeLoginRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof login>>,
+  TError,
+  { data: BackofficeLoginRequest },
+  TContext
+> => {
+  const mutationKey = ["login"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof login>>,
+    { data: BackofficeLoginRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
+    return login(data, requestOptions);
+  };
 
-export const getLoginMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: BackofficeLoginRequest}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: BackofficeLoginRequest}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['login'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type LoginMutationResult = NonNullable<
+  Awaited<ReturnType<typeof login>>
+>;
+export type LoginMutationBody = BackofficeLoginRequest;
+export type LoginMutationError = unknown;
 
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof login>>, {data: BackofficeLoginRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  login(data,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type LoginMutationResult = NonNullable<Awaited<ReturnType<typeof login>>>
-    export type LoginMutationBody = BackofficeLoginRequest
-    export type LoginMutationError = unknown
-
-    /**
+/**
  * @summary 백오피스 로그인
  */
-export const useLogin = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: BackofficeLoginRequest}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof login>>,
-        TError,
-        {data: BackofficeLoginRequest},
-        TContext
-      > => {
-      return useMutation(getLoginMutationOptions(options), queryClient);
-    }
-    /**
+export const useLogin = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof login>>,
+      TError,
+      { data: BackofficeLoginRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof login>>,
+  TError,
+  { data: BackofficeLoginRequest },
+  TContext
+> => {
+  return useMutation(getLoginMutationOptions(options), queryClient);
+};
+/**
  * 회원가입 전 이메일 사용 가능 여부를 확인합니다. true = 사용 가능, false = 이미 존재
  * @summary 이메일 중복 체크
  */
 export type checkEmailAvailableResponse200 = {
-  data: Blob
-  status: 200
-}
-
-export type checkEmailAvailableResponseSuccess = (checkEmailAvailableResponse200) & {
-  headers: Headers;
+  data: Blob;
+  status: 200;
 };
-;
 
-export type checkEmailAvailableResponse = (checkEmailAvailableResponseSuccess)
+export type checkEmailAvailableResponseSuccess =
+  checkEmailAvailableResponse200 & {
+    headers: Headers;
+  };
+export type checkEmailAvailableResponse = checkEmailAvailableResponseSuccess;
 
-export const getCheckEmailAvailableUrl = (params: CheckEmailAvailableParams,) => {
+export const getCheckEmailAvailableUrl = (
+  params: CheckEmailAvailableParams,
+) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/backoffice/auth/check-email?${stringifiedParams}` : `/api/v1/backoffice/auth/check-email`
-}
+  return stringifiedParams.length > 0
+    ? `/api/v1/backoffice/auth/check-email?${stringifiedParams}`
+    : `/api/v1/backoffice/auth/check-email`;
+};
 
-export const checkEmailAvailable = async (params: CheckEmailAvailableParams, options?: RequestInit): Promise<checkEmailAvailableResponse> => {
-  
-  const res = await fetch(getCheckEmailAvailableUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-)
+export const checkEmailAvailable = async (
+  params: CheckEmailAvailableParams,
+  options?: RequestInit,
+): Promise<checkEmailAvailableResponse> => {
+  return customMutator<checkEmailAvailableResponse>(
+    getCheckEmailAvailableUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: checkEmailAvailableResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as checkEmailAvailableResponse
-}
-  
-
-
-
-
-export const getCheckEmailAvailableQueryKey = (params?: CheckEmailAvailableParams,) => {
-    return [
-    `/api/v1/backoffice/auth/check-email`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-    
-export const getCheckEmailAvailableQueryOptions = <TData = Awaited<ReturnType<typeof checkEmailAvailable>>, TError = unknown>(params: CheckEmailAvailableParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof checkEmailAvailable>>, TError, TData>>, fetch?: RequestInit}
+export const getCheckEmailAvailableQueryKey = (
+  params?: CheckEmailAvailableParams,
 ) => {
+  return [
+    `/api/v1/backoffice/auth/check-email`,
+    ...(params ? [params] : []),
+  ] as const;
+};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+export const getCheckEmailAvailableQueryOptions = <
+  TData = Awaited<ReturnType<typeof checkEmailAvailable>>,
+  TError = unknown,
+>(
+  params: CheckEmailAvailableParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkEmailAvailable>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getCheckEmailAvailableQueryKey(params);
+  const queryKey =
+    queryOptions?.queryKey ?? getCheckEmailAvailableQueryKey(params);
 
-  
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof checkEmailAvailable>>
+  > = ({ signal }) =>
+    checkEmailAvailable(params, { signal, ...requestOptions });
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof checkEmailAvailable>>> = ({ signal }) => checkEmailAvailable(params, { signal, ...fetchOptions });
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof checkEmailAvailable>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-      
+export type CheckEmailAvailableQueryResult = NonNullable<
+  Awaited<ReturnType<typeof checkEmailAvailable>>
+>;
+export type CheckEmailAvailableQueryError = unknown;
 
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof checkEmailAvailable>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CheckEmailAvailableQueryResult = NonNullable<Awaited<ReturnType<typeof checkEmailAvailable>>>
-export type CheckEmailAvailableQueryError = unknown
-
-
-export function useCheckEmailAvailable<TData = Awaited<ReturnType<typeof checkEmailAvailable>>, TError = unknown>(
- params: CheckEmailAvailableParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof checkEmailAvailable>>, TError, TData>> & Pick<
+export function useCheckEmailAvailable<
+  TData = Awaited<ReturnType<typeof checkEmailAvailable>>,
+  TError = unknown,
+>(
+  params: CheckEmailAvailableParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkEmailAvailable>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof checkEmailAvailable>>,
           TError,
           Awaited<ReturnType<typeof checkEmailAvailable>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCheckEmailAvailable<TData = Awaited<ReturnType<typeof checkEmailAvailable>>, TError = unknown>(
- params: CheckEmailAvailableParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof checkEmailAvailable>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useCheckEmailAvailable<
+  TData = Awaited<ReturnType<typeof checkEmailAvailable>>,
+  TError = unknown,
+>(
+  params: CheckEmailAvailableParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkEmailAvailable>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof checkEmailAvailable>>,
           TError,
           Awaited<ReturnType<typeof checkEmailAvailable>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCheckEmailAvailable<TData = Awaited<ReturnType<typeof checkEmailAvailable>>, TError = unknown>(
- params: CheckEmailAvailableParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof checkEmailAvailable>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useCheckEmailAvailable<
+  TData = Awaited<ReturnType<typeof checkEmailAvailable>>,
+  TError = unknown,
+>(
+  params: CheckEmailAvailableParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkEmailAvailable>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 이메일 중복 체크
  */
 
-export function useCheckEmailAvailable<TData = Awaited<ReturnType<typeof checkEmailAvailable>>, TError = unknown>(
- params: CheckEmailAvailableParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof checkEmailAvailable>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useCheckEmailAvailable<
+  TData = Awaited<ReturnType<typeof checkEmailAvailable>>,
+  TError = unknown,
+>(
+  params: CheckEmailAvailableParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof checkEmailAvailable>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getCheckEmailAvailableQueryOptions(params, options);
 
-  const queryOptions = getCheckEmailAvailableQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
 
 /**
  * 업로더 본인이 계정을 탈퇴합니다. Soft Delete로 처리됩니다.
  * @summary 업로더 계정 탈퇴
  */
 export type deleteAccountResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type deleteAccountResponseSuccess = (deleteAccountResponse200) & {
+export type deleteAccountResponseSuccess = deleteAccountResponse200 & {
   headers: Headers;
 };
-;
-
-export type deleteAccountResponse = (deleteAccountResponseSuccess)
+export type deleteAccountResponse = deleteAccountResponseSuccess;
 
 export const getDeleteAccountUrl = () => {
+  return `/api/v1/backoffice/auth/account`;
+};
 
-
-  
-
-  return `/api/v1/backoffice/auth/account`
-}
-
-export const deleteAccount = async ( options?: RequestInit): Promise<deleteAccountResponse> => {
-  
-  const res = await fetch(getDeleteAccountUrl(),
-  {      
+export const deleteAccount = async (
+  options?: RequestInit,
+): Promise<deleteAccountResponse> => {
+  return customMutator<deleteAccountResponse>(getDeleteAccountUrl(), {
     ...options,
-    method: 'DELETE'
-    
-    
-  }
-)
+    method: "DELETE",
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: deleteAccountResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as deleteAccountResponse
-}
-  
+export const getDeleteAccountMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteAccount>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteAccount>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["deleteAccount"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteAccount>>,
+    void
+  > = () => {
+    return deleteAccount(requestOptions);
+  };
 
+  return { mutationFn, ...mutationOptions };
+};
 
-export const getDeleteAccountMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAccount>>, TError,void, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteAccount>>, TError,void, TContext> => {
+export type DeleteAccountMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteAccount>>
+>;
 
-const mutationKey = ['deleteAccount'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type DeleteAccountMutationError = unknown;
 
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteAccount>>, void> = () => {
-          
-
-          return  deleteAccount(fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteAccountMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAccount>>>
-    
-    export type DeleteAccountMutationError = unknown
-
-    /**
+/**
  * @summary 업로더 계정 탈퇴
  */
-export const useDeleteAccount = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAccount>>, TError,void, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteAccount>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getDeleteAccountMutationOptions(options), queryClient);
-    }
-    
+export const useDeleteAccount = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteAccount>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteAccount>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getDeleteAccountMutationOptions(options), queryClient);
+};

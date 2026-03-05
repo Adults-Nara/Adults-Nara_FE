@@ -6,5 +6,5 @@
  */
 
 export type GetMyPreferencesParams = {
-limit?: number;
+  limit?: number;
 };

@@ -4,8 +4,8 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { PointTransactionHistoryRequest } from './pointTransactionHistoryRequest';
+import type { PointTransactionHistoryRequest } from "./pointTransactionHistoryRequest";
 
 export type GetMyPointTransactionHistoryParams = {
-req: PointTransactionHistoryRequest;
+  req: PointTransactionHistoryRequest;
 };

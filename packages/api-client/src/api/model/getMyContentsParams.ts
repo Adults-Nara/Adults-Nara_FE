@@ -4,12 +4,12 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { GetMyContentsDirection } from './getMyContentsDirection';
+import type { GetMyContentsDirection } from "./getMyContentsDirection";
 
 export type GetMyContentsParams = {
-keyword?: string;
-page?: number;
-size?: number;
-sortBy?: string;
-direction?: GetMyContentsDirection;
+  keyword?: string;
+  page?: number;
+  size?: number;
+  sortBy?: string;
+  direction?: GetMyContentsDirection;
 };

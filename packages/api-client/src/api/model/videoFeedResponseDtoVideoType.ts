@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type VideoFeedResponseDtoVideoType = typeof VideoFeedResponseDtoVideoType[keyof typeof VideoFeedResponseDtoVideoType];
-
+export type VideoFeedResponseDtoVideoType =
+  (typeof VideoFeedResponseDtoVideoType)[keyof typeof VideoFeedResponseDtoVideoType];
 
 export const VideoFeedResponseDtoVideoType = {
-  SHORT: 'SHORT',
-  LONG: 'LONG',
+  SHORT: "SHORT",
+  LONG: "LONG",
 } as const;

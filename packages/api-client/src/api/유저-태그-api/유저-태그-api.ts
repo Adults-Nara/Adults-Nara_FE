@@ -4,10 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -20,314 +17,373 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
-import type {
-  OnboardingTagRequest,
-  UpdateUserTagRequest
-} from '.././model';
+import type { OnboardingTagRequest, UpdateUserTagRequest } from ".././model";
 
+import { customMutator } from "../../lib/mutator";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * 사용자의 관심 태그 목록을 새로운 목록으로 교체합니다.
  * @summary 관심 태그 수정
  */
 export type updateUserTagsResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type updateUserTagsResponseSuccess = (updateUserTagsResponse200) & {
+export type updateUserTagsResponseSuccess = updateUserTagsResponse200 & {
   headers: Headers;
 };
-;
-
-export type updateUserTagsResponse = (updateUserTagsResponseSuccess)
+export type updateUserTagsResponse = updateUserTagsResponseSuccess;
 
 export const getUpdateUserTagsUrl = () => {
+  return `/api/v1/user-tag`;
+};
 
-
-  
-
-  return `/api/v1/user-tag`
-}
-
-export const updateUserTags = async (updateUserTagRequest: UpdateUserTagRequest, options?: RequestInit): Promise<updateUserTagsResponse> => {
-  
-  const res = await fetch(getUpdateUserTagsUrl(),
-  {      
+export const updateUserTags = async (
+  updateUserTagRequest: UpdateUserTagRequest,
+  options?: RequestInit,
+): Promise<updateUserTagsResponse> => {
+  return customMutator<updateUserTagsResponse>(getUpdateUserTagsUrl(), {
     ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      updateUserTagRequest,)
-  }
-)
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateUserTagRequest),
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: updateUserTagsResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as updateUserTagsResponse
-}
-  
+export const getUpdateUserTagsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateUserTags>>,
+    TError,
+    { data: UpdateUserTagRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateUserTags>>,
+  TError,
+  { data: UpdateUserTagRequest },
+  TContext
+> => {
+  const mutationKey = ["updateUserTags"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateUserTags>>,
+    { data: UpdateUserTagRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
+    return updateUserTags(data, requestOptions);
+  };
 
-export const getUpdateUserTagsMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUserTags>>, TError,{data: UpdateUserTagRequest}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof updateUserTags>>, TError,{data: UpdateUserTagRequest}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['updateUserTags'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type UpdateUserTagsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateUserTags>>
+>;
+export type UpdateUserTagsMutationBody = UpdateUserTagRequest;
+export type UpdateUserTagsMutationError = unknown;
 
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateUserTags>>, {data: UpdateUserTagRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  updateUserTags(data,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdateUserTagsMutationResult = NonNullable<Awaited<ReturnType<typeof updateUserTags>>>
-    export type UpdateUserTagsMutationBody = UpdateUserTagRequest
-    export type UpdateUserTagsMutationError = unknown
-
-    /**
+/**
  * @summary 관심 태그 수정
  */
-export const useUpdateUserTags = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUserTags>>, TError,{data: UpdateUserTagRequest}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateUserTags>>,
-        TError,
-        {data: UpdateUserTagRequest},
-        TContext
-      > => {
-      return useMutation(getUpdateUserTagsMutationOptions(options), queryClient);
-    }
-    /**
+export const useUpdateUserTags = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateUserTags>>,
+      TError,
+      { data: UpdateUserTagRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateUserTags>>,
+  TError,
+  { data: UpdateUserTagRequest },
+  TContext
+> => {
+  return useMutation(getUpdateUserTagsMutationOptions(options), queryClient);
+};
+/**
  * 온보딩 시 사용자가 선택한 관심 태그를 저장합니다.
  * @summary 온보딩 태그 저장
  */
 export type saveOnboardingTagsResponse200 = {
-  data: Blob
-  status: 200
-}
-
-export type saveOnboardingTagsResponseSuccess = (saveOnboardingTagsResponse200) & {
-  headers: Headers;
+  data: Blob;
+  status: 200;
 };
-;
 
-export type saveOnboardingTagsResponse = (saveOnboardingTagsResponseSuccess)
+export type saveOnboardingTagsResponseSuccess =
+  saveOnboardingTagsResponse200 & {
+    headers: Headers;
+  };
+export type saveOnboardingTagsResponse = saveOnboardingTagsResponseSuccess;
 
 export const getSaveOnboardingTagsUrl = () => {
+  return `/api/v1/user-tag/onboarding`;
+};
 
-
-  
-
-  return `/api/v1/user-tag/onboarding`
-}
-
-export const saveOnboardingTags = async (onboardingTagRequest: OnboardingTagRequest, options?: RequestInit): Promise<saveOnboardingTagsResponse> => {
-  
-  const res = await fetch(getSaveOnboardingTagsUrl(),
-  {      
+export const saveOnboardingTags = async (
+  onboardingTagRequest: OnboardingTagRequest,
+  options?: RequestInit,
+): Promise<saveOnboardingTagsResponse> => {
+  return customMutator<saveOnboardingTagsResponse>(getSaveOnboardingTagsUrl(), {
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      onboardingTagRequest,)
-  }
-)
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(onboardingTagRequest),
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: saveOnboardingTagsResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as saveOnboardingTagsResponse
-}
-  
+export const getSaveOnboardingTagsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof saveOnboardingTags>>,
+    TError,
+    { data: OnboardingTagRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof saveOnboardingTags>>,
+  TError,
+  { data: OnboardingTagRequest },
+  TContext
+> => {
+  const mutationKey = ["saveOnboardingTags"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof saveOnboardingTags>>,
+    { data: OnboardingTagRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
+    return saveOnboardingTags(data, requestOptions);
+  };
 
-export const getSaveOnboardingTagsMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveOnboardingTags>>, TError,{data: OnboardingTagRequest}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof saveOnboardingTags>>, TError,{data: OnboardingTagRequest}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['saveOnboardingTags'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type SaveOnboardingTagsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof saveOnboardingTags>>
+>;
+export type SaveOnboardingTagsMutationBody = OnboardingTagRequest;
+export type SaveOnboardingTagsMutationError = unknown;
 
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof saveOnboardingTags>>, {data: OnboardingTagRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  saveOnboardingTags(data,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SaveOnboardingTagsMutationResult = NonNullable<Awaited<ReturnType<typeof saveOnboardingTags>>>
-    export type SaveOnboardingTagsMutationBody = OnboardingTagRequest
-    export type SaveOnboardingTagsMutationError = unknown
-
-    /**
+/**
  * @summary 온보딩 태그 저장
  */
-export const useSaveOnboardingTags = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveOnboardingTags>>, TError,{data: OnboardingTagRequest}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof saveOnboardingTags>>,
-        TError,
-        {data: OnboardingTagRequest},
-        TContext
-      > => {
-      return useMutation(getSaveOnboardingTagsMutationOptions(options), queryClient);
-    }
-    /**
+export const useSaveOnboardingTags = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof saveOnboardingTags>>,
+      TError,
+      { data: OnboardingTagRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof saveOnboardingTags>>,
+  TError,
+  { data: OnboardingTagRequest },
+  TContext
+> => {
+  return useMutation(
+    getSaveOnboardingTagsMutationOptions(options),
+    queryClient,
+  );
+};
+/**
  * 사용자가 관심 설정한 태그별 시청 횟수 통계를 반환합니다.
  * @summary 태그별 시청 통계 조회
  */
 export type getTagWatchStatsResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getTagWatchStatsResponseSuccess = (getTagWatchStatsResponse200) & {
+export type getTagWatchStatsResponseSuccess = getTagWatchStatsResponse200 & {
   headers: Headers;
 };
-;
-
-export type getTagWatchStatsResponse = (getTagWatchStatsResponseSuccess)
+export type getTagWatchStatsResponse = getTagWatchStatsResponseSuccess;
 
 export const getGetTagWatchStatsUrl = () => {
+  return `/api/v1/user-tag/tag-watch-stats`;
+};
 
-
-  
-
-  return `/api/v1/user-tag/tag-watch-stats`
-}
-
-export const getTagWatchStats = async ( options?: RequestInit): Promise<getTagWatchStatsResponse> => {
-  
-  const res = await fetch(getGetTagWatchStatsUrl(),
-  {      
+export const getTagWatchStats = async (
+  options?: RequestInit,
+): Promise<getTagWatchStatsResponse> => {
+  return customMutator<getTagWatchStatsResponse>(getGetTagWatchStatsUrl(), {
     ...options,
-    method: 'GET'
-    
-    
-  }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getTagWatchStatsResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getTagWatchStatsResponse
-}
-  
-
-
-
+    method: "GET",
+  });
+};
 
 export const getGetTagWatchStatsQueryKey = () => {
-    return [
-    `/api/v1/user-tag/tag-watch-stats`
-    ] as const;
-    }
+  return [`/api/v1/user-tag/tag-watch-stats`] as const;
+};
 
-    
-export const getGetTagWatchStatsQueryOptions = <TData = Awaited<ReturnType<typeof getTagWatchStats>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTagWatchStats>>, TError, TData>>, fetch?: RequestInit}
-) => {
+export const getGetTagWatchStatsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getTagWatchStats>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getTagWatchStats>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetTagWatchStatsQueryKey();
 
-  const queryKey =  queryOptions?.queryKey ?? getGetTagWatchStatsQueryKey();
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getTagWatchStats>>
+  > = ({ signal }) => getTagWatchStats({ signal, ...requestOptions });
 
-  
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getTagWatchStats>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTagWatchStats>>> = ({ signal }) => getTagWatchStats({ signal, ...fetchOptions });
+export type GetTagWatchStatsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTagWatchStats>>
+>;
+export type GetTagWatchStatsQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTagWatchStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetTagWatchStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getTagWatchStats>>>
-export type GetTagWatchStatsQueryError = unknown
-
-
-export function useGetTagWatchStats<TData = Awaited<ReturnType<typeof getTagWatchStats>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTagWatchStats>>, TError, TData>> & Pick<
+export function useGetTagWatchStats<
+  TData = Awaited<ReturnType<typeof getTagWatchStats>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getTagWatchStats>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getTagWatchStats>>,
           TError,
           Awaited<ReturnType<typeof getTagWatchStats>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetTagWatchStats<TData = Awaited<ReturnType<typeof getTagWatchStats>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTagWatchStats>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetTagWatchStats<
+  TData = Awaited<ReturnType<typeof getTagWatchStats>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getTagWatchStats>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getTagWatchStats>>,
           TError,
           Awaited<ReturnType<typeof getTagWatchStats>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetTagWatchStats<TData = Awaited<ReturnType<typeof getTagWatchStats>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTagWatchStats>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetTagWatchStats<
+  TData = Awaited<ReturnType<typeof getTagWatchStats>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getTagWatchStats>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 태그별 시청 통계 조회
  */
 
-export function useGetTagWatchStats<TData = Awaited<ReturnType<typeof getTagWatchStats>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTagWatchStats>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetTagWatchStats<
+  TData = Awaited<ReturnType<typeof getTagWatchStats>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getTagWatchStats>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetTagWatchStatsQueryOptions(options);
 
-  const queryOptions = getGetTagWatchStatsQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
-

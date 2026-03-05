@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type ApiResponsePageVideoSearchResponseResult = typeof ApiResponsePageVideoSearchResponseResult[keyof typeof ApiResponsePageVideoSearchResponseResult];
-
+export type ApiResponsePageVideoSearchResponseResult =
+  (typeof ApiResponsePageVideoSearchResponseResult)[keyof typeof ApiResponsePageVideoSearchResponseResult];
 
 export const ApiResponsePageVideoSearchResponseResult = {
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR',
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
 } as const;

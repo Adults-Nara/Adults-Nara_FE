@@ -4,8 +4,8 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { ApiResponseBooleanResult } from './apiResponseBooleanResult';
-import type { ErrorMessage } from './errorMessage';
+import type { ApiResponseBooleanResult } from "./apiResponseBooleanResult";
+import type { ErrorMessage } from "./errorMessage";
 
 export interface ApiResponseBoolean {
   result?: ApiResponseBooleanResult;

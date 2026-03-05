@@ -6,12 +6,12 @@
  */
 
 export type KakaoLoginParams = {
-/**
- * 카카오 인가코드
- */
-code: string;
-/**
- * CSRF 방지용 state 토큰
- */
-state?: string;
+  /**
+   * 카카오 인가코드
+   */
+  code: string;
+  /**
+   * CSRF 방지용 state 토큰
+   */
+  state?: string;
 };

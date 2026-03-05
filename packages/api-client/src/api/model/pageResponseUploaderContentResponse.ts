@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { UploaderContentResponse } from './uploaderContentResponse';
+import type { UploaderContentResponse } from "./uploaderContentResponse";
 
 export interface PageResponseUploaderContentResponse {
   content?: UploaderContentResponse[];

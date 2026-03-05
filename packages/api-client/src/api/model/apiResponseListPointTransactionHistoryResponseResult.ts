@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type ApiResponseListPointTransactionHistoryResponseResult = typeof ApiResponseListPointTransactionHistoryResponseResult[keyof typeof ApiResponseListPointTransactionHistoryResponseResult];
-
+export type ApiResponseListPointTransactionHistoryResponseResult =
+  (typeof ApiResponseListPointTransactionHistoryResponseResult)[keyof typeof ApiResponseListPointTransactionHistoryResponseResult];
 
 export const ApiResponseListPointTransactionHistoryResponseResult = {
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR',
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
 } as const;

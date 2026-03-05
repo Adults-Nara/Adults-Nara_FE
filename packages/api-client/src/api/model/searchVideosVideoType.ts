@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type SearchVideosVideoType = typeof SearchVideosVideoType[keyof typeof SearchVideosVideoType];
-
+export type SearchVideosVideoType =
+  (typeof SearchVideosVideoType)[keyof typeof SearchVideosVideoType];
 
 export const SearchVideosVideoType = {
-  SHORT: 'SHORT',
-  LONG: 'LONG',
+  SHORT: "SHORT",
+  LONG: "LONG",
 } as const;

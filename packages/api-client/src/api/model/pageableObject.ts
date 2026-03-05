@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { SortObject } from './sortObject';
+import type { SortObject } from "./sortObject";
 
 export interface PageableObject {
   paged?: boolean;

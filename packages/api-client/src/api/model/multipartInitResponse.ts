@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { PresignedPart } from './presignedPart';
+import type { PresignedPart } from "./presignedPart";
 
 export interface MultipartInitResponse {
   videoId?: string;

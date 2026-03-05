@@ -4,9 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -16,275 +14,426 @@ import type {
   QueryKey,
   UndefinedInitialDataOptions,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import type {
   GetMyPreferencesParams,
-  GetUserPreferencesParams
-} from '.././model';
+  GetUserPreferencesParams,
+} from ".././model";
 
+import { customMutator } from "../../lib/mutator";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * 관리자만 접근 가능합니다. 특정 사용자의 상위 N개 선호 태그와 점수를 반환합니다.
  * @summary 특정 유저 선호 태그 조회 (관리자)
  */
 export type getUserPreferencesResponse200 = {
-  data: Blob
-  status: 200
-}
-
-export type getUserPreferencesResponseSuccess = (getUserPreferencesResponse200) & {
-  headers: Headers;
+  data: Blob;
+  status: 200;
 };
-;
 
-export type getUserPreferencesResponse = (getUserPreferencesResponseSuccess)
+export type getUserPreferencesResponseSuccess =
+  getUserPreferencesResponse200 & {
+    headers: Headers;
+  };
+export type getUserPreferencesResponse = getUserPreferencesResponseSuccess;
 
-export const getGetUserPreferencesUrl = (userId: number,
-    params?: GetUserPreferencesParams,) => {
+export const getGetUserPreferencesUrl = (
+  userId: number,
+  params?: GetUserPreferencesParams,
+) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/preferences/${userId}?${stringifiedParams}` : `/api/v1/preferences/${userId}`
-}
+  return stringifiedParams.length > 0
+    ? `/api/v1/preferences/${userId}?${stringifiedParams}`
+    : `/api/v1/preferences/${userId}`;
+};
 
-export const getUserPreferences = async (userId: number,
-    params?: GetUserPreferencesParams, options?: RequestInit): Promise<getUserPreferencesResponse> => {
-  
-  const res = await fetch(getGetUserPreferencesUrl(userId,params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-)
+export const getUserPreferences = async (
+  userId: number,
+  params?: GetUserPreferencesParams,
+  options?: RequestInit,
+): Promise<getUserPreferencesResponse> => {
+  return customMutator<getUserPreferencesResponse>(
+    getGetUserPreferencesUrl(userId, params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getUserPreferencesResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getUserPreferencesResponse
-}
-  
-
-
-
-
-export const getGetUserPreferencesQueryKey = (userId: number,
-    params?: GetUserPreferencesParams,) => {
-    return [
-    `/api/v1/preferences/${userId}`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-    
-export const getGetUserPreferencesQueryOptions = <TData = Awaited<ReturnType<typeof getUserPreferences>>, TError = unknown>(userId: number,
-    params?: GetUserPreferencesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserPreferences>>, TError, TData>>, fetch?: RequestInit}
+export const getGetUserPreferencesQueryKey = (
+  userId: number,
+  params?: GetUserPreferencesParams,
 ) => {
+  return [
+    `/api/v1/preferences/${userId}`,
+    ...(params ? [params] : []),
+  ] as const;
+};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+export const getGetUserPreferencesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getUserPreferences>>,
+  TError = unknown,
+>(
+  userId: number,
+  params?: GetUserPreferencesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUserPreferences>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetUserPreferencesQueryKey(userId,params);
+  const queryKey =
+    queryOptions?.queryKey ?? getGetUserPreferencesQueryKey(userId, params);
 
-  
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getUserPreferences>>
+  > = ({ signal }) =>
+    getUserPreferences(userId, params, { signal, ...requestOptions });
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserPreferences>>> = ({ signal }) => getUserPreferences(userId,params, { signal, ...fetchOptions });
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!userId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getUserPreferences>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-      
+export type GetUserPreferencesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getUserPreferences>>
+>;
+export type GetUserPreferencesQueryError = unknown;
 
-      
-
-   return  { queryKey, queryFn, enabled: !!(userId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUserPreferences>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetUserPreferencesQueryResult = NonNullable<Awaited<ReturnType<typeof getUserPreferences>>>
-export type GetUserPreferencesQueryError = unknown
-
-
-export function useGetUserPreferences<TData = Awaited<ReturnType<typeof getUserPreferences>>, TError = unknown>(
- userId: number,
-    params: undefined |  GetUserPreferencesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserPreferences>>, TError, TData>> & Pick<
+export function useGetUserPreferences<
+  TData = Awaited<ReturnType<typeof getUserPreferences>>,
+  TError = unknown,
+>(
+  userId: number,
+  params: undefined | GetUserPreferencesParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUserPreferences>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUserPreferences>>,
           TError,
           Awaited<ReturnType<typeof getUserPreferences>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetUserPreferences<TData = Awaited<ReturnType<typeof getUserPreferences>>, TError = unknown>(
- userId: number,
-    params?: GetUserPreferencesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserPreferences>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUserPreferences<
+  TData = Awaited<ReturnType<typeof getUserPreferences>>,
+  TError = unknown,
+>(
+  userId: number,
+  params?: GetUserPreferencesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUserPreferences>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUserPreferences>>,
           TError,
           Awaited<ReturnType<typeof getUserPreferences>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetUserPreferences<TData = Awaited<ReturnType<typeof getUserPreferences>>, TError = unknown>(
- userId: number,
-    params?: GetUserPreferencesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserPreferences>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetUserPreferences<
+  TData = Awaited<ReturnType<typeof getUserPreferences>>,
+  TError = unknown,
+>(
+  userId: number,
+  params?: GetUserPreferencesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUserPreferences>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 특정 유저 선호 태그 조회 (관리자)
  */
 
-export function useGetUserPreferences<TData = Awaited<ReturnType<typeof getUserPreferences>>, TError = unknown>(
- userId: number,
-    params?: GetUserPreferencesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserPreferences>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetUserPreferences<
+  TData = Awaited<ReturnType<typeof getUserPreferences>>,
+  TError = unknown,
+>(
+  userId: number,
+  params?: GetUserPreferencesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getUserPreferences>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetUserPreferencesQueryOptions(
+    userId,
+    params,
+    options,
+  );
 
-  const queryOptions = getGetUserPreferencesQueryOptions(userId,params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
 
 /**
  * 현재 로그인한 사용자의 상위 N개 선호 태그와 점수를 반환합니다.
  * @summary 내 선호 태그 조회
  */
 export type getMyPreferencesResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getMyPreferencesResponseSuccess = (getMyPreferencesResponse200) & {
+export type getMyPreferencesResponseSuccess = getMyPreferencesResponse200 & {
   headers: Headers;
 };
-;
+export type getMyPreferencesResponse = getMyPreferencesResponseSuccess;
 
-export type getMyPreferencesResponse = (getMyPreferencesResponseSuccess)
-
-export const getGetMyPreferencesUrl = (params?: GetMyPreferencesParams,) => {
+export const getGetMyPreferencesUrl = (params?: GetMyPreferencesParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/preferences/me?${stringifiedParams}` : `/api/v1/preferences/me`
-}
+  return stringifiedParams.length > 0
+    ? `/api/v1/preferences/me?${stringifiedParams}`
+    : `/api/v1/preferences/me`;
+};
 
-export const getMyPreferences = async (params?: GetMyPreferencesParams, options?: RequestInit): Promise<getMyPreferencesResponse> => {
-  
-  const res = await fetch(getGetMyPreferencesUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-)
+export const getMyPreferences = async (
+  params?: GetMyPreferencesParams,
+  options?: RequestInit,
+): Promise<getMyPreferencesResponse> => {
+  return customMutator<getMyPreferencesResponse>(
+    getGetMyPreferencesUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getMyPreferencesResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getMyPreferencesResponse
-}
-  
-
-
-
-
-export const getGetMyPreferencesQueryKey = (params?: GetMyPreferencesParams,) => {
-    return [
-    `/api/v1/preferences/me`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-    
-export const getGetMyPreferencesQueryOptions = <TData = Awaited<ReturnType<typeof getMyPreferences>>, TError = unknown>(params?: GetMyPreferencesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyPreferences>>, TError, TData>>, fetch?: RequestInit}
+export const getGetMyPreferencesQueryKey = (
+  params?: GetMyPreferencesParams,
 ) => {
+  return [`/api/v1/preferences/me`, ...(params ? [params] : [])] as const;
+};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+export const getGetMyPreferencesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMyPreferences>>,
+  TError = unknown,
+>(
+  params?: GetMyPreferencesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMyPreferences>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetMyPreferencesQueryKey(params);
+  const queryKey =
+    queryOptions?.queryKey ?? getGetMyPreferencesQueryKey(params);
 
-  
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getMyPreferences>>
+  > = ({ signal }) => getMyPreferences(params, { signal, ...requestOptions });
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyPreferences>>> = ({ signal }) => getMyPreferences(params, { signal, ...fetchOptions });
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMyPreferences>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-      
+export type GetMyPreferencesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMyPreferences>>
+>;
+export type GetMyPreferencesQueryError = unknown;
 
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMyPreferences>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetMyPreferencesQueryResult = NonNullable<Awaited<ReturnType<typeof getMyPreferences>>>
-export type GetMyPreferencesQueryError = unknown
-
-
-export function useGetMyPreferences<TData = Awaited<ReturnType<typeof getMyPreferences>>, TError = unknown>(
- params: undefined |  GetMyPreferencesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyPreferences>>, TError, TData>> & Pick<
+export function useGetMyPreferences<
+  TData = Awaited<ReturnType<typeof getMyPreferences>>,
+  TError = unknown,
+>(
+  params: undefined | GetMyPreferencesParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMyPreferences>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMyPreferences>>,
           TError,
           Awaited<ReturnType<typeof getMyPreferences>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMyPreferences<TData = Awaited<ReturnType<typeof getMyPreferences>>, TError = unknown>(
- params?: GetMyPreferencesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyPreferences>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyPreferences<
+  TData = Awaited<ReturnType<typeof getMyPreferences>>,
+  TError = unknown,
+>(
+  params?: GetMyPreferencesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMyPreferences>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMyPreferences>>,
           TError,
           Awaited<ReturnType<typeof getMyPreferences>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMyPreferences<TData = Awaited<ReturnType<typeof getMyPreferences>>, TError = unknown>(
- params?: GetMyPreferencesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyPreferences>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyPreferences<
+  TData = Awaited<ReturnType<typeof getMyPreferences>>,
+  TError = unknown,
+>(
+  params?: GetMyPreferencesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMyPreferences>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 내 선호 태그 조회
  */
 
-export function useGetMyPreferences<TData = Awaited<ReturnType<typeof getMyPreferences>>, TError = unknown>(
- params?: GetMyPreferencesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyPreferences>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetMyPreferences<
+  TData = Awaited<ReturnType<typeof getMyPreferences>>,
+  TError = unknown,
+>(
+  params?: GetMyPreferencesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMyPreferences>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetMyPreferencesQueryOptions(params, options);
 
-  const queryOptions = getGetMyPreferencesQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
-

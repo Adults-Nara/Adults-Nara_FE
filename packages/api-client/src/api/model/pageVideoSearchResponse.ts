@@ -4,9 +4,9 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { PageableObject } from './pageableObject';
-import type { SortObject } from './sortObject';
-import type { VideoSearchResponse } from './videoSearchResponse';
+import type { PageableObject } from "./pageableObject";
+import type { SortObject } from "./sortObject";
+import type { VideoSearchResponse } from "./videoSearchResponse";
 
 export interface PageVideoSearchResponse {
   totalPages?: number;

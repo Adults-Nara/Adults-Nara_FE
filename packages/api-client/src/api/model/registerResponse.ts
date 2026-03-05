@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { SubscriptionResponse } from './subscriptionResponse';
+import type { SubscriptionResponse } from "./subscriptionResponse";
 
 export interface RegisterResponse {
   registered?: boolean;

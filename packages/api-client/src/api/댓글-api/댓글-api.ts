@@ -4,11 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -25,614 +21,862 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import type {
   CommentCreateRequest,
   CommentEditRequest,
-  GetCommentsParams
-} from '.././model';
+  GetCommentsParams,
+} from ".././model";
 
+import { customMutator } from "../../lib/mutator";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * 특정 영상의 댓글 목록을 페이지네이션으로 조회합니다. 비로그인 사용자도 조회 가능합니다.
  * @summary 댓글 목록 조회
  */
 export type getCommentsResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getCommentsResponseSuccess = (getCommentsResponse200) & {
+export type getCommentsResponseSuccess = getCommentsResponse200 & {
   headers: Headers;
 };
-;
+export type getCommentsResponse = getCommentsResponseSuccess;
 
-export type getCommentsResponse = (getCommentsResponseSuccess)
-
-export const getGetCommentsUrl = (videoId: number,
-    params?: GetCommentsParams,) => {
+export const getGetCommentsUrl = (
+  videoId: number,
+  params?: GetCommentsParams,
+) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/comment/videos/${videoId}?${stringifiedParams}` : `/api/v1/comment/videos/${videoId}`
-}
+  return stringifiedParams.length > 0
+    ? `/api/v1/comment/videos/${videoId}?${stringifiedParams}`
+    : `/api/v1/comment/videos/${videoId}`;
+};
 
-export const getComments = async (videoId: number,
-    params?: GetCommentsParams, options?: RequestInit): Promise<getCommentsResponse> => {
-  
-  const res = await fetch(getGetCommentsUrl(videoId,params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-)
+export const getComments = async (
+  videoId: number,
+  params?: GetCommentsParams,
+  options?: RequestInit,
+): Promise<getCommentsResponse> => {
+  return customMutator<getCommentsResponse>(
+    getGetCommentsUrl(videoId, params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getCommentsResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getCommentsResponse
-}
-  
-
-
-
-
-export const getGetCommentsInfiniteQueryKey = (videoId: number,
-    params?: GetCommentsParams,) => {
-    return [
-    'infinite', `/api/v1/comment/videos/${videoId}`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-export const getGetCommentsQueryKey = (videoId: number,
-    params?: GetCommentsParams,) => {
-    return [
-    `/api/v1/comment/videos/${videoId}`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-    
-export const getGetCommentsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getComments>>, GetCommentsParams['page']>, TError = unknown>(videoId: number,
-    params?: GetCommentsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData, QueryKey, GetCommentsParams['page']>>, fetch?: RequestInit}
+export const getGetCommentsInfiniteQueryKey = (
+  videoId: number,
+  params?: GetCommentsParams,
 ) => {
+  return [
+    "infinite",
+    `/api/v1/comment/videos/${videoId}`,
+    ...(params ? [params] : []),
+  ] as const;
+};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+export const getGetCommentsQueryKey = (
+  videoId: number,
+  params?: GetCommentsParams,
+) => {
+  return [
+    `/api/v1/comment/videos/${videoId}`,
+    ...(params ? [params] : []),
+  ] as const;
+};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetCommentsInfiniteQueryKey(videoId,params);
+export const getGetCommentsInfiniteQueryOptions = <
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getComments>>,
+    GetCommentsParams["page"]
+  >,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetCommentsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getComments>>,
+        TError,
+        TData,
+        QueryKey,
+        GetCommentsParams["page"]
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  
+  const queryKey =
+    queryOptions?.queryKey ?? getGetCommentsInfiniteQueryKey(videoId, params);
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getComments>>, QueryKey, GetCommentsParams['page']> = ({ signal, pageParam }) => getComments(videoId,{...params, 'page': pageParam || params?.['page']}, { signal, ...fetchOptions });
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getComments>>,
+    QueryKey,
+    GetCommentsParams["page"]
+  > = ({ signal, pageParam }) =>
+    getComments(
+      videoId,
+      { ...params, page: pageParam || params?.["page"] },
+      { signal, ...requestOptions },
+    );
 
-      
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!videoId,
+    ...queryOptions,
+  } as UseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getComments>>,
+    TError,
+    TData,
+    QueryKey,
+    GetCommentsParams["page"]
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-      
+export type GetCommentsInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getComments>>
+>;
+export type GetCommentsInfiniteQueryError = unknown;
 
-   return  { queryKey, queryFn, enabled: !!(videoId), ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData, QueryKey, GetCommentsParams['page']> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetCommentsInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getComments>>>
-export type GetCommentsInfiniteQueryError = unknown
-
-
-export function useGetCommentsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getComments>>, GetCommentsParams['page']>, TError = unknown>(
- videoId: number,
-    params: undefined |  GetCommentsParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData, QueryKey, GetCommentsParams['page']>> & Pick<
+export function useGetCommentsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getComments>>,
+    GetCommentsParams["page"]
+  >,
+  TError = unknown,
+>(
+  videoId: number,
+  params: undefined | GetCommentsParams,
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getComments>>,
+        TError,
+        TData,
+        QueryKey,
+        GetCommentsParams["page"]
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getComments>>,
           TError,
-          Awaited<ReturnType<typeof getComments>>, QueryKey
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCommentsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getComments>>, GetCommentsParams['page']>, TError = unknown>(
- videoId: number,
-    params?: GetCommentsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData, QueryKey, GetCommentsParams['page']>> & Pick<
+          Awaited<ReturnType<typeof getComments>>,
+          QueryKey
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCommentsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getComments>>,
+    GetCommentsParams["page"]
+  >,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetCommentsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getComments>>,
+        TError,
+        TData,
+        QueryKey,
+        GetCommentsParams["page"]
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getComments>>,
           TError,
-          Awaited<ReturnType<typeof getComments>>, QueryKey
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCommentsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getComments>>, GetCommentsParams['page']>, TError = unknown>(
- videoId: number,
-    params?: GetCommentsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData, QueryKey, GetCommentsParams['page']>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+          Awaited<ReturnType<typeof getComments>>,
+          QueryKey
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCommentsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getComments>>,
+    GetCommentsParams["page"]
+  >,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetCommentsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getComments>>,
+        TError,
+        TData,
+        QueryKey,
+        GetCommentsParams["page"]
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 댓글 목록 조회
  */
 
-export function useGetCommentsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getComments>>, GetCommentsParams['page']>, TError = unknown>(
- videoId: number,
-    params?: GetCommentsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData, QueryKey, GetCommentsParams['page']>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetCommentsInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getComments>>,
+    GetCommentsParams["page"]
+  >,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetCommentsParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getComments>>,
+        TError,
+        TData,
+        QueryKey,
+        GetCommentsParams["page"]
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCommentsInfiniteQueryOptions(
+    videoId,
+    params,
+    options,
+  );
 
-  const queryOptions = getGetCommentsInfiniteQueryOptions(videoId,params,options)
-
-  const query = useInfiniteQuery(queryOptions, queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
 
-
-
-
-export const getGetCommentsQueryOptions = <TData = Awaited<ReturnType<typeof getComments>>, TError = unknown>(videoId: number,
-    params?: GetCommentsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>>, fetch?: RequestInit}
+export const getGetCommentsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getComments>>,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetCommentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey =
+    queryOptions?.queryKey ?? getGetCommentsQueryKey(videoId, params);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetCommentsQueryKey(videoId,params);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getComments>>> = ({
+    signal,
+  }) => getComments(videoId, params, { signal, ...requestOptions });
 
-  
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!videoId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getComments>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getComments>>> = ({ signal }) => getComments(videoId,params, { signal, ...fetchOptions });
+export type GetCommentsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getComments>>
+>;
+export type GetCommentsQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(videoId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetCommentsQueryResult = NonNullable<Awaited<ReturnType<typeof getComments>>>
-export type GetCommentsQueryError = unknown
-
-
-export function useGetComments<TData = Awaited<ReturnType<typeof getComments>>, TError = unknown>(
- videoId: number,
-    params: undefined |  GetCommentsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>> & Pick<
+export function useGetComments<
+  TData = Awaited<ReturnType<typeof getComments>>,
+  TError = unknown,
+>(
+  videoId: number,
+  params: undefined | GetCommentsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getComments>>,
           TError,
           Awaited<ReturnType<typeof getComments>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetComments<TData = Awaited<ReturnType<typeof getComments>>, TError = unknown>(
- videoId: number,
-    params?: GetCommentsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetComments<
+  TData = Awaited<ReturnType<typeof getComments>>,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetCommentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getComments>>,
           TError,
           Awaited<ReturnType<typeof getComments>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetComments<TData = Awaited<ReturnType<typeof getComments>>, TError = unknown>(
- videoId: number,
-    params?: GetCommentsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetComments<
+  TData = Awaited<ReturnType<typeof getComments>>,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetCommentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 댓글 목록 조회
  */
 
-export function useGetComments<TData = Awaited<ReturnType<typeof getComments>>, TError = unknown>(
- videoId: number,
-    params?: GetCommentsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetComments<
+  TData = Awaited<ReturnType<typeof getComments>>,
+  TError = unknown,
+>(
+  videoId: number,
+  params?: GetCommentsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getComments>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetCommentsQueryOptions(videoId, params, options);
 
-  const queryOptions = getGetCommentsQueryOptions(videoId,params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
 
 /**
  * 특정 영상에 댓글을 작성합니다.
  * @summary 댓글 작성
  */
 export type createCommentResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type createCommentResponseSuccess = (createCommentResponse200) & {
+export type createCommentResponseSuccess = createCommentResponse200 & {
   headers: Headers;
 };
-;
+export type createCommentResponse = createCommentResponseSuccess;
 
-export type createCommentResponse = (createCommentResponseSuccess)
+export const getCreateCommentUrl = (videoId: number) => {
+  return `/api/v1/comment/videos/${videoId}`;
+};
 
-export const getCreateCommentUrl = (videoId: number,) => {
-
-
-  
-
-  return `/api/v1/comment/videos/${videoId}`
-}
-
-export const createComment = async (videoId: number,
-    commentCreateRequest: CommentCreateRequest, options?: RequestInit): Promise<createCommentResponse> => {
-  
-  const res = await fetch(getCreateCommentUrl(videoId),
-  {      
+export const createComment = async (
+  videoId: number,
+  commentCreateRequest: CommentCreateRequest,
+  options?: RequestInit,
+): Promise<createCommentResponse> => {
+  return customMutator<createCommentResponse>(getCreateCommentUrl(videoId), {
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      commentCreateRequest,)
-  }
-)
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(commentCreateRequest),
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: createCommentResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as createCommentResponse
-}
-  
+export const getCreateCommentMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createComment>>,
+    TError,
+    { videoId: number; data: CommentCreateRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createComment>>,
+  TError,
+  { videoId: number; data: CommentCreateRequest },
+  TContext
+> => {
+  const mutationKey = ["createComment"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createComment>>,
+    { videoId: number; data: CommentCreateRequest }
+  > = (props) => {
+    const { videoId, data } = props ?? {};
 
+    return createComment(videoId, data, requestOptions);
+  };
 
-export const getCreateCommentMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createComment>>, TError,{videoId: number;data: CommentCreateRequest}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof createComment>>, TError,{videoId: number;data: CommentCreateRequest}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['createComment'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type CreateCommentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createComment>>
+>;
+export type CreateCommentMutationBody = CommentCreateRequest;
+export type CreateCommentMutationError = unknown;
 
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createComment>>, {videoId: number;data: CommentCreateRequest}> = (props) => {
-          const {videoId,data} = props ?? {};
-
-          return  createComment(videoId,data,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CreateCommentMutationResult = NonNullable<Awaited<ReturnType<typeof createComment>>>
-    export type CreateCommentMutationBody = CommentCreateRequest
-    export type CreateCommentMutationError = unknown
-
-    /**
+/**
  * @summary 댓글 작성
  */
-export const useCreateComment = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createComment>>, TError,{videoId: number;data: CommentCreateRequest}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof createComment>>,
-        TError,
-        {videoId: number;data: CommentCreateRequest},
-        TContext
-      > => {
-      return useMutation(getCreateCommentMutationOptions(options), queryClient);
-    }
-    /**
+export const useCreateComment = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createComment>>,
+      TError,
+      { videoId: number; data: CommentCreateRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createComment>>,
+  TError,
+  { videoId: number; data: CommentCreateRequest },
+  TContext
+> => {
+  return useMutation(getCreateCommentMutationOptions(options), queryClient);
+};
+/**
  * 내가 작성한 댓글을 삭제합니다.
  * @summary 댓글 삭제
  */
 export type deleteCommentResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type deleteCommentResponseSuccess = (deleteCommentResponse200) & {
+export type deleteCommentResponseSuccess = deleteCommentResponse200 & {
   headers: Headers;
 };
-;
+export type deleteCommentResponse = deleteCommentResponseSuccess;
 
-export type deleteCommentResponse = (deleteCommentResponseSuccess)
+export const getDeleteCommentUrl = (commentId: number) => {
+  return `/api/v1/comment/${commentId}`;
+};
 
-export const getDeleteCommentUrl = (commentId: number,) => {
-
-
-  
-
-  return `/api/v1/comment/${commentId}`
-}
-
-export const deleteComment = async (commentId: number, options?: RequestInit): Promise<deleteCommentResponse> => {
-  
-  const res = await fetch(getDeleteCommentUrl(commentId),
-  {      
+export const deleteComment = async (
+  commentId: number,
+  options?: RequestInit,
+): Promise<deleteCommentResponse> => {
+  return customMutator<deleteCommentResponse>(getDeleteCommentUrl(commentId), {
     ...options,
-    method: 'DELETE'
-    
-    
-  }
-)
+    method: "DELETE",
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: deleteCommentResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as deleteCommentResponse
-}
-  
+export const getDeleteCommentMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteComment>>,
+    TError,
+    { commentId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteComment>>,
+  TError,
+  { commentId: number },
+  TContext
+> => {
+  const mutationKey = ["deleteComment"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteComment>>,
+    { commentId: number }
+  > = (props) => {
+    const { commentId } = props ?? {};
 
+    return deleteComment(commentId, requestOptions);
+  };
 
-export const getDeleteCommentMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteComment>>, TError,{commentId: number}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteComment>>, TError,{commentId: number}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['deleteComment'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type DeleteCommentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteComment>>
+>;
 
-      
+export type DeleteCommentMutationError = unknown;
 
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteComment>>, {commentId: number}> = (props) => {
-          const {commentId} = props ?? {};
-
-          return  deleteComment(commentId,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteCommentMutationResult = NonNullable<Awaited<ReturnType<typeof deleteComment>>>
-    
-    export type DeleteCommentMutationError = unknown
-
-    /**
+/**
  * @summary 댓글 삭제
  */
-export const useDeleteComment = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteComment>>, TError,{commentId: number}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteComment>>,
-        TError,
-        {commentId: number},
-        TContext
-      > => {
-      return useMutation(getDeleteCommentMutationOptions(options), queryClient);
-    }
-    /**
+export const useDeleteComment = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteComment>>,
+      TError,
+      { commentId: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteComment>>,
+  TError,
+  { commentId: number },
+  TContext
+> => {
+  return useMutation(getDeleteCommentMutationOptions(options), queryClient);
+};
+/**
  * 내가 작성한 댓글을 수정합니다.
  * @summary 댓글 수정
  */
 export type editCommentResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type editCommentResponseSuccess = (editCommentResponse200) & {
+export type editCommentResponseSuccess = editCommentResponse200 & {
   headers: Headers;
 };
-;
+export type editCommentResponse = editCommentResponseSuccess;
 
-export type editCommentResponse = (editCommentResponseSuccess)
+export const getEditCommentUrl = (commentId: number) => {
+  return `/api/v1/comment/${commentId}`;
+};
 
-export const getEditCommentUrl = (commentId: number,) => {
-
-
-  
-
-  return `/api/v1/comment/${commentId}`
-}
-
-export const editComment = async (commentId: number,
-    commentEditRequest: CommentEditRequest, options?: RequestInit): Promise<editCommentResponse> => {
-  
-  const res = await fetch(getEditCommentUrl(commentId),
-  {      
+export const editComment = async (
+  commentId: number,
+  commentEditRequest: CommentEditRequest,
+  options?: RequestInit,
+): Promise<editCommentResponse> => {
+  return customMutator<editCommentResponse>(getEditCommentUrl(commentId), {
     ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      commentEditRequest,)
-  }
-)
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(commentEditRequest),
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: editCommentResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as editCommentResponse
-}
-  
+export const getEditCommentMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof editComment>>,
+    TError,
+    { commentId: number; data: CommentEditRequest },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof editComment>>,
+  TError,
+  { commentId: number; data: CommentEditRequest },
+  TContext
+> => {
+  const mutationKey = ["editComment"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof editComment>>,
+    { commentId: number; data: CommentEditRequest }
+  > = (props) => {
+    const { commentId, data } = props ?? {};
 
+    return editComment(commentId, data, requestOptions);
+  };
 
-export const getEditCommentMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof editComment>>, TError,{commentId: number;data: CommentEditRequest}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof editComment>>, TError,{commentId: number;data: CommentEditRequest}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['editComment'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type EditCommentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof editComment>>
+>;
+export type EditCommentMutationBody = CommentEditRequest;
+export type EditCommentMutationError = unknown;
 
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof editComment>>, {commentId: number;data: CommentEditRequest}> = (props) => {
-          const {commentId,data} = props ?? {};
-
-          return  editComment(commentId,data,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type EditCommentMutationResult = NonNullable<Awaited<ReturnType<typeof editComment>>>
-    export type EditCommentMutationBody = CommentEditRequest
-    export type EditCommentMutationError = unknown
-
-    /**
+/**
  * @summary 댓글 수정
  */
-export const useEditComment = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof editComment>>, TError,{commentId: number;data: CommentEditRequest}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof editComment>>,
-        TError,
-        {commentId: number;data: CommentEditRequest},
-        TContext
-      > => {
-      return useMutation(getEditCommentMutationOptions(options), queryClient);
-    }
-    /**
+export const useEditComment = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof editComment>>,
+      TError,
+      { commentId: number; data: CommentEditRequest },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof editComment>>,
+  TError,
+  { commentId: number; data: CommentEditRequest },
+  TContext
+> => {
+  return useMutation(getEditCommentMutationOptions(options), queryClient);
+};
+/**
  * 특정 영상에 내가 작성한 댓글을 조회합니다.
  * @summary 내 댓글 조회
  */
 export type getMyCommentResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type getMyCommentResponseSuccess = (getMyCommentResponse200) & {
+export type getMyCommentResponseSuccess = getMyCommentResponse200 & {
   headers: Headers;
 };
-;
+export type getMyCommentResponse = getMyCommentResponseSuccess;
 
-export type getMyCommentResponse = (getMyCommentResponseSuccess)
+export const getGetMyCommentUrl = (videoId: number) => {
+  return `/api/v1/comment/videos/${videoId}/me`;
+};
 
-export const getGetMyCommentUrl = (videoId: number,) => {
-
-
-  
-
-  return `/api/v1/comment/videos/${videoId}/me`
-}
-
-export const getMyComment = async (videoId: number, options?: RequestInit): Promise<getMyCommentResponse> => {
-  
-  const res = await fetch(getGetMyCommentUrl(videoId),
-  {      
+export const getMyComment = async (
+  videoId: number,
+  options?: RequestInit,
+): Promise<getMyCommentResponse> => {
+  return customMutator<getMyCommentResponse>(getGetMyCommentUrl(videoId), {
     ...options,
-    method: 'GET'
-    
-    
-  }
-)
+    method: "GET",
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getMyCommentResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getMyCommentResponse
-}
-  
+export const getGetMyCommentQueryKey = (videoId: number) => {
+  return [`/api/v1/comment/videos/${videoId}/me`] as const;
+};
 
-
-
-
-export const getGetMyCommentQueryKey = (videoId: number,) => {
-    return [
-    `/api/v1/comment/videos/${videoId}/me`
-    ] as const;
-    }
-
-    
-export const getGetMyCommentQueryOptions = <TData = Awaited<ReturnType<typeof getMyComment>>, TError = unknown>(videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyComment>>, TError, TData>>, fetch?: RequestInit}
+export const getGetMyCommentQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMyComment>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyComment>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetMyCommentQueryKey(videoId);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetMyCommentQueryKey(videoId);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyComment>>> = ({
+    signal,
+  }) => getMyComment(videoId, { signal, ...requestOptions });
 
-  
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!videoId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMyComment>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyComment>>> = ({ signal }) => getMyComment(videoId, { signal, ...fetchOptions });
+export type GetMyCommentQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMyComment>>
+>;
+export type GetMyCommentQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(videoId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMyComment>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetMyCommentQueryResult = NonNullable<Awaited<ReturnType<typeof getMyComment>>>
-export type GetMyCommentQueryError = unknown
-
-
-export function useGetMyComment<TData = Awaited<ReturnType<typeof getMyComment>>, TError = unknown>(
- videoId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyComment>>, TError, TData>> & Pick<
+export function useGetMyComment<
+  TData = Awaited<ReturnType<typeof getMyComment>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyComment>>, TError, TData>
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMyComment>>,
           TError,
           Awaited<ReturnType<typeof getMyComment>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMyComment<TData = Awaited<ReturnType<typeof getMyComment>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyComment>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyComment<
+  TData = Awaited<ReturnType<typeof getMyComment>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyComment>>, TError, TData>
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMyComment>>,
           TError,
           Awaited<ReturnType<typeof getMyComment>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMyComment<TData = Awaited<ReturnType<typeof getMyComment>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyComment>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyComment<
+  TData = Awaited<ReturnType<typeof getMyComment>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyComment>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 내 댓글 조회
  */
 
-export function useGetMyComment<TData = Awaited<ReturnType<typeof getMyComment>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyComment>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetMyComment<
+  TData = Awaited<ReturnType<typeof getMyComment>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMyComment>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetMyCommentQueryOptions(videoId, options);
 
-  const queryOptions = getGetMyCommentQueryOptions(videoId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
-

@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { FieldError } from './fieldError';
+import type { FieldError } from "./fieldError";
 
 export interface ErrorMessage {
   code?: string;

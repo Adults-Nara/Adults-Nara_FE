@@ -4,9 +4,9 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { ApiResponseVideoInfoResponseResult } from './apiResponseVideoInfoResponseResult';
-import type { ErrorMessage } from './errorMessage';
-import type { VideoInfoResponse } from './videoInfoResponse';
+import type { ApiResponseVideoInfoResponseResult } from "./apiResponseVideoInfoResponseResult";
+import type { ErrorMessage } from "./errorMessage";
+import type { VideoInfoResponse } from "./videoInfoResponse";
 
 export interface ApiResponseVideoInfoResponse {
   result?: ApiResponseVideoInfoResponseResult;

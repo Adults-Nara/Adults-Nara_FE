@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type UploadRequestVideoType = typeof UploadRequestVideoType[keyof typeof UploadRequestVideoType];
-
+export type UploadRequestVideoType =
+  (typeof UploadRequestVideoType)[keyof typeof UploadRequestVideoType];
 
 export const UploadRequestVideoType = {
-  SHORT: 'SHORT',
-  LONG: 'LONG',
+  SHORT: "SHORT",
+  LONG: "LONG",
 } as const;

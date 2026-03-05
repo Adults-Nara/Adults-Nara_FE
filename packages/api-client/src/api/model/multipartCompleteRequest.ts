@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { CompletedPartDto } from './completedPartDto';
+import type { CompletedPartDto } from "./completedPartDto";
 
 export interface MultipartCompleteRequest {
   uploadId?: string;

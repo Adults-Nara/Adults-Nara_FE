@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { WatchHistoryItemResponse } from './watchHistoryItemResponse';
+import type { WatchHistoryItemResponse } from "./watchHistoryItemResponse";
 
 export interface WatchHistoryPageResponse {
   items?: WatchHistoryItemResponse[];

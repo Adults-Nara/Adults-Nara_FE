@@ -4,10 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -20,395 +17,576 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
+import { customMutator } from "../../lib/mutator";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
  * 해당 영상에 최고예요를 표시합니다.
  * @summary 슈퍼라이크(왕따봉) 누르기
  */
 export type superLikeVideoResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type superLikeVideoResponseSuccess = (superLikeVideoResponse200) & {
+export type superLikeVideoResponseSuccess = superLikeVideoResponse200 & {
   headers: Headers;
 };
-;
+export type superLikeVideoResponse = superLikeVideoResponseSuccess;
 
-export type superLikeVideoResponse = (superLikeVideoResponseSuccess)
+export const getSuperLikeVideoUrl = (videoId: number) => {
+  return `/api/v1/interactions/${videoId}/superlike`;
+};
 
-export const getSuperLikeVideoUrl = (videoId: number,) => {
-
-
-  
-
-  return `/api/v1/interactions/${videoId}/superlike`
-}
-
-export const superLikeVideo = async (videoId: number, options?: RequestInit): Promise<superLikeVideoResponse> => {
-  
-  const res = await fetch(getSuperLikeVideoUrl(videoId),
-  {      
+export const superLikeVideo = async (
+  videoId: number,
+  options?: RequestInit,
+): Promise<superLikeVideoResponse> => {
+  return customMutator<superLikeVideoResponse>(getSuperLikeVideoUrl(videoId), {
     ...options,
-    method: 'POST'
-    
-    
-  }
-)
+    method: "POST",
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: superLikeVideoResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as superLikeVideoResponse
-}
-  
+export const getSuperLikeVideoMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof superLikeVideo>>,
+    TError,
+    { videoId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof superLikeVideo>>,
+  TError,
+  { videoId: number },
+  TContext
+> => {
+  const mutationKey = ["superLikeVideo"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof superLikeVideo>>,
+    { videoId: number }
+  > = (props) => {
+    const { videoId } = props ?? {};
 
+    return superLikeVideo(videoId, requestOptions);
+  };
 
-export const getSuperLikeVideoMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof superLikeVideo>>, TError,{videoId: number}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof superLikeVideo>>, TError,{videoId: number}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['superLikeVideo'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type SuperLikeVideoMutationResult = NonNullable<
+  Awaited<ReturnType<typeof superLikeVideo>>
+>;
 
-      
+export type SuperLikeVideoMutationError = unknown;
 
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof superLikeVideo>>, {videoId: number}> = (props) => {
-          const {videoId} = props ?? {};
-
-          return  superLikeVideo(videoId,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SuperLikeVideoMutationResult = NonNullable<Awaited<ReturnType<typeof superLikeVideo>>>
-    
-    export type SuperLikeVideoMutationError = unknown
-
-    /**
+/**
  * @summary 슈퍼라이크(왕따봉) 누르기
  */
-export const useSuperLikeVideo = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof superLikeVideo>>, TError,{videoId: number}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof superLikeVideo>>,
-        TError,
-        {videoId: number},
-        TContext
-      > => {
-      return useMutation(getSuperLikeVideoMutationOptions(options), queryClient);
-    }
-    /**
+export const useSuperLikeVideo = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof superLikeVideo>>,
+      TError,
+      { videoId: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof superLikeVideo>>,
+  TError,
+  { videoId: number },
+  TContext
+> => {
+  return useMutation(getSuperLikeVideoMutationOptions(options), queryClient);
+};
+/**
  * 해당 영상에 좋아요를 표시합니다.
  * @summary 좋아요 누르기
  */
 export type likeVideoResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type likeVideoResponseSuccess = (likeVideoResponse200) & {
+export type likeVideoResponseSuccess = likeVideoResponse200 & {
   headers: Headers;
 };
-;
+export type likeVideoResponse = likeVideoResponseSuccess;
 
-export type likeVideoResponse = (likeVideoResponseSuccess)
+export const getLikeVideoUrl = (videoId: number) => {
+  return `/api/v1/interactions/${videoId}/like`;
+};
 
-export const getLikeVideoUrl = (videoId: number,) => {
-
-
-  
-
-  return `/api/v1/interactions/${videoId}/like`
-}
-
-export const likeVideo = async (videoId: number, options?: RequestInit): Promise<likeVideoResponse> => {
-  
-  const res = await fetch(getLikeVideoUrl(videoId),
-  {      
+export const likeVideo = async (
+  videoId: number,
+  options?: RequestInit,
+): Promise<likeVideoResponse> => {
+  return customMutator<likeVideoResponse>(getLikeVideoUrl(videoId), {
     ...options,
-    method: 'POST'
-    
-    
-  }
-)
+    method: "POST",
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: likeVideoResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as likeVideoResponse
-}
-  
+export const getLikeVideoMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof likeVideo>>,
+    TError,
+    { videoId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof likeVideo>>,
+  TError,
+  { videoId: number },
+  TContext
+> => {
+  const mutationKey = ["likeVideo"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof likeVideo>>,
+    { videoId: number }
+  > = (props) => {
+    const { videoId } = props ?? {};
 
+    return likeVideo(videoId, requestOptions);
+  };
 
-export const getLikeVideoMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof likeVideo>>, TError,{videoId: number}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof likeVideo>>, TError,{videoId: number}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['likeVideo'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type LikeVideoMutationResult = NonNullable<
+  Awaited<ReturnType<typeof likeVideo>>
+>;
 
-      
+export type LikeVideoMutationError = unknown;
 
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof likeVideo>>, {videoId: number}> = (props) => {
-          const {videoId} = props ?? {};
-
-          return  likeVideo(videoId,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type LikeVideoMutationResult = NonNullable<Awaited<ReturnType<typeof likeVideo>>>
-    
-    export type LikeVideoMutationError = unknown
-
-    /**
+/**
  * @summary 좋아요 누르기
  */
-export const useLikeVideo = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof likeVideo>>, TError,{videoId: number}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof likeVideo>>,
-        TError,
-        {videoId: number},
-        TContext
-      > => {
-      return useMutation(getLikeVideoMutationOptions(options), queryClient);
-    }
-    /**
+export const useLikeVideo = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof likeVideo>>,
+      TError,
+      { videoId: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof likeVideo>>,
+  TError,
+  { videoId: number },
+  TContext
+> => {
+  return useMutation(getLikeVideoMutationOptions(options), queryClient);
+};
+/**
  * 해당 영상에 싫어요를 표시합니다.
  * @summary 싫어요 누르기
  */
 export type dislikeVideoResponse200 = {
-  data: Blob
-  status: 200
-}
+  data: Blob;
+  status: 200;
+};
 
-export type dislikeVideoResponseSuccess = (dislikeVideoResponse200) & {
+export type dislikeVideoResponseSuccess = dislikeVideoResponse200 & {
   headers: Headers;
 };
-;
+export type dislikeVideoResponse = dislikeVideoResponseSuccess;
 
-export type dislikeVideoResponse = (dislikeVideoResponseSuccess)
+export const getDislikeVideoUrl = (videoId: number) => {
+  return `/api/v1/interactions/${videoId}/dislike`;
+};
 
-export const getDislikeVideoUrl = (videoId: number,) => {
-
-
-  
-
-  return `/api/v1/interactions/${videoId}/dislike`
-}
-
-export const dislikeVideo = async (videoId: number, options?: RequestInit): Promise<dislikeVideoResponse> => {
-  
-  const res = await fetch(getDislikeVideoUrl(videoId),
-  {      
+export const dislikeVideo = async (
+  videoId: number,
+  options?: RequestInit,
+): Promise<dislikeVideoResponse> => {
+  return customMutator<dislikeVideoResponse>(getDislikeVideoUrl(videoId), {
     ...options,
-    method: 'POST'
-    
-    
-  }
-)
+    method: "POST",
+  });
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: dislikeVideoResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as dislikeVideoResponse
-}
-  
+export const getDislikeVideoMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof dislikeVideo>>,
+    TError,
+    { videoId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof dislikeVideo>>,
+  TError,
+  { videoId: number },
+  TContext
+> => {
+  const mutationKey = ["dislikeVideo"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof dislikeVideo>>,
+    { videoId: number }
+  > = (props) => {
+    const { videoId } = props ?? {};
 
+    return dislikeVideo(videoId, requestOptions);
+  };
 
-export const getDislikeVideoMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof dislikeVideo>>, TError,{videoId: number}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof dislikeVideo>>, TError,{videoId: number}, TContext> => {
+  return { mutationFn, ...mutationOptions };
+};
 
-const mutationKey = ['dislikeVideo'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
+export type DislikeVideoMutationResult = NonNullable<
+  Awaited<ReturnType<typeof dislikeVideo>>
+>;
 
-      
+export type DislikeVideoMutationError = unknown;
 
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof dislikeVideo>>, {videoId: number}> = (props) => {
-          const {videoId} = props ?? {};
-
-          return  dislikeVideo(videoId,fetchOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DislikeVideoMutationResult = NonNullable<Awaited<ReturnType<typeof dislikeVideo>>>
-    
-    export type DislikeVideoMutationError = unknown
-
-    /**
+/**
  * @summary 싫어요 누르기
  */
-export const useDislikeVideo = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof dislikeVideo>>, TError,{videoId: number}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof dislikeVideo>>,
-        TError,
-        {videoId: number},
-        TContext
-      > => {
-      return useMutation(getDislikeVideoMutationOptions(options), queryClient);
-    }
-    /**
+export const useDislikeVideo = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof dislikeVideo>>,
+      TError,
+      { videoId: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof dislikeVideo>>,
+  TError,
+  { videoId: number },
+  TContext
+> => {
+  return useMutation(getDislikeVideoMutationOptions(options), queryClient);
+};
+/**
+ * DB의 모든 좋아요/싫어요 데이터를 Redis에 강제 동기화(복구)합니다.
+ * @summary [관리자] 인터랙션 캐시 웜업
+ */
+export type warmUpInteractionsResponse200 = {
+  data: Blob;
+  status: 200;
+};
+
+export type warmUpInteractionsResponseSuccess =
+  warmUpInteractionsResponse200 & {
+    headers: Headers;
+  };
+export type warmUpInteractionsResponse = warmUpInteractionsResponseSuccess;
+
+export const getWarmUpInteractionsUrl = () => {
+  return `/api/v1/interactions/admin/warmup`;
+};
+
+export const warmUpInteractions = async (
+  options?: RequestInit,
+): Promise<warmUpInteractionsResponse> => {
+  return customMutator<warmUpInteractionsResponse>(getWarmUpInteractionsUrl(), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getWarmUpInteractionsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof warmUpInteractions>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customMutator>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof warmUpInteractions>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["warmUpInteractions"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof warmUpInteractions>>,
+    void
+  > = () => {
+    return warmUpInteractions(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type WarmUpInteractionsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof warmUpInteractions>>
+>;
+
+export type WarmUpInteractionsMutationError = unknown;
+
+/**
+ * @summary [관리자] 인터랙션 캐시 웜업
+ */
+export const useWarmUpInteractions = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof warmUpInteractions>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof warmUpInteractions>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(
+    getWarmUpInteractionsMutationOptions(options),
+    queryClient,
+  );
+};
+/**
  * 내가 이 영상에 좋아요/싫어요를 했는지 확인합니다.
  * @summary 내 반응 조회
  */
 export type getMyInteractionStatusResponse200 = {
-  data: Blob
-  status: 200
-}
-
-export type getMyInteractionStatusResponseSuccess = (getMyInteractionStatusResponse200) & {
-  headers: Headers;
+  data: Blob;
+  status: 200;
 };
-;
 
-export type getMyInteractionStatusResponse = (getMyInteractionStatusResponseSuccess)
+export type getMyInteractionStatusResponseSuccess =
+  getMyInteractionStatusResponse200 & {
+    headers: Headers;
+  };
+export type getMyInteractionStatusResponse =
+  getMyInteractionStatusResponseSuccess;
 
-export const getGetMyInteractionStatusUrl = (videoId: number,) => {
+export const getGetMyInteractionStatusUrl = (videoId: number) => {
+  return `/api/v1/interactions/${videoId}/my-status`;
+};
 
+export const getMyInteractionStatus = async (
+  videoId: number,
+  options?: RequestInit,
+): Promise<getMyInteractionStatusResponse> => {
+  return customMutator<getMyInteractionStatusResponse>(
+    getGetMyInteractionStatusUrl(videoId),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
 
-  
+export const getGetMyInteractionStatusQueryKey = (videoId: number) => {
+  return [`/api/v1/interactions/${videoId}/my-status`] as const;
+};
 
-  return `/api/v1/interactions/${videoId}/my-status`
-}
-
-export const getMyInteractionStatus = async (videoId: number, options?: RequestInit): Promise<getMyInteractionStatusResponse> => {
-  
-  const res = await fetch(getGetMyInteractionStatusUrl(videoId),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-)
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  
-  const data: getMyInteractionStatusResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as getMyInteractionStatusResponse
-}
-  
-
-
-
-
-export const getGetMyInteractionStatusQueryKey = (videoId: number,) => {
-    return [
-    `/api/v1/interactions/${videoId}/my-status`
-    ] as const;
-    }
-
-    
-export const getGetMyInteractionStatusQueryOptions = <TData = Awaited<ReturnType<typeof getMyInteractionStatus>>, TError = unknown>(videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyInteractionStatus>>, TError, TData>>, fetch?: RequestInit}
+export const getGetMyInteractionStatusQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMyInteractionStatus>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMyInteractionStatus>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+  const queryKey =
+    queryOptions?.queryKey ?? getGetMyInteractionStatusQueryKey(videoId);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetMyInteractionStatusQueryKey(videoId);
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getMyInteractionStatus>>
+  > = ({ signal }) =>
+    getMyInteractionStatus(videoId, { signal, ...requestOptions });
 
-  
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!videoId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMyInteractionStatus>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyInteractionStatus>>> = ({ signal }) => getMyInteractionStatus(videoId, { signal, ...fetchOptions });
+export type GetMyInteractionStatusQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMyInteractionStatus>>
+>;
+export type GetMyInteractionStatusQueryError = unknown;
 
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(videoId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMyInteractionStatus>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetMyInteractionStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getMyInteractionStatus>>>
-export type GetMyInteractionStatusQueryError = unknown
-
-
-export function useGetMyInteractionStatus<TData = Awaited<ReturnType<typeof getMyInteractionStatus>>, TError = unknown>(
- videoId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyInteractionStatus>>, TError, TData>> & Pick<
+export function useGetMyInteractionStatus<
+  TData = Awaited<ReturnType<typeof getMyInteractionStatus>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMyInteractionStatus>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMyInteractionStatus>>,
           TError,
           Awaited<ReturnType<typeof getMyInteractionStatus>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMyInteractionStatus<TData = Awaited<ReturnType<typeof getMyInteractionStatus>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyInteractionStatus>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyInteractionStatus<
+  TData = Awaited<ReturnType<typeof getMyInteractionStatus>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMyInteractionStatus>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMyInteractionStatus>>,
           TError,
           Awaited<ReturnType<typeof getMyInteractionStatus>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMyInteractionStatus<TData = Awaited<ReturnType<typeof getMyInteractionStatus>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyInteractionStatus>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMyInteractionStatus<
+  TData = Awaited<ReturnType<typeof getMyInteractionStatus>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMyInteractionStatus>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary 내 반응 조회
  */
 
-export function useGetMyInteractionStatus<TData = Awaited<ReturnType<typeof getMyInteractionStatus>>, TError = unknown>(
- videoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyInteractionStatus>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetMyInteractionStatus<
+  TData = Awaited<ReturnType<typeof getMyInteractionStatus>>,
+  TError = unknown,
+>(
+  videoId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMyInteractionStatus>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customMutator>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getGetMyInteractionStatusQueryOptions(videoId, options);
 
-  const queryOptions = getGetMyInteractionStatusQueryOptions(videoId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
-

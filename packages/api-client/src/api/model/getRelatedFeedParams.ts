@@ -6,15 +6,15 @@
  */
 
 export type GetRelatedFeedParams = {
-/**
- * 페이지 번호 (0부터 시작)
- * @minimum 0
- */
-page?: number;
-/**
- * 가져올 개수 (기본 10)
- * @minimum 1
- * @maximum 20
- */
-size?: number;
+  /**
+   * 페이지 번호 (0부터 시작)
+   * @minimum 0
+   */
+  page?: number;
+  /**
+   * 가져올 개수 (기본 10)
+   * @minimum 1
+   * @maximum 20
+   */
+  size?: number;
 };

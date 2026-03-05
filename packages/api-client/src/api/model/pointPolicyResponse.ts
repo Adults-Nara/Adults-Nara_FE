@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { PointPolicyResponsePolicyName } from './pointPolicyResponsePolicyName';
+import type { PointPolicyResponsePolicyName } from "./pointPolicyResponsePolicyName";
 
 export interface PointPolicyResponse {
   policyName?: PointPolicyResponsePolicyName;

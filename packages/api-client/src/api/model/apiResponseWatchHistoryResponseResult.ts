@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type ApiResponseWatchHistoryResponseResult = typeof ApiResponseWatchHistoryResponseResult[keyof typeof ApiResponseWatchHistoryResponseResult];
-
+export type ApiResponseWatchHistoryResponseResult =
+  (typeof ApiResponseWatchHistoryResponseResult)[keyof typeof ApiResponseWatchHistoryResponseResult];
 
 export const ApiResponseWatchHistoryResponseResult = {
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR',
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
 } as const;

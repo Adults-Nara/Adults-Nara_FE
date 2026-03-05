@@ -6,5 +6,5 @@
  */
 
 export type AbortMultipartUploadParams = {
-uploadId: string;
+  uploadId: string;
 };

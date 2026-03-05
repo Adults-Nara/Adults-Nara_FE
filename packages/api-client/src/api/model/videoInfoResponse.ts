@@ -4,8 +4,8 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { VideoInfoResponseVisibility } from './videoInfoResponseVisibility';
-import type { WatchHistoryResponse } from './watchHistoryResponse';
+import type { VideoInfoResponseVisibility } from "./videoInfoResponseVisibility";
+import type { WatchHistoryResponse } from "./watchHistoryResponse";
 
 export interface VideoInfoResponse {
   videoId?: string;

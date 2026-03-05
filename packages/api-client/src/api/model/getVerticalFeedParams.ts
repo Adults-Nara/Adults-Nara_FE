@@ -6,10 +6,10 @@
  */
 
 export type GetVerticalFeedParams = {
-/**
- * 가져올 개수 (기본 10)
- * @minimum 1
- * @maximum 50
- */
-size?: number;
+  /**
+   * 가져올 개수 (기본 10)
+   * @minimum 1
+   * @maximum 50
+   */
+  size?: number;
 };

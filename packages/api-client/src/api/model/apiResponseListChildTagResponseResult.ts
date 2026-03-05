@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type ApiResponseListChildTagResponseResult = typeof ApiResponseListChildTagResponseResult[keyof typeof ApiResponseListChildTagResponseResult];
-
+export type ApiResponseListChildTagResponseResult =
+  (typeof ApiResponseListChildTagResponseResult)[keyof typeof ApiResponseListChildTagResponseResult];
 
 export const ApiResponseListChildTagResponseResult = {
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR',
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
 } as const;

@@ -4,7 +4,7 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { ContentUpdateRequestVisibility } from './contentUpdateRequestVisibility';
+import type { ContentUpdateRequestVisibility } from "./contentUpdateRequestVisibility";
 
 export interface ContentUpdateRequest {
   title?: string;

@@ -6,6 +6,6 @@
  */
 
 export type GetRecentWatchHistoryParams = {
-page?: number;
-size?: number;
+  page?: number;
+  size?: number;
 };

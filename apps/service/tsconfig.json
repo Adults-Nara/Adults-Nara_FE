@@ -4,7 +4,9 @@
     "paths": {
       "@/*": ["./src/*"],
       "@repo/configs/*": ["../../packages/configs/*"],
-      "@repo/ui": ["../../packages/ui/src/index.ts"]
+      "@repo/ui": ["../../packages/ui/src/index.ts"],
+      "@project/api-client": ["../../packages/api-client/src/index.ts"],
+      "@project/store": ["../../packages/store/src/index.ts"]
     },
     "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],

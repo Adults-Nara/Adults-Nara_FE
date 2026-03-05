@@ -4,9 +4,9 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { ApiResponseListParentTagWithChildResponseResult } from './apiResponseListParentTagWithChildResponseResult';
-import type { ErrorMessage } from './errorMessage';
-import type { ParentTagWithChildResponse } from './parentTagWithChildResponse';
+import type { ApiResponseListParentTagWithChildResponseResult } from "./apiResponseListParentTagWithChildResponseResult";
+import type { ErrorMessage } from "./errorMessage";
+import type { ParentTagWithChildResponse } from "./parentTagWithChildResponse";
 
 export interface ApiResponseListParentTagWithChildResponse {
   result?: ApiResponseListParentTagWithChildResponseResult;

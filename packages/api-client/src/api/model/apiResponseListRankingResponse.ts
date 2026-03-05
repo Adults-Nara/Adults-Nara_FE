@@ -4,9 +4,9 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { ApiResponseListRankingResponseResult } from './apiResponseListRankingResponseResult';
-import type { ErrorMessage } from './errorMessage';
-import type { RankingResponse } from './rankingResponse';
+import type { ApiResponseListRankingResponseResult } from "./apiResponseListRankingResponseResult";
+import type { ErrorMessage } from "./errorMessage";
+import type { RankingResponse } from "./rankingResponse";
 
 export interface ApiResponseListRankingResponse {
   result?: ApiResponseListRankingResponseResult;

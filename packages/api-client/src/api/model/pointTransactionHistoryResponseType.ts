@@ -5,12 +5,12 @@
  * OpenAPI spec version: v0
  */
 
-export type PointTransactionHistoryResponseType = typeof PointTransactionHistoryResponseType[keyof typeof PointTransactionHistoryResponseType];
-
+export type PointTransactionHistoryResponseType =
+  (typeof PointTransactionHistoryResponseType)[keyof typeof PointTransactionHistoryResponseType];
 
 export const PointTransactionHistoryResponseType = {
-  AD_REWARD: 'AD_REWARD',
-  PURCHASE_BONUS: 'PURCHASE_BONUS',
-  GIFTICON_PURCHASE: 'GIFTICON_PURCHASE',
-  UPLUS_DISCOUNT: 'UPLUS_DISCOUNT',
+  AD_REWARD: "AD_REWARD",
+  PURCHASE_BONUS: "PURCHASE_BONUS",
+  GIFTICON_PURCHASE: "GIFTICON_PURCHASE",
+  UPLUS_DISCOUNT: "UPLUS_DISCOUNT",
 } as const;

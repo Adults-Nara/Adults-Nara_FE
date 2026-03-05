@@ -5,10 +5,10 @@
  * OpenAPI spec version: v0
  */
 
-export type UploadRequestVisibility = typeof UploadRequestVisibility[keyof typeof UploadRequestVisibility];
-
+export type UploadRequestVisibility =
+  (typeof UploadRequestVisibility)[keyof typeof UploadRequestVisibility];
 
 export const UploadRequestVisibility = {
-  PRIVATE: 'PRIVATE',
-  PUBLIC: 'PUBLIC',
+  PRIVATE: "PRIVATE",
+  PUBLIC: "PUBLIC",
 } as const;

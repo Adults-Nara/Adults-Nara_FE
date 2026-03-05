@@ -4,14 +4,14 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { GetUsersDirection } from './getUsersDirection';
-import type { GetUsersUserRole } from './getUsersUserRole';
+import type { GetUsersDirection } from "./getUsersDirection";
+import type { GetUsersUserRole } from "./getUsersUserRole";
 
 export type GetUsersParams = {
-userRole: GetUsersUserRole;
-keyword?: string;
-page?: number;
-size?: number;
-sortBy?: string;
-direction?: GetUsersDirection;
+  userRole: GetUsersUserRole;
+  keyword?: string;
+  page?: number;
+  size?: number;
+  sortBy?: string;
+  direction?: GetUsersDirection;
 };
