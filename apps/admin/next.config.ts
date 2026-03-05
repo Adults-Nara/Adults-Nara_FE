@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'picsum.photos', // 썸네일 테스트용
       },
+      {
+        protocol: 'https',
+        hostname: 'stream.asinna.store',
+      },
     ],
   },
   /* config options here */

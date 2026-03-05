@@ -17,7 +17,7 @@ interface DataTableProps<T> {
   onSelectChange?: (ids: string[]) => void; // 선택 변경 핸들러
 }
 
-export function DataTable<T extends { id: string }>({
+export function DataTable<T extends { videoId: string }>({
   columns,
   data,
   isLoading,
@@ -33,13 +33,13 @@ export function DataTable<T extends { id: string }>({
   };
 
   const isAllSelected =
-    data.length > 0 && data.every((item) => selectedIds.includes(item.id));
+    data.length > 0 && data.every((item) => selectedIds.includes(item.videoId));
   // 전체 선택/해제 토글
   const toggleAll = () => {
     if (isAllSelected) {
       onSelectChange?.([]); // 모두 해제
     } else {
-      onSelectChange?.(data.map((item) => item.id)); // 모두 선택
+      onSelectChange?.(data.map((item) => item.videoId)); // 모두 선택
     }
   };
   return (
@@ -79,17 +79,17 @@ export function DataTable<T extends { id: string }>({
           ) : (
             data.map((item) => (
               <tr
-                key={item.id}
+                key={item.videoId}
                 className={cn(
-                  `transition-colors hover:bg-gray-100 ${selectedIds.includes(item.id) ? 'bg-blue-100 hover:bg-blue-100' : ''}`,
+                  `transition-colors hover:bg-gray-100 ${selectedIds.includes(item.videoId) ? 'bg-blue-100 hover:bg-blue-100' : ''}`,
                 )}
               >
                 <td className="w-12.5 p-4 text-center">
                   <input
                     type="checkbox"
                     className="h-4.5 w-4.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    checked={selectedIds.includes(item.id)}
-                    onChange={() => toggleOne(item.id)}
+                    checked={selectedIds.includes(item.videoId)}
+                    onChange={() => toggleOne(item.videoId)}
                   />
                 </td>
                 {columns.map((col) => (

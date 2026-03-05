@@ -7,7 +7,7 @@ import {
   useFormState,
   useWatch,
 } from 'react-hook-form';
-import { CONTENT_TYPE_OPTIONS, UploadRequest } from '@/models/upload.model';
+import { CONTENT_TYPE_OPTIONS, UploadRequest } from '@/models/content.model';
 
 interface ContentInfoSectionProps {
   isEdit: boolean;

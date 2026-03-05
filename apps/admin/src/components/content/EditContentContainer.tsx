@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import ContentForm from './form/ContentForm';
-import { UploadRequest } from '@/models/upload.model';
+import { UploadRequest } from '@/models/content.model';
 import { LeftArrow } from '@repo/ui';
 import { mockVideoUpload } from './form/content.schema';
 

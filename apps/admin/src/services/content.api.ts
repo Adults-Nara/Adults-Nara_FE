@@ -1,8 +1,9 @@
 import {
+  ContentsListResponse,
   MultipartCompleteRequest,
   MultipartInitRequest,
   MultipartInitResponse,
-} from '@/models/upload.model';
+} from '@/models/content.model';
 import { httpClient } from './httpClient';
 import { API_ENDPOINTS } from '@/constant/endpoints';
 import { ApiResponse } from '@/types/api';
@@ -16,7 +17,7 @@ export async function apiInit(f: File) {
   };
 
   const res = await httpClient<ApiResponse<MultipartInitResponse>>(
-    API_ENDPOINTS.UPLOAD.INIT,
+    API_ENDPOINTS.CONTENTS.INIT,
     {
       method: 'POST',
       body: JSON.stringify(body),
@@ -31,7 +32,7 @@ export async function apiComplete(
   videoId: string,
   req: MultipartCompleteRequest,
 ) {
-  await httpClient(API_ENDPOINTS.UPLOAD.COMPLETE(videoId), {
+  await httpClient(API_ENDPOINTS.CONTENTS.COMPLETE(videoId), {
     method: 'POST',
     body: JSON.stringify(req),
   });
@@ -115,8 +116,32 @@ export async function uploadWithConcurrency<T>(
 
 //메타데이터 (썸네일+기본정보) 업로드
 export const ContentUpload = async (videoId: string, data: FormData) => {
-  await httpClient<ApiResponse<void>>(API_ENDPOINTS.UPLOAD.UPLOAD(videoId), {
+  await httpClient<ApiResponse<void>>(API_ENDPOINTS.CONTENTS.UPLOAD(videoId), {
     method: 'POST',
     body: data,
   });
+};
+
+export const UploaderConentsList = async (params: {
+  keyword?: string;
+  page: number;
+  size: number;
+  sortBy: string;
+  direction: 'ASC' | 'DESC';
+}) => {
+  const searchParams = new URLSearchParams({
+    keyword: params.keyword ?? '',
+    page: String(params.page),
+    size: String(params.size),
+    sortBy: params.sortBy,
+    direction: params.direction,
+  });
+  const response = await httpClient<ApiResponse<ContentsListResponse>>(
+    `${API_ENDPOINTS.CONTENTS.UPLOADER_CONTENTS_LIST}?${searchParams}`,
+    {
+      method: 'GET',
+    },
+  );
+
+  return response.data;
 };

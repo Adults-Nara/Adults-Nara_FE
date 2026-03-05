@@ -65,7 +65,12 @@ const Sidebar = () => {
       <div className="flex items-center gap-5 p-3">
         <div className="bg-primary-100 h-12.5 w-12.5 shrink-0 rounded-full">
           {userData.profileImageUrl ? (
-            <Image src={userData.profileImageUrl} alt="유저프로필" />
+            <Image
+              width="10"
+              height="10"
+              src={userData.profileImageUrl}
+              alt="유저프로필"
+            />
           ) : (
             ''
           )}

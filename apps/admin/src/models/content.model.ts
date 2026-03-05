@@ -1,3 +1,4 @@
+import { ContentListContainer } from '@components/content';
 import z from 'zod';
 
 export const CONTENT_TYPE_OPTIONS = [
@@ -39,4 +40,26 @@ export interface MultipartCompleteRequest {
   uploadId: string;
   sizeBytes: number;
   parts: { partNumber: number; eTag: string }[];
+}
+
+export interface ContentItem {
+  videoId: string;
+  thumbnailUrl: string;
+  title: string;
+  description: string;
+  otherVideoUrl: string;
+  viewCount: number;
+  likeCount: number;
+  dislikeCount: number;
+  commentCount: number;
+  visibility: 'PRIVATE' | 'PUBLIC';
+  createdAt: string;
+}
+
+export interface ContentsListResponse {
+  content: ContentItem[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
 }

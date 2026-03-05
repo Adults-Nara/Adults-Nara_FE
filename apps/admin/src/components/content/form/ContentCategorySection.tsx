@@ -7,7 +7,7 @@ import {
   useFormState,
   useWatch,
 } from 'react-hook-form';
-import { UploadRequest } from '@/models/upload.model';
+import { UploadRequest } from '@/models/content.model';
 
 const ContentCategorySection = () => {
   const { control, setValue } = useFormContext<UploadRequest>();

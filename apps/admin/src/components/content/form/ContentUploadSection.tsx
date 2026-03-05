@@ -1,12 +1,12 @@
 'use client';
-import { MultipartCompleteRequest } from '@/models/upload.model';
+import { MultipartCompleteRequest } from '@/models/content.model';
 import {
   apiComplete,
   apiInit,
   putPart,
   sliceFileIntoParts,
   uploadWithConcurrency,
-} from '@/services/upload.api';
+} from '@/services/content.api';
 import { ImagesIcon, Upload } from '@repo/ui';
 import { useEffect, useState } from 'react';
 

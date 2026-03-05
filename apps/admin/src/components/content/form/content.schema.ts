@@ -1,4 +1,4 @@
-import { UploadRequest } from '@/models/upload.model';
+import { UploadRequest } from '@/models/content.model';
 
 export const mockVideoUpload: UploadRequest = {
   videoType: 'LONG',

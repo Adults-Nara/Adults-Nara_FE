@@ -1,7 +1,7 @@
 'use client';
 
 import { FormProvider, useForm } from 'react-hook-form';
-import { UploadRequest, contentSchema } from '@/models/upload.model';
+import { UploadRequest, contentSchema } from '@/models/content.model';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ContentInfoSection from './ContentInfoSection';
 import ContentCategorySection from './ContentCategorySection';

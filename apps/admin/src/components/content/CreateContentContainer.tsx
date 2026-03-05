@@ -1,9 +1,9 @@
 'use client';
 import Link from 'next/link';
 import ContentForm from './form/ContentForm';
-import { UploadRequest } from '@/models/upload.model';
+import { UploadRequest } from '@/models/content.model';
 import { LeftArrow } from '@repo/ui';
-import { useContentUpload } from '@/lib/tanstack/mutation/upload.mutation';
+import { useContentUpload } from '@/lib/tanstack/mutation/content.mutation';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constant/routes';

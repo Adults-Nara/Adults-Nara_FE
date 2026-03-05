@@ -1,4 +1,4 @@
-import { ContentUpload } from '@/services/upload.api';
+import { ContentUpload } from '@/services/content.api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useContentUpload() {

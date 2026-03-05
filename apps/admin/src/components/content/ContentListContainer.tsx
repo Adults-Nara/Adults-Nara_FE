@@ -2,7 +2,6 @@
 import { useState } from 'react';
 
 import { CONTENT_COLUMNS } from './contentColumns';
-import { MOCK_CONTENTS } from '@/types/content';
 import { DataTable, Pagination } from '@components/common';
 import {
   Button,
@@ -16,6 +15,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constant/routes';
 import { useDialogStore } from '@/store/useDialogStore';
+import { useContentsList } from '@/lib/tanstack/query/content.query';
 
 interface ContentListContainerProps {
   currentPage: number;
@@ -24,8 +24,10 @@ interface ContentListContainerProps {
 const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const router = useRouter();
-  const totalPages = 150; // 실제로는 서버에서 받아온 totalCount / limit 값으로 계산
   const { openDialog } = useDialogStore();
+
+  const { data, isLoading, isError } = useContentsList({ page: currentPage });
+  const totalPages = data?.totalPages;
 
   const handlerEdit = (id: string) => {
     router.push(ROUTES.EDIT_CONTENT(id));
@@ -52,6 +54,9 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
     });
   };
 
+  if (!data || isError) return <span>에러에러!</span>;
+  if (isLoading) return <span>로딩로딩!</span>;
+
   const columns = CONTENT_COLUMNS(handlerEdit, handlerDelete);
   return (
     <div className="flex flex-col gap-5">
@@ -59,7 +64,7 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
       <div className="flex flex-col">
         <span className="title1">콘텐츠 리스트</span>
         <span className="title3 text-gray-700">
-          {`총 ${MOCK_CONTENTS.length}개의 콘텐츠`}
+          {`총 ${data.totalElements}개의 콘텐츠`}
         </span>
       </div>
       {/* 검색섹션 */}
@@ -102,11 +107,11 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
       {/* 테이블 */}
       <DataTable
         columns={columns}
-        data={MOCK_CONTENTS}
+        data={data.content}
         selectedIds={selectedIds}
         onSelectChange={setSelectedIds}
       />
-      <Pagination totalPages={totalPages} currentPage={currentPage} />
+      <Pagination totalPages={totalPages ?? 0} currentPage={currentPage + 1} />
     </div>
   );
 };
