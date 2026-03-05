@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import BottomSheet from '@/components/BottomSheet';
+import QueryProvider from '@/lib/tanstack/QueryProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,8 +33,10 @@ export default function RootLayout({
           id="app-container"
           className="bg-background mx-auto min-h-dvh max-w-112.5"
         >
-          {children}
-          <BottomSheet />
+          <QueryProvider>
+            {children}
+            <BottomSheet />
+          </QueryProvider>
         </div>
       </body>
     </html>

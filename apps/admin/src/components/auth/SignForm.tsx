@@ -1,22 +1,26 @@
 'use client';
 import { ROUTES } from '@/constant/routes';
+import {
+  useBackofficeCheckEmail,
+  useBackofficeSign,
+} from '@/lib/tanstack/mutation/auth.mutation';
+import { BackofficeSignRequest } from '@/models/auth.model';
 import { Button, Input, Logo } from '@repo/ui';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-interface SignFormValues {
-  email: string;
-  password: string;
-  nickname: string;
-}
-
-interface SignFormUIValues extends SignFormValues {
+interface SignFormUIValues extends BackofficeSignRequest {
   passwordConfirm: string;
 }
 
 const SignForm = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const router = useRouter();
+  const { mutate: signMutate, isPending: signPending } = useBackofficeSign();
+  const { mutate: checkMutate, isPending: checkPending } =
+    useBackofficeCheckEmail();
 
   const {
     register,
@@ -50,18 +54,25 @@ const SignForm = () => {
       return;
     }
 
-    try {
-      // API 추후 연결
-      setIsEmailVerified(true);
-      clearErrors('email');
-      alert('사용 가능한 이메일입니다.');
-    } catch (err) {
-      setError('email', {
-        type: 'manual',
-        message: '이미 사용 중인 이메일입니다.',
-      });
-      setIsEmailVerified(false);
-    }
+    checkMutate(emailValue, {
+      onSuccess: (res) => {
+        if (res) {
+          setIsEmailVerified(true);
+          clearErrors('email');
+          alert('사용 가능한 이메일입니다.'); //TODO:추후 토스트로 변경
+        } else {
+          setError('email', {
+            type: 'manual',
+            message: '이미 사용 중인 이메일입니다.',
+          });
+          setIsEmailVerified(false);
+        }
+      },
+      onError: (error) => {
+        //TODO:추후 토스트
+        console.error('이메일 체크 실패:', error.message);
+      },
+    });
   };
 
   const onSubmit = (data: SignFormUIValues) => {
@@ -72,10 +83,18 @@ const SignForm = () => {
       });
       return;
     }
-    //api 연동
-    const { passwordConfirm, ...submitData } = data;
 
-    console.log('서버로 보낼 DTO:', submitData);
+    const { passwordConfirm, ...submitData } = data;
+    signMutate(submitData, {
+      onSuccess: () => {
+        //TODO:추후 토스트 (회원가입성공)
+        router.push(ROUTES.LOGIN);
+      },
+      onError: (error) => {
+        //TODO:추후 토스트
+        console.error('회원 가입 실패:', error.message);
+      },
+    });
   };
 
   return (
@@ -110,6 +129,7 @@ const SignForm = () => {
               errorMessage={errors.email?.message as string}
             />
             <Button
+              disabled={checkPending}
               type="button"
               className="body2"
               onClick={checkEmailDuplicate}
@@ -160,7 +180,9 @@ const SignForm = () => {
       </div>
 
       <div className="flex w-full flex-col items-center gap-7">
-        <Button type="submit">회원가입</Button>
+        <Button disabled={signPending} type="submit">
+          회원가입
+        </Button>
         <span className="title3 text-gray-700">
           이미 계정이 있으신가요?
           <Link href={ROUTES.LOGIN} className="text-primary-500 ml-2">
