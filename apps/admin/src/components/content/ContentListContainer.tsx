@@ -128,6 +128,7 @@ const ContentListContainer = ({
       <DataTable
         columns={columns}
         data={data?.content ?? []}
+        getRowId={(row) => row.videoId}
         isLoading={isLoading}
         isError={isError}
         selectedIds={selectedIds}

@@ -12,18 +12,21 @@ export interface Column<T> {
 interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
+  getRowId: (row: T) => string;
   isLoading?: boolean;
   isError?: boolean;
   selectedIds?: string[]; // 선택된 ID 목록
   onSelectChange?: (ids: string[]) => void; // 선택 변경 핸들러
 }
 
-export function DataTable<T extends { videoId: string }>({
+export function DataTable<T>({
   columns,
   data,
+  getRowId,
   isLoading,
   isError,
   selectedIds = [],
+
   onSelectChange,
 }: DataTableProps<T>) {
   // 개별 선택 토글
@@ -35,9 +38,10 @@ export function DataTable<T extends { videoId: string }>({
   };
 
   const isAllSelected =
-    data.length > 0 && data.every((item) => selectedIds.includes(item.videoId));
+    data.length > 0 &&
+    data.every((item) => selectedIds.includes(getRowId(item)));
   const toggleAll = () => {
-    const pageIds = data.map((item) => item.videoId);
+    const pageIds = data.map((item) => getRowId(item));
 
     if (isAllSelected) {
       // 현재 페이지 것만 제거
@@ -104,17 +108,17 @@ export function DataTable<T extends { videoId: string }>({
           ) : (
             data.map((item) => (
               <tr
-                key={item.videoId}
+                key={getRowId(item)}
                 className={cn(
-                  `transition-colors hover:bg-gray-100 ${selectedIds.includes(item.videoId) ? 'bg-blue-100 hover:bg-blue-100' : ''}`,
+                  `transition-colors hover:bg-gray-100 ${selectedIds.includes(getRowId(item)) ? 'bg-blue-100 hover:bg-blue-100' : ''}`,
                 )}
               >
                 <td className="w-12.5 p-4 text-center">
                   <input
                     type="checkbox"
                     className="h-4.5 w-4.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    checked={selectedIds.includes(item.videoId)}
-                    onChange={() => toggleOne(item.videoId)}
+                    checked={selectedIds.includes(getRowId(item))}
+                    onChange={() => toggleOne(getRowId(item))}
                   />
                 </td>
                 {columns.map((col) => (
