@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'stream.asinna.store', // 백엔드 미디어 서버 (썸네일, 영상 스트리밍 등)
       },
+      {
+        protocol: 'http',
+        hostname: '**.kakaocdn.net', // 카카오톡 프로필
+      },
     ],
   },
   /* config options here */

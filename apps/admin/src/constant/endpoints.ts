@@ -21,4 +21,10 @@ export const API_ENDPOINTS = {
     UPLOADER_CONTENTS_LIST: '/backoffice/uploader/contents',
     ADMIN_CONTENTS_LIST: '/backoffice/admin/contents',
   },
+
+  USERS: {
+    USER_LIST: '/backoffice/users',
+    USER_DELETE: '/backoffice/users',
+    USER_STATUS: '/backoffice/users/status',
+  },
 } as const;

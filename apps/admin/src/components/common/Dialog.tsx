@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useDialogStore } from '@/store/useDialogStore';
 import { Button, Close } from '@repo/ui';
+import { UserBanStatus } from '@/models/users.model';
 
 // 선택 옵션 배열
 const options = [
@@ -12,8 +13,8 @@ const options = [
 ] as const;
 
 const labelMap: Record<string, string> = {
-  user: '사용자',
-  uploader: '업로더',
+  VIEWER: '사용자',
+  UPLOADER: '업로더',
   content: '콘텐츠',
 } as const;
 
@@ -21,9 +22,7 @@ export function Dialog() {
   const { isOpen, UserType, DialogType, data, closeDialog } = useDialogStore();
   const [reasonText, setReasonText] = useState('');
   // 정지 기간 상태 추가
-  const [period, setPeriod] = useState<
-    'SUSPENDED_7' | 'SUSPENDED_15' | 'SUSPENDED_30' | 'DEACTIVATED'
-  >('SUSPENDED_7');
+  const [period, setPeriod] = useState<UserBanStatus>('SUSPENDED_7');
 
   // 다이얼로그가 열릴 때마다 입력값 초기화
   useEffect(() => {
