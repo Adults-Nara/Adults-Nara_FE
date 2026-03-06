@@ -126,7 +126,21 @@ const UsersListContainer = ({
   };
   const handlerAllDelete = () => {
     openDialog(type, 'delete', {
-      onConfirm: () => console.log(selectedIds),
+      onConfirm: () => {
+        deleteMutate(
+          { userIds: selectedIds },
+          {
+            onSuccess: () => {
+              //TODO:추후 토스트추가
+              console.log('삭제 성공', selectedIds);
+            },
+            onError: (error) => {
+              //TODO:추후 토스트추가
+              console.error(error.message);
+            },
+          },
+        );
+      },
     });
   };
 
