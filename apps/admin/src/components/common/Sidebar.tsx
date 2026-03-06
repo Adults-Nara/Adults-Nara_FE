@@ -49,7 +49,7 @@ const Sidebar = () => {
               <span>콘텐츠 리스트</span>
             </Link>
           </div>
-          {userData?.role === 'ADMIN' ? (
+          {userData.role === 'ADMIN' ? (
             <div className="flex flex-col gap-1">
               <span className="title3 text-gray-700">사용자 관리</span>
               <Link href={ROUTES.USER} className={getLinkStyle(ROUTES.USER)}>
@@ -64,24 +64,23 @@ const Sidebar = () => {
                 <span>업로더 리스트</span>
               </Link>
             </div>
-          ) : (
-            ''
-          )}
+          ) : null}
         </div>
       </div>
       <div className="flex items-center gap-5 p-3">
-        <div className="bg-primary-100 h-12.5 w-12.5 shrink-0 rounded-full">
+        <div className="bg-primary-100 relative h-12.5 w-12.5 shrink-0 rounded-full">
           {userData.profileImageUrl ? (
             <Image
               className="h-full w-full rounded-full object-cover"
               src={userData.profileImageUrl}
               alt="유저 프로필"
+              fill
             />
           ) : null}
         </div>
         <div className="flex w-full flex-col">
-          <span className="title3">{userData?.nickname}</span>
-          <span className="body3 text-gray-700">{userData?.email}</span>
+          <span className="title3">{userData.nickname}</span>
+          <span className="body3 text-gray-700">{userData.email}</span>
         </div>
       </div>
     </div>
