@@ -1,4 +1,3 @@
-import { ShortFormVideoData } from '@/types/video';
 import {
   LikeFill,
   Like,
@@ -8,17 +7,51 @@ import {
   Bookmark,
   Comment,
 } from '@repo/ui';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useInteraction } from '@/lib/tanstack/query/interaction.query';
+import {
+  useDislikeVideo,
+  useLikeVideo,
+} from '@/lib/tanstack/mutation/interaction.mutation';
+import { useBookmarkStatus } from '@/lib/tanstack/query/bookmark.query';
+import { useToggleBookmark } from '@/lib/tanstack/mutation/bookmark.mutation';
 
 interface ShortTabActionButtonsProps {
-  videoData: ShortFormVideoData;
+  videoId: string;
 }
 
-export function ShortTabActionButtons({
-  videoData,
-}: ShortTabActionButtonsProps) {
-  const [liked, setLiked] = useState<boolean | null>(videoData.isLiked ?? null);
-  const [bookmarked, setBookmarked] = useState<boolean>(videoData.isBookmarked);
+export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
+  const { data: interaction, isLoading: interactionLoading } =
+    useInteraction(videoId);
+  const { data: bookmark, isLoading: bookmarkLoading } = useBookmarkStatus(
+    Number(videoId),
+  );
+
+  const { mutate: mutateLike } = useLikeVideo();
+  const { mutate: mutateDislike } = useDislikeVideo();
+  const { mutate: mutateBookmark } = useToggleBookmark();
+
+  // 낙관적 업데이트를 위해, useState 사용
+  const [liked, setLiked] = useState<boolean | null>();
+  const [bookmarked, setBookmarked] = useState<boolean | null>();
+
+  useEffect(() => {
+    if (!interaction) return;
+    switch (interaction.interactionType) {
+      case 'LIKE':
+        setLiked(true);
+        break;
+      case 'DISLIKE':
+        setLiked(false);
+        break;
+    }
+  }, [interaction]);
+
+  useEffect(() => {
+    if (bookmark?.isBookmarked !== undefined) {
+      setBookmarked(bookmark.isBookmarked);
+    }
+  }, [bookmark]);
 
   // 좋아요, 싫어요 로직
   const handleLike = (changeTo: boolean) => {
@@ -27,20 +60,27 @@ export function ShortTabActionButtons({
     } else {
       setLiked(changeTo);
     }
-    // TODO: 여기에 실제 API 호출 로직 추가 (ex. 낙관적 업데이트 후 서버 전송)
+    // API 호출
+    if (changeTo === true) {
+      mutateLike(Number(videoId));
+    } else {
+      mutateDislike(Number(videoId));
+    }
   };
 
   // 북마크 로직
   const handleBookmark = () => {
     setBookmarked(!bookmarked);
-    // TODO: 북마크 API 호출 로직 추가
+
+    // API 호출
+    mutateBookmark(Number(videoId));
   };
 
   // 댓글 창 열기 로직
   const handleComment = () => {
     // TODO: 실제 서비스의 댓글 바텀시트(Bottom Sheet)나 모달을 여는 로직 추가
-    console.log('댓글 창 열기:', videoData.id);
   };
+  if (interactionLoading || bookmarkLoading) return null;
 
   return (
     <div className="flex flex-col items-center gap-6 text-[28px] drop-shadow-sm">
@@ -70,7 +110,8 @@ export function ShortTabActionButtons({
         onClick={handleComment}
       >
         <Comment />
-        <span className="body4">{videoData.comments}</span>
+        {/* TODO: 댓글 개수 표시 */}
+        <span className="body4">{10}</span>
       </button>
     </div>
   );

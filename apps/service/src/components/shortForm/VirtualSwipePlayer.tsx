@@ -1,16 +1,17 @@
 'use client';
 import ReactPlayer from 'react-player';
-import { ShortFormVideoData } from '@/types/video';
 import { useRef, useState, ReactNode, useEffect } from 'react';
+import { RecommendationVideoItem } from '@/models/recommendations.model';
+import { useVideoS3Url } from '@/lib/tanstack/query/video.query';
 
 interface VirtualSwipePlayerProps {
-  currentVideo: ShortFormVideoData;
-  upVideo: ShortFormVideoData | null;
-  downVideo: ShortFormVideoData | null;
-  leftVideo: ShortFormVideoData | null;
-  rightVideo: ShortFormVideoData | null;
+  currentVideo: RecommendationVideoItem;
+  upVideo: RecommendationVideoItem | null;
+  downVideo: RecommendationVideoItem | null;
+  leftVideo: RecommendationVideoItem | null;
+  rightVideo: RecommendationVideoItem | null;
   onSwipe: (direction: 'up' | 'down' | 'left' | 'right') => void;
-  renderController?: (video: ShortFormVideoData) => ReactNode;
+  renderController?: (video: RecommendationVideoItem) => ReactNode;
 }
 
 export function VirtualSwipePlayer({
@@ -24,10 +25,15 @@ export function VirtualSwipePlayer({
 }: VirtualSwipePlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
+  // 영상 url 받아오기
+  const { data, isLoading } = useVideoS3Url(currentVideo.videoId);
+
+  const s3Url = data?.masterUrl;
 
   useEffect(() => {
     setIsPlaying(true);
-  }, [currentVideo]);
+    if (isLoading) return;
+  }, [currentVideo, data, isLoading]);
 
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
@@ -127,6 +133,7 @@ export function VirtualSwipePlayer({
     setOffset({ x: 0, y: 0 });
   };
 
+  if (isLoading || !s3Url) return <>로딩중..</>;
   return (
     <div
       className="relative h-dvh w-full touch-none overflow-hidden bg-black"
@@ -145,9 +152,17 @@ export function VirtualSwipePlayer({
         <div className="absolute inset-0 h-full w-full">
           <ReactPlayer
             ref={videoRef}
-            src={currentVideo.videoUrl}
+            src={s3Url}
             playing={isPlaying}
             controls={false}
+            config={{
+              hls: {
+                startPosition: currentVideo.watchProgress ?? 0,
+                xhrSetup: (xhr: XMLHttpRequest) => {
+                  xhr.withCredentials = true; // 쿠키 포함
+                },
+              },
+            }}
             loop
             playsInline
             width="100%"
@@ -175,28 +190,28 @@ export function VirtualSwipePlayer({
         {/* 상하좌우 썸네일 */}
         {upVideo && (
           <img
-            src={upVideo.thumbnail}
+            src={upVideo.thumbnailUrl}
             alt=""
             className="absolute inset-0 h-full w-full -translate-y-full object-cover"
           />
         )}
         {downVideo && (
           <img
-            src={downVideo.thumbnail}
+            src={downVideo.thumbnailUrl}
             alt=""
             className="absolute inset-0 h-full w-full translate-y-full object-cover"
           />
         )}
         {leftVideo && (
           <img
-            src={leftVideo.thumbnail}
+            src={leftVideo.thumbnailUrl}
             alt=""
             className="absolute inset-0 h-full w-full -translate-x-full object-cover"
           />
         )}
         {rightVideo && (
           <img
-            src={rightVideo.thumbnail}
+            src={rightVideo.thumbnailUrl}
             alt=""
             className="absolute inset-0 h-full w-full translate-x-full object-cover"
           />

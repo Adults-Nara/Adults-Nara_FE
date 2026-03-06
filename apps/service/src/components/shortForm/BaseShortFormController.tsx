@@ -1,10 +1,10 @@
 // components/video/BaseShortFormController.tsx
 import { ReactNode } from 'react';
-import { ShortFormVideoData } from '@/types/video';
 import { VideoInfoSection } from './VideoInfoSection';
+import { RecommendationVideoItem } from '@/models/recommendations.model';
 
 interface ControllerProps {
-  data: ShortFormVideoData;
+  data: RecommendationVideoItem;
   isReady: boolean; // API 로딩 완료 여부
   actionSlot: ReactNode; // 좋아요, 싫어요 등
 }
@@ -39,10 +39,10 @@ export function BaseShortFormController({
         <VideoInfoSection
           title={data.title}
           uploader={{
-            name: data.uploader.name,
-            profileImg: data.uploader.profileImg || '',
+            name: data.uploaderNickname,
+            profileImg: data.uploaderProfileImageUrl || '',
           }}
-          longformUrl={data.longformUrl}
+          longformUrl={data.otherVideoUrl}
         />
       </div>
     </div>
