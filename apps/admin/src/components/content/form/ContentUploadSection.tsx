@@ -24,9 +24,10 @@ const ContentUploadSection = ({
   setVideoId,
 }: ContentUploadSectionProps) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialThumbnail);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
 
-  // 마운트시 임시URL 클린업
+  // 마운트시 섬네일임시URL 클린업
   useEffect(() => {
     return () => {
       if (previewUrl && !initialThumbnail?.startsWith(previewUrl)) {
@@ -34,6 +35,17 @@ const ContentUploadSection = ({
       }
     };
   }, [previewUrl, initialThumbnail]);
+
+  //비디오 임시URL 클린업
+  useEffect(() => {
+    if (!videoFile) {
+      setVideoPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(videoFile);
+    setVideoPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [videoFile]);
 
   // 썸네일파일 선택 시 실행될 함수
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -160,7 +172,8 @@ const ContentUploadSection = ({
             <>
               {videoFile ? (
                 <video
-                  src={URL.createObjectURL(videoFile)}
+                  // src={URL.createObjectURL(videoFile)}
+                  src={videoPreviewUrl ?? undefined}
                   className="w-full rounded-lg"
                 />
               ) : (

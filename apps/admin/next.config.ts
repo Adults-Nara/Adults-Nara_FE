@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'stream.asinna.store',
+        hostname: 'stream.asinna.store', // 백엔드 미디어 서버 (썸네일, 영상 스트리밍 등)
       },
     ],
   },

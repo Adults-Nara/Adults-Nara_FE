@@ -28,15 +28,17 @@ const ContentListContainer = ({
   currentKeyword,
 }: ContentListContainerProps) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [keyword, setKeyword] = useState('');
+  const [keyword, setKeyword] = useState(currentKeyword);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { openDialog } = useDialogStore();
-  const { role } = useAuthStore.getState();
+  const role = useAuthStore((state) => state.role);
 
+  //음수체크
+  const safePage = Math.max(1, currentPage || 1);
   const { data, isLoading, isError } = useContentsList(role, {
-    page: currentPage,
+    page: safePage,
     keyword: currentKeyword,
   });
   const totalPages = data?.totalPages ?? 0;
@@ -135,7 +137,7 @@ const ContentListContainer = ({
         onSelectChange={setSelectedIds}
       />
       {!isError && (
-        <Pagination totalPages={totalPages} currentPage={currentPage} />
+        <Pagination totalPages={totalPages} currentPage={safePage} />
       )}
     </div>
   );

@@ -1,4 +1,3 @@
-import { ContentListContainer } from '@components/content';
 import z from 'zod';
 
 export const CONTENT_TYPE_OPTIONS = [

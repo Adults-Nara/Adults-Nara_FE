@@ -40,6 +40,9 @@ export async function apiComplete(
 
 //원본 동영상 나누기
 export function sliceFileIntoParts(f: File, partSizeBytes: number) {
+  if (!Number.isFinite(partSizeBytes) || partSizeBytes <= 0) {
+    throw new Error(`Invalid partSizeBytes: ${partSizeBytes}`);
+  }
   const parts: {
     partNumber: number;
     blob: Blob;
@@ -122,7 +125,7 @@ export const ContentUpload = async (videoId: string, data: FormData) => {
   });
 };
 
-export const UploaderConentsList = async (params: {
+export const UploaderContentsList = async (params: {
   keyword?: string;
   page: number;
   size: number;
@@ -145,7 +148,7 @@ export const UploaderConentsList = async (params: {
   return response.data;
 };
 
-export const AdminConentsList = async (params: {
+export const AdminContentsList = async (params: {
   keyword?: string;
   page: number;
   size: number;

@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const { data: userData, isError, refetch } = useBackofficeMe();
+  const { data: userData, isError, isPending, refetch } = useBackofficeMe();
 
   const getLinkStyle = (href: string) =>
     cn(
@@ -16,7 +16,14 @@ const Sidebar = () => {
       pathname.startsWith(href) ? 'bg-primary-600' : 'hover:bg-gray-800',
     );
 
-  if (!userData || isError)
+  if (isPending)
+    return (
+      <div className="bg-navy flex h-full min-w-75 flex-col justify-center gap-5 px-10 text-white">
+        {/* TODO: 사이드바 로딩UI  */}
+        <span className="text-center">로딩중...</span>
+      </div>
+    );
+  if (isError)
     return (
       <div className="bg-navy flex h-full min-w-75 flex-col justify-center gap-5 px-10 text-white">
         {/* TODO: 사이드바 에러UI  */}
@@ -66,14 +73,11 @@ const Sidebar = () => {
         <div className="bg-primary-100 h-12.5 w-12.5 shrink-0 rounded-full">
           {userData.profileImageUrl ? (
             <Image
-              width="10"
-              height="10"
+              className="h-full w-full rounded-full object-cover"
               src={userData.profileImageUrl}
-              alt="유저프로필"
+              alt="유저 프로필"
             />
-          ) : (
-            ''
-          )}
+          ) : null}
         </div>
         <div className="flex w-full flex-col">
           <span className="title3">{userData?.nickname}</span>

@@ -14,6 +14,11 @@ const CreateContentContainer = () => {
   const [videoId, setVideoId] = useState('');
 
   const handleCreate = (data: UploadRequest, thumbnailFile: File | null) => {
+    if (!videoId) {
+      // TODO: 토스트로 교체
+      console.log('원본 영상 업로드 완료 후 저장해주세요.');
+      return;
+    }
     const formData = new FormData();
 
     formData.append(

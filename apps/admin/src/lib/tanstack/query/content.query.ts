@@ -1,4 +1,7 @@
-import { AdminConentsList, UploaderConentsList } from '@/services/content.api';
+import {
+  AdminContentsList,
+  UploaderContentsList,
+} from '@/services/content.api';
 import { useQuery } from '@tanstack/react-query';
 
 export function useContentsList(
@@ -24,7 +27,7 @@ export function useContentsList(
     queryKey: ['contents', role, params],
     queryFn: () => {
       if (role === 'ADMIN') {
-        return AdminConentsList({
+        return AdminContentsList({
           keyword,
           page: apiPage,
           size,
@@ -32,7 +35,7 @@ export function useContentsList(
           direction,
         });
       } else {
-        return UploaderConentsList({
+        return UploaderContentsList({
           keyword,
           page: apiPage,
           size,
