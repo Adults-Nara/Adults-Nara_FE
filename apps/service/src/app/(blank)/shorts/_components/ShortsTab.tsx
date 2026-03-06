@@ -1,6 +1,5 @@
 'use client';
 
-import { ShortFormVideoData } from '@/types/video';
 import BaseShortsTab from '@/components/shortForm/BaseShortsTab';
 import { getRecommendationFeed } from '@/services/video.api';
 import { useQuery } from '@tanstack/react-query';

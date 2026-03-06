@@ -6,6 +6,8 @@ import { VirtualSwipePlayer } from './VirtualSwipePlayer'; // 방금 만든 컴�
 import { ShortTabActionButtons } from '@/app/(blank)/shorts/_components/ShortTabActionButtons';
 import { RecommendationVideoItem } from '@/models/recommendations.model';
 import { useRelatedVideos } from '@/lib/tanstack/query/video.query';
+import { useVideoS3Url } from '@/lib/tanstack/query/video.query';
+import { useUpdateWatchPosition } from '@/lib/tanstack/mutation/watch-history.mutation';
 
 interface BaseShortsTabProps {
   algorithmList: RecommendationVideoItem[];
@@ -55,15 +57,34 @@ export default function BaseShortsTab({ algorithmList }: BaseShortsTabProps) {
     }
   };
 
+  // Video data fetching & Watch Position updates lifted from VirtualSwipePlayer
+  const { data: s3Data, isLoading: isS3Loading } = useVideoS3Url(
+    currentVideo?.videoId, // Will be skipped internally if undefined
+  );
+  const s3Url = s3Data?.masterUrl;
+
+  const { mutate: updatePosition } = useUpdateWatchPosition(
+    currentVideo ? Number(currentVideo.videoId) : 0,
+  );
+
+  const handleWatchProgressUpdate = (currentTime: number) => {
+    updatePosition({ lastPosition: currentTime });
+  };
+
   if (!currentVideo) return null;
 
   return (
-    <VirtualSwipePlayer
+    <VirtualSwipePlayer<RecommendationVideoItem>
       currentVideo={currentVideo}
       upVideo={upVideo}
       downVideo={downVideo}
       leftVideo={leftVideo}
       rightVideo={rightVideo}
+      videoUrl={s3Url}
+      videoLoading={isS3Loading}
+      getThumbnailUrl={(v) => v.thumbnailUrl}
+      watchProgress={currentVideo.watchProgress ?? 0}
+      onWatchProgressUpdate={handleWatchProgressUpdate}
       onSwipe={handleSwipe}
       renderController={(currentVideo) => {
         return (
