@@ -50,6 +50,18 @@ const ContentListContainer = ({
   });
   const totalPages = data?.totalPages ?? 0;
 
+  const createMutationCallbacks = (successMessage: string) => ({
+    onSuccess: () => {
+      // TODO: 토스트로 변경
+      console.log(successMessage);
+      setSelectedIds([]);
+    },
+    onError: (error: Error) => {
+      // TODO: 토스트로 변경
+      console.error(error.message);
+    },
+  });
+
   const handlerEdit = (id: string) => {
     router.push(ROUTES.EDIT_CONTENT(id));
   };
@@ -58,17 +70,7 @@ const ContentListContainer = ({
       onConfirm: () =>
         deleteMutate(
           { videoIds: [id] },
-          {
-            onSuccess: () => {
-              //TODO: 토스트로변경
-              console.log('영상 삭제 성공', id);
-              setSelectedIds([]);
-            },
-            onError: (error) => {
-              //TODO: 토스트로변경
-              console.error(error.message);
-            },
-          },
+          createMutationCallbacks(`영상 삭제 성공 ${id}`),
         ),
     });
   };
@@ -78,17 +80,7 @@ const ContentListContainer = ({
       onConfirm: () =>
         statusMutate(
           { videoIds: selectedIds, visibility: 'PUBLIC' },
-          {
-            onSuccess: () => {
-              //TODO: 토스트로변경
-              console.log('영상 활성화 성공', selectedIds);
-              setSelectedIds([]);
-            },
-            onError: (error) => {
-              //TODO: 토스트로변경
-              console.error(error.message);
-            },
-          },
+          createMutationCallbacks(`영상 활성화 성공 성공 ${selectedIds}`),
         ),
     });
   };
@@ -97,17 +89,7 @@ const ContentListContainer = ({
       onConfirm: () =>
         statusMutate(
           { videoIds: selectedIds, visibility: 'PRIVATE' },
-          {
-            onSuccess: () => {
-              //TODO: 토스트로변경
-              console.log('영상 비활성화 성공', selectedIds);
-              setSelectedIds([]);
-            },
-            onError: (error) => {
-              //TODO: 토스트로변경
-              console.error(error.message);
-            },
-          },
+          createMutationCallbacks(`영상 비활성화 성공 ${selectedIds}`),
         ),
     });
   };
@@ -116,17 +98,7 @@ const ContentListContainer = ({
       onConfirm: () =>
         deleteMutate(
           { videoIds: selectedIds },
-          {
-            onSuccess: () => {
-              //TODO: 토스트로변경
-              console.log('영상 다중 삭제 성공', selectedIds);
-              setSelectedIds([]);
-            },
-            onError: (error) => {
-              //TODO: 토스트로변경
-              console.error(error.message);
-            },
-          },
+          createMutationCallbacks(`영상 다중삭제 성공 ${selectedIds}`),
         ),
     });
   };

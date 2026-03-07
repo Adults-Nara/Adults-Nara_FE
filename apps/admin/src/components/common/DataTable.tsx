@@ -106,33 +106,36 @@ export function DataTable<T>({
               </td>
             </tr>
           ) : (
-            data.map((item) => (
-              <tr
-                key={getRowId(item)}
-                className={cn(
-                  `transition-colors hover:bg-gray-100 ${selectedIds.includes(getRowId(item)) ? 'bg-blue-100 hover:bg-blue-100' : ''}`,
-                )}
-              >
-                <td className="w-12.5 p-4 text-center">
-                  <input
-                    type="checkbox"
-                    className="h-4.5 w-4.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    checked={selectedIds.includes(getRowId(item))}
-                    onChange={() => toggleOne(getRowId(item))}
-                  />
-                </td>
-                {columns.map((col) => (
-                  <td
-                    key={String(col.key)}
-                    className={`body2 px-4 py-3 ${col.align === 'center' ? 'text-center' : ''}`}
-                  >
-                    {col.render
-                      ? col.render(item)
-                      : (item[col.key as keyof T] as React.ReactNode)}
+            data.map((item) => {
+              const rowId = getRowId(item);
+              return (
+                <tr
+                  key={rowId}
+                  className={cn(
+                    `transition-colors hover:bg-gray-100 ${selectedIds.includes(rowId) ? 'bg-blue-100 hover:bg-blue-100' : ''}`,
+                  )}
+                >
+                  <td className="w-12.5 p-4 text-center">
+                    <input
+                      type="checkbox"
+                      className="h-4.5 w-4.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      checked={selectedIds.includes(rowId)}
+                      onChange={() => toggleOne(rowId)}
+                    />
                   </td>
-                ))}
-              </tr>
-            ))
+                  {columns.map((col) => (
+                    <td
+                      key={String(col.key)}
+                      className={`body2 px-4 py-3 ${col.align === 'center' ? 'text-center' : ''}`}
+                    >
+                      {col.render
+                        ? col.render(item)
+                        : (item[col.key as keyof T] as React.ReactNode)}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })
           )}
         </tbody>
       </table>

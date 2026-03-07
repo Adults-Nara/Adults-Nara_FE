@@ -12,7 +12,6 @@ import { ApiResponse } from '@/types/api';
 
 //업로드 시작
 export async function apiInit(f: File) {
-  console.log(f.type);
   const body: MultipartInitRequest = {
     contentType: f.type || 'video/mp4',
     sizeBytes: f.size,
@@ -137,8 +136,8 @@ export const ContentsDelete = async (data: { videoIds: string[] }) => {
   });
 };
 
-export const ContentsEdit = async (vidioId: string, data: FormData) => {
-  await httpClient<ApiResponse<void>>(API_ENDPOINTS.CONTENTS.EDIT(vidioId), {
+export const ContentsEdit = async (videoId: string, data: FormData) => {
+  await httpClient<ApiResponse<void>>(API_ENDPOINTS.CONTENTS.EDIT(videoId), {
     method: 'PATCH',
     body: data,
   });

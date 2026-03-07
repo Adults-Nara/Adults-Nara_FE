@@ -33,7 +33,12 @@ export function useContentsList(
 
   const apiPage = page - 1;
   return useQuery({
-    queryKey: ['contents', 'list', role, params],
+    queryKey: [
+      'contents',
+      'list',
+      role,
+      { page, keyword, size, sortBy, direction },
+    ],
     queryFn: () => {
       if (role === 'ADMIN') {
         return AdminContentsList({
