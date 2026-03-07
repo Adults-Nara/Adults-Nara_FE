@@ -41,6 +41,12 @@ export interface MultipartCompleteRequest {
   parts: { partNumber: number; eTag: string }[];
 }
 
+export type ProcessingStatus =
+  | 'UPLOADED' //원본영상 업로드 완료
+  | 'TRANSCODING' //트랜스코딩중
+  | 'READY' // 영상 준비 완료 (트랜스코딩완료)
+  | 'FAILED'; // 트랜스코딩 실패
+
 export interface ContentItem {
   videoId: string;
   thumbnailUrl: string;
@@ -53,6 +59,7 @@ export interface ContentItem {
   commentCount: number;
   visibility: 'PRIVATE' | 'PUBLIC';
   createdAt: string;
+  processingStatus: ProcessingStatus;
 }
 
 export interface ContentsListResponse {
@@ -61,4 +68,21 @@ export interface ContentsListResponse {
   size: number;
   totalElements: number;
   totalPages: number;
+}
+
+export interface ContentsStatusRequest {
+  videoIds: string[];
+  visibility: 'PRIVATE' | 'PUBLIC';
+}
+
+export interface ContentDetailResponses {
+  videoId: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  visibility: 'PRIVATE' | 'PUBLIC';
+  tagIds: string[];
+  createdAt: string;
+  otherVideoUrl: string;
+  videoType: 'SHORT' | 'LONG' | 'AD';
 }

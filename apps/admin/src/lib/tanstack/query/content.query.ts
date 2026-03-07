@@ -1,8 +1,17 @@
 import {
   AdminContentsList,
+  ContentsDetail,
   UploaderContentsList,
 } from '@/services/content.api';
 import { useQuery } from '@tanstack/react-query';
+
+export function useContentDetail(videoId: string) {
+  return useQuery({
+    queryKey: ['contents', 'detail', videoId],
+    queryFn: () => ContentsDetail(videoId),
+    enabled: !!videoId,
+  });
+}
 
 export function useContentsList(
   role: 'UPLOADER' | 'ADMIN' | null,
@@ -24,7 +33,7 @@ export function useContentsList(
 
   const apiPage = page - 1;
   return useQuery({
-    queryKey: ['contents', role, params],
+    queryKey: ['contents', 'list', role, params],
     queryFn: () => {
       if (role === 'ADMIN') {
         return AdminContentsList({

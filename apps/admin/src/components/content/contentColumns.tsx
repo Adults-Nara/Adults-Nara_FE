@@ -6,6 +6,25 @@ import { Delete, Edit } from '@repo/ui';
 import { ContentItem } from '@/models/content.model';
 import Image from 'next/image';
 
+const TRANSCODING_STATUS = {
+  UPLOADED: {
+    label: '업로드 완료',
+    className: 'bg-gray-500 text-white',
+  },
+  TRANSCODING: {
+    label: '진행중',
+    className: 'bg-blue-500 text-white',
+  },
+  READY: {
+    label: '완료',
+    className: 'bg-green-600 text-white',
+  },
+  FAILED: {
+    label: '실패',
+    className: 'bg-red-500 text-white',
+  },
+};
+
 export const CONTENT_COLUMNS = (
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
@@ -92,6 +111,21 @@ export const CONTENT_COLUMNS = (
         {item.visibility === 'PUBLIC' ? '활성' : '비활성'}
       </span>
     ),
+  },
+  {
+    key: 'processingStatus',
+    label: '트랜스코딩',
+    width: '120px',
+    align: 'center',
+    render: (item) => {
+      const status = TRANSCODING_STATUS[item.processingStatus];
+
+      return (
+        <span className={`body4 rounded-full px-3 py-1.5 ${status.className}`}>
+          {status.label}
+        </span>
+      );
+    },
   },
   {
     key: 'createdAt',

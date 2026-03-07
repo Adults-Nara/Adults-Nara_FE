@@ -30,10 +30,6 @@ const CreateContentContainer = () => {
       formData.append('image', thumbnailFile);
     }
 
-    console.log('최종 전송할 데이터:', data);
-    console.log('첨부된 파일:', thumbnailFile);
-    console.log(formData, 'FormData 준비 완료');
-
     mutate(
       { videoId: videoId, data: formData },
       {

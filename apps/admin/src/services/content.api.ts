@@ -1,5 +1,7 @@
 import {
+  ContentDetailResponses,
   ContentsListResponse,
+  ContentsStatusRequest,
   MultipartCompleteRequest,
   MultipartInitRequest,
   MultipartInitResponse,
@@ -64,7 +66,6 @@ export function sliceFileIntoParts(f: File, partSizeBytes: number) {
 //eTag 정리
 export function normalizeETag(etag: string | null): string {
   if (!etag) return '';
-  // Some browsers include quotes, some not. Normalize.
   const t = etag.trim();
   if (t.startsWith('"') && t.endsWith('"') && t.length >= 2)
     return t.slice(1, -1);
@@ -73,8 +74,6 @@ export function normalizeETag(etag: string | null): string {
 
 //S3로 전송(헤더옵션 예민해서 fetch로)
 export async function putPart(url: string, blob: Blob): Promise<string> {
-  // NOTE: For presigned UploadPart URLs, do NOT set Content-Type arbitrarily.
-  // Browser will set a default; setting custom headers can cause signature mismatch.
   const res = await fetch(url, {
     method: 'PUT',
     body: blob,
@@ -87,7 +86,6 @@ export async function putPart(url: string, blob: Blob): Promise<string> {
 
   const etag = normalizeETag(res.headers.get('ETag'));
   if (!etag) {
-    // ETag should be present for UploadPart responses
     throw new Error('Missing ETag header from S3 response');
   }
   return etag;
@@ -123,6 +121,37 @@ export const ContentUpload = async (videoId: string, data: FormData) => {
     method: 'POST',
     body: data,
   });
+};
+
+export const ContentsStatusUpdate = async (data: ContentsStatusRequest) => {
+  await httpClient<ApiResponse<void>>(API_ENDPOINTS.CONTENTS.STATUS, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+};
+
+export const ContentsDelete = async (data: { videoIds: string[] }) => {
+  await httpClient<ApiResponse<void>>(API_ENDPOINTS.CONTENTS.DELETE, {
+    method: 'DELETE',
+    body: JSON.stringify(data),
+  });
+};
+
+export const ContentsEdit = async (vidioId: string, data: FormData) => {
+  await httpClient<ApiResponse<void>>(API_ENDPOINTS.CONTENTS.EDIT(vidioId), {
+    method: 'PATCH',
+    body: data,
+  });
+};
+
+export const ContentsDetail = async (videoId: string) => {
+  const response = await httpClient<ApiResponse<ContentDetailResponses>>(
+    API_ENDPOINTS.CONTENTS.DETAIL(videoId),
+    {
+      method: 'GET',
+    },
+  );
+  return response.data;
 };
 
 export const UploaderContentsList = async (params: {

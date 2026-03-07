@@ -1,7 +1,11 @@
 'use client';
 
 import { FormProvider, useForm } from 'react-hook-form';
-import { UploadRequest, contentSchema } from '@/models/content.model';
+import {
+  ContentDetailResponses,
+  UploadRequest,
+  contentSchema,
+} from '@/models/content.model';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ContentInfoSection from './ContentInfoSection';
 import ContentCategorySection from './ContentCategorySection';
@@ -11,7 +15,7 @@ import { Button, Delete, Upload } from '@repo/ui';
 
 interface ContentFormProps {
   mode: 'create' | 'edit';
-  defaultValues?: UploadRequest;
+  defaultValues?: ContentDetailResponses;
   onSubmit: (data: UploadRequest, thumbnail: File | null) => void;
   onDelete?: () => void;
   setVideoId?: (videoId: string) => void;

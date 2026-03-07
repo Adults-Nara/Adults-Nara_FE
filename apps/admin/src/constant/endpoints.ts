@@ -18,6 +18,8 @@ export const API_ENDPOINTS = {
     UPLOAD: (videoId: string) => `/videos/${videoId}/upload`,
     EDIT: (videoId: string) => `/backoffice/contents/${videoId}`,
     DETAIL: (videoId: string) => `/backoffice/contents/${videoId}`,
+    DELETE: `/backoffice/contents`,
+    STATUS: `/backoffice/contents/status`,
     UPLOADER_CONTENTS_LIST: '/backoffice/uploader/contents',
     ADMIN_CONTENTS_LIST: '/backoffice/admin/contents',
   },

@@ -17,6 +17,10 @@ import { ROUTES } from '@/constant/routes';
 import { useDialogStore } from '@/store/useDialogStore';
 import { useContentsList } from '@/lib/tanstack/query/content.query';
 import { useAuthStore } from '@/store/useAuthStore';
+import {
+  useContentDelete,
+  useContentStatusUpload,
+} from '@/lib/tanstack/mutation/content.mutation';
 
 interface ContentListContainerProps {
   currentPage: number;
@@ -35,6 +39,9 @@ const ContentListContainer = ({
   const { openDialog } = useDialogStore();
   const role = useAuthStore((state) => state.role);
 
+  const { mutate: statusMutate } = useContentStatusUpload();
+  const { mutate: deleteMutate } = useContentDelete();
+
   //음수체크
   const safePage = Math.max(1, currentPage || 1);
   const { data, isLoading, isError } = useContentsList(role, {
@@ -48,23 +55,79 @@ const ContentListContainer = ({
   };
   const handlerDelete = (id: string) => {
     openDialog('content', 'delete', {
-      onConfirm: () => console.log(id),
+      onConfirm: () =>
+        deleteMutate(
+          { videoIds: [id] },
+          {
+            onSuccess: () => {
+              //TODO: 토스트로변경
+              console.log('영상 삭제 성공', id);
+              setSelectedIds([]);
+            },
+            onError: (error) => {
+              //TODO: 토스트로변경
+              console.error(error.message);
+            },
+          },
+        ),
     });
   };
 
   const handlerAllActive = () => {
     openDialog('content', 'activate', {
-      onConfirm: () => console.log(selectedIds),
+      onConfirm: () =>
+        statusMutate(
+          { videoIds: selectedIds, visibility: 'PUBLIC' },
+          {
+            onSuccess: () => {
+              //TODO: 토스트로변경
+              console.log('영상 활성화 성공', selectedIds);
+              setSelectedIds([]);
+            },
+            onError: (error) => {
+              //TODO: 토스트로변경
+              console.error(error.message);
+            },
+          },
+        ),
     });
   };
   const handlerAllDeactivated = () => {
     openDialog('content', 'deactivate', {
-      onConfirm: () => console.log(selectedIds),
+      onConfirm: () =>
+        statusMutate(
+          { videoIds: selectedIds, visibility: 'PRIVATE' },
+          {
+            onSuccess: () => {
+              //TODO: 토스트로변경
+              console.log('영상 비활성화 성공', selectedIds);
+              setSelectedIds([]);
+            },
+            onError: (error) => {
+              //TODO: 토스트로변경
+              console.error(error.message);
+            },
+          },
+        ),
     });
   };
   const handlerAllDelete = () => {
     openDialog('content', 'delete', {
-      onConfirm: () => console.log(selectedIds),
+      onConfirm: () =>
+        deleteMutate(
+          { videoIds: selectedIds },
+          {
+            onSuccess: () => {
+              //TODO: 토스트로변경
+              console.log('영상 다중 삭제 성공', selectedIds);
+              setSelectedIds([]);
+            },
+            onError: (error) => {
+              //TODO: 토스트로변경
+              console.error(error.message);
+            },
+          },
+        ),
     });
   };
   const handleSearch = () => {

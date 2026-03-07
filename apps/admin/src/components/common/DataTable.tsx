@@ -55,7 +55,7 @@ export function DataTable<T>({
   };
   return (
     <div className="max-h-150 w-full overflow-auto rounded-lg border border-gray-500 bg-white">
-      <table className="w-full min-w-230 table-fixed text-left">
+      <table className="w-full min-w-270 table-fixed text-left">
         <thead className="body2 sticky top-0 z-10 h-12.5 bg-gray-200 text-gray-900">
           <tr>
             <th className="w-12.5 content-center p-4 text-center shadow-[inset_0_-1px_0_0_#BEC1C7]">
