@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
     KAKAO_LOGIN_URL: '/auth/kakao/login-url',
     LOGOUT: '/auth/token/logout',
     REFRESH: '/auth/token/refresh',
+    ME: '/auth/me',
   },
 
   RECOMMENDATION: {

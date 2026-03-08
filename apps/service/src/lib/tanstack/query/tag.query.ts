@@ -7,7 +7,6 @@ import {
   getUserPreferences,
   getMyPreferences,
 } from '@/services/tag.api';
-import { UpdateUserTagRequest, OnboardingTagRequest } from '@/models/tag.model';
 
 export const TAG_KEYS = {
   parentWithChild: ['tags', 'parent-with-child'] as const,
@@ -34,14 +33,14 @@ export function useParentTagsWithChild() {
 
 // 내 관심 태그(자식) 목록 조회
 export function useMyChildTags() {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isPending, isError } = useQuery({
     queryKey: TAG_KEYS.myChildTags,
     queryFn: getMyChildTags,
   });
 
   return {
     tags: data ?? [],
-    isLoading,
+    isPending,
     isError,
   };
 }
@@ -63,14 +62,14 @@ export function useVideosByTag(tagId: number) {
 
 // 태그별 시청 통계 조회
 export function useTagWatchStats() {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isPending, isError } = useQuery({
     queryKey: TAG_KEYS.watchStats,
     queryFn: getTagWatchStats,
   });
 
   return {
     stats: data ?? [],
-    isLoading,
+    isPending,
     isError,
   };
 }

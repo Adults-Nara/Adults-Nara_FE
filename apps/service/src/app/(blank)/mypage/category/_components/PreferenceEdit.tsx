@@ -1,5 +1,6 @@
 'use client';
 import CategoryAccordion from '@/components/CategoryAccordion';
+import { findLabelByValue } from '@/utils/findLabelByValue';
 import { Chip } from '@repo/ui';
 
 interface PreferenceEditProps {
@@ -13,8 +14,12 @@ const PreferenceEdit = ({
 }: PreferenceEditProps) => {
   return (
     <div className="flex flex-col gap-4">
-      <span className="title1">선호주제</span>
-
+      <div className="flex items-center">
+        <span className="title1">선호주제</span>
+        <span className="body2 text-primary-500 ml-2">
+          {selectedCategories.length}/5
+        </span>
+      </div>
       <div className="flex flex-col gap-5 px-2">
         <div className="flex w-full flex-wrap gap-2">
           {selectedCategories.length === 0 ? (
@@ -22,24 +27,26 @@ const PreferenceEdit = ({
               선택된 주제가 없습니다! 선호주제를 선택해주세요.
             </span>
           ) : (
-            selectedCategories.map((cat, index) => {
+            selectedCategories.map((cat) => {
               return (
                 <Chip
-                  key={index}
+                  key={cat}
                   onDelete={() => onToggle(cat)}
                   selected
                   className="hover:bg-primary-500"
                 >
-                  {cat}
+                  {findLabelByValue(cat)}
                 </Chip>
               );
             })
           )}
         </div>
-        <CategoryAccordion
-          selectedCategories={selectedCategories}
-          onToggle={onToggle}
-        />
+        <div className="h-100 overflow-auto">
+          <CategoryAccordion
+            selectedCategories={selectedCategories}
+            onToggle={onToggle}
+          />
+        </div>
       </div>
     </div>
   );

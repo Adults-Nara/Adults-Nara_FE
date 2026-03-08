@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   getWatchHistory,
   getRecentWatchHistory,
@@ -11,9 +11,12 @@ export function useWatchHistory(videoId: number) {
   });
 }
 
-export function useRecentWatchHistory(page = 0, size = 10) {
-  return useQuery({
-    queryKey: ['recentWatchHistory', page, size],
-    queryFn: () => getRecentWatchHistory(page, size),
+export function useRecentWatchHistory(size?: number) {
+  return useInfiniteQuery({
+    queryKey: ['recentWatchHistory', size],
+    queryFn: ({ pageParam = 0 }) => getRecentWatchHistory(pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.hasMore ? pages.length : undefined,
   });
 }

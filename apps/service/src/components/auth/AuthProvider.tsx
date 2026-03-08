@@ -41,10 +41,10 @@ export default function AuthProvider({
         setIsInitialized(true);
       }
     };
-    console.log('레이아웃 엑세스토큰 검증', accessToken);
     initAuth();
   }, [setAccessToken]);
 
+  console.log('레이아웃 엑세스토큰 검증', accessToken);
   // 초기 로딩 시 깜빡임 방지 (화이트아웃 방지를 위해 스켈레톤이나 null 리턴)
   if (!isInitialized) return null;
 

@@ -1,18 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   getBookmarkList,
   getBookmarkStatus,
   getBookmarkSummary,
 } from '@/services/bookmark.api';
 
-export function useBookmarkList(
-  videoType: 'SHORT' | 'LONG',
-  page: number = 0,
-  size: number = 10,
-) {
-  return useQuery({
-    queryKey: ['bookmarks', videoType, page, size],
-    queryFn: () => getBookmarkList(videoType, page, size),
+export function useBookmarkList(videoType: 'SHORT' | 'LONG', size?: number) {
+  return useInfiniteQuery({
+    queryKey: ['bookmarks', videoType, size],
+    queryFn: ({ pageParam = 0 }) => getBookmarkList(videoType, pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.hasMore ? pages.length : undefined,
   });
 }
 

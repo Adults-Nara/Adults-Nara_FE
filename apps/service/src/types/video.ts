@@ -21,6 +21,7 @@ export interface ShortFormVideoData extends VideoData {
   longformUrl: string;
 }
 export interface ThumbnailData {
+  id: string;
   thumbnailSrc: string;
   title: string;
   uploader: string;

@@ -1,8 +1,8 @@
 import Thumbnail from '@/components/thumbnail/Thumbnail';
-import { ThumbnailData } from '@/types/video';
+import { BookmarkPlaylistResponse } from '@/models/bookmark.model';
 
 interface BookmarkItemProps {
-  data: ThumbnailData[];
+  data: BookmarkPlaylistResponse;
   type: 'long' | 'short';
 }
 
@@ -16,9 +16,9 @@ const BookmarkItem = ({ data, type }: BookmarkItemProps) => {
             : 'grid-cols-4 grid-rows-1'
         }`}
       >
-        {data.slice(0, 4).map((video, index) => (
+        {data.thumbnails.map((img, index) => (
           <div key={index} className="relative h-full w-full overflow-hidden">
-            <Thumbnail type={type} src={video.thumbnailSrc} fillContainer />
+            <Thumbnail type={type} src={img} fillContainer />
           </div>
         ))}
       </div>
@@ -26,7 +26,7 @@ const BookmarkItem = ({ data, type }: BookmarkItemProps) => {
         <span className="title3 line-clamp-2">
           {type === 'long' ? '긴영상' : '짧은영상'} 재생목록
         </span>
-        <span className="body4 text-gray-700">영상 {data.length}개</span>
+        <span className="body4 text-gray-700">영상 {data.totalCount}개</span>
       </div>
     </div>
   );
