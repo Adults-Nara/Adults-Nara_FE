@@ -3,6 +3,7 @@ import { ThumbnailData } from '@/types/video';
 
 export const MOCK_VIDEO_DATA: ThumbnailData[] = [
   {
+    id: '1',
     thumbnailSrc: 'https://picsum.photos/1600/900?random=11',
     title: '[건강] 무릎 통증 싹 사라지는 아침 5분 스트레칭 (의사 권장)',
     uploader: '백세건강TV',
@@ -13,6 +14,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     type: 'long',
   },
   {
+    id: '2',
     thumbnailSrc: 'https://picsum.photos/1600/900?random=12',
     title: '[요리] 입맛 없을 때 딱! 보리보리 된장찌개 맛있게 끓이는 법',
     uploader: '엄마의손맛',
@@ -23,6 +25,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     type: 'long',
   },
   {
+    id: '3',
     thumbnailSrc: 'https://picsum.photos/1600/900?random=13',
     title: '[원예] 베란다에서 상추와 고추 키우기 - 초보자도 실패 없는 비법',
     uploader: '숲속작은정원',
@@ -33,6 +36,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     type: 'short',
   },
   {
+    id: '4',
     thumbnailSrc: 'https://picsum.photos/1600/900?random=14',
     title: '[애완동물] 우리 집 강아지 노령견 케어법 - 관절 건강과 영양 관리',
     uploader: '댕냥이연구소',
@@ -43,6 +47,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     type: 'long',
   },
   {
+    id: '5',
     thumbnailSrc: 'https://picsum.photos/1600/900?random=15',
     title: '[교양] 퇴계 이황에게 배우는 마음 다스리는 법 - 중년의 지혜',
     uploader: '인문학산책',
@@ -53,6 +58,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     type: 'long',
   },
   {
+    id: '6',
     thumbnailSrc: 'https://picsum.photos/1600/900?random=16',
     title: '[뉴스] 2024년 달라지는 기초연금과 시니어 복지 혜택 총정리',
     uploader: '데일리뉴스24',
@@ -63,6 +69,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     type: 'short',
   },
   {
+    id: '7',
     thumbnailSrc: 'https://picsum.photos/1600/900?random=17',
     title: '[음식] 소화 잘 되는 나물 반찬 5가지 - 보관법까지 알려드려요',
     uploader: '산촌밥상',
@@ -73,6 +80,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     type: 'long',
   },
   {
+    id: '8',
     thumbnailSrc: 'https://picsum.photos/1600/900?random=18',
     title: '[드라마] 다시 봐도 가슴 뭉클한 그 시절 명작 드라마 명장면 모음',
     uploader: '추억의상영관',
@@ -83,6 +91,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     type: 'long',
   },
   {
+    id: '9',
     thumbnailSrc: 'https://picsum.photos/1600/900?random=19',
     title: '[건강] 당뇨 걱정 없는 간식 추천 - 설탕 없이도 달콤한 과일들',
     uploader: '닥터시니어',
@@ -93,6 +102,7 @@ export const MOCK_VIDEO_DATA: ThumbnailData[] = [
     type: 'short',
   },
   {
+    id: '10',
     thumbnailSrc: 'https://picsum.photos/1600/900?random=20',
     title: '[원예] 시들시들한 화분 심폐소생술! 분갈이만 잘해도 살아납니다',
     uploader: '초록이집사',
