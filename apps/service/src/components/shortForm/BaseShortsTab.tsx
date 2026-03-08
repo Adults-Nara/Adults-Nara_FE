@@ -1,50 +1,35 @@
 'use client';
 
-import { ShortFormVideoData } from '@/types/video';
 import { useState, useEffect } from 'react';
 import { BaseShortFormController } from '@/components/shortForm/BaseShortFormController';
 import { VirtualSwipePlayer } from './VirtualSwipePlayer'; // 방금 만든 컴포넌트
 import { ShortTabActionButtons } from '@/app/(blank)/shorts/_components/ShortTabActionButtons';
+import { RecommendationVideoItem } from '@/models/recommendations.model';
+import { useRelatedVideos } from '@/lib/tanstack/query/video.query';
+import { useVideoS3Url } from '@/lib/tanstack/query/video.query';
+import { useUpdateWatchPosition } from '@/lib/tanstack/mutation/watch-history.mutation';
 
 interface BaseShortsTabProps {
-  algorithmList: ShortFormVideoData[];
-}
-
-function fetchRelatedVideos(
-  sourceVideo: ShortFormVideoData,
-): ShortFormVideoData[] {
-  return Array.from({ length: 5 }, (_, i) => ({
-    id: `${sourceVideo.id}-rel-${i}`,
-    videoUrl:
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-    thumbnail: '',
-    uploader: { name: `related_${i + 1}`, profileImg: null },
-    title: `${sourceVideo.title} 관련 ${i + 1}`,
-    likes: (i + 1) * 80,
-    dislikes: (i + 1) * 3,
-    comments: (i + 1) * 15,
-    isLiked: i % 2 === 0,
-    isBookmarked: i % 2 === 0,
-    longformUrl: '',
-  }));
+  algorithmList: RecommendationVideoItem[];
 }
 
 export default function BaseShortsTab({ algorithmList }: BaseShortsTabProps) {
-  const [vList, setVList] = useState<ShortFormVideoData[]>(algorithmList);
+  const [vList, setVList] = useState<RecommendationVideoItem[]>(algorithmList);
   const [rowIndex, setRowIndex] = useState(0);
   const [colIndex, setColIndex] = useState(0);
-  const [hList, setHList] = useState<ShortFormVideoData[]>([]);
+  const [hList, setHList] = useState<RecommendationVideoItem[]>([]);
+  const { videos, isLoading } = useRelatedVideos(vList[rowIndex]?.videoId);
 
   // 층(Row) 변경 시 가로 리스트 업데이트
   useEffect(() => {
     const source = vList[rowIndex];
-    if (source) {
-      setHList([source, ...fetchRelatedVideos(source)]);
-    }
-  }, [rowIndex, vList]);
+    if (!source || isLoading) return;
+    setHList([source, ...videos]);
+  }, [rowIndex, vList, videos, isLoading]);
 
   // 이웃 영상들 도출
   const currentVideo = hList[colIndex];
+
   const upVideo = rowIndex > 0 ? vList[rowIndex - 1] : null;
   const downVideo = rowIndex < vList.length - 1 ? vList[rowIndex + 1] : null;
   const leftVideo = colIndex > 0 ? hList[colIndex - 1] : null;
@@ -72,15 +57,34 @@ export default function BaseShortsTab({ algorithmList }: BaseShortsTabProps) {
     }
   };
 
+  // Video data fetching & Watch Position updates lifted from VirtualSwipePlayer
+  const { data: s3Data, isLoading: isS3Loading } = useVideoS3Url(
+    currentVideo?.videoId, // Will be skipped internally if undefined
+  );
+  const s3Url = s3Data?.masterUrl;
+
+  const { mutate: updatePosition } = useUpdateWatchPosition(
+    currentVideo ? Number(currentVideo.videoId) : 0,
+  );
+
+  const handleWatchProgressUpdate = (currentTime: number) => {
+    updatePosition({ lastPosition: currentTime });
+  };
+
   if (!currentVideo) return null;
 
   return (
-    <VirtualSwipePlayer
+    <VirtualSwipePlayer<RecommendationVideoItem>
       currentVideo={currentVideo}
       upVideo={upVideo}
       downVideo={downVideo}
       leftVideo={leftVideo}
       rightVideo={rightVideo}
+      videoUrl={s3Url}
+      videoLoading={isS3Loading}
+      getThumbnailUrl={(v) => v.thumbnailUrl}
+      watchProgress={currentVideo.watchProgress ?? 0}
+      onWatchProgressUpdate={handleWatchProgressUpdate}
       onSwipe={handleSwipe}
       renderController={(currentVideo) => {
         return (
@@ -89,8 +93,8 @@ export default function BaseShortsTab({ algorithmList }: BaseShortsTabProps) {
             isReady={true}
             actionSlot={
               <ShortTabActionButtons
-                key={`btn-${currentVideo.id}`}
-                videoData={currentVideo}
+                key={`btn-${currentVideo.videoId}`}
+                videoId={currentVideo.videoId}
               />
             }
           />

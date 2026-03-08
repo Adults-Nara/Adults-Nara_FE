@@ -119,6 +119,26 @@ export const ShortsTourTab = React.memo(
       (video: ShortFormVideoData) => {
         const isInteractive = tutorialStep >= 4;
 
+        // BaseShortFormController expects RecommendationVideoItem-like structures for the title/uploader.
+        // In the next step we will generalize BaseShortFormController too, but for now we map it.
+        const mappedVideo = {
+          videoId: video.id,
+          userId: 0,
+          uploaderNickname: video.uploader.name,
+          uploaderProfileImageUrl: video.uploader.profileImg,
+          title: video.title,
+          description: '',
+          thumbnailUrl: video.thumbnail,
+          duration: 0,
+          tags: [],
+          viewCount: 0,
+          likeCount: video.likes,
+          uploadDate: '',
+          videoType: 'SHORT' as const,
+          watchProgress: 0,
+          otherVideoUrl: video.longformUrl,
+        };
+
         return (
           <>
             <div
@@ -136,7 +156,7 @@ export const ShortsTourTab = React.memo(
               onTouchEnd={(e) => e.stopPropagation()}
             />
             <BaseShortFormController
-              data={video}
+              data={mappedVideo}
               isReady={true}
               actionSlot={
                 <div className="flex flex-col gap-5 pb-6">
@@ -158,12 +178,15 @@ export const ShortsTourTab = React.memo(
         className="relative h-dvh w-full overflow-hidden bg-black"
         onPointerUpCapture={handlePointerUp}
       >
-        <VirtualSwipePlayer
+        <VirtualSwipePlayer<ShortFormVideoData>
           currentVideo={currentVideo}
           upVideo={null}
           downVideo={tutorialStep === 1 ? ONBOARDING_DATA[1] : null}
           leftVideo={tutorialStep === 2 ? ONBOARDING_DATA[2] : null}
           rightVideo={tutorialStep === 2 ? ONBOARDING_DATA[2] : null}
+          videoUrl={currentVideo.videoUrl}
+          videoLoading={false}
+          getThumbnailUrl={(v) => v.thumbnail}
           onSwipe={handleSwipe}
           renderController={renderController}
         />
