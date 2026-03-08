@@ -59,7 +59,7 @@ export const httpClient = async <T>(
     credentials: 'include',
   });
 
-  if (response.status === 401) {
+  if (response.status === 401 || response.status === 403) {
     const newAccessToken = await refreshAccessToken(setAccessToken);
 
     if (newAccessToken) {

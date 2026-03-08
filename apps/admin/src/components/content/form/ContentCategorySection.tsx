@@ -7,17 +7,17 @@ import {
   useFormState,
   useWatch,
 } from 'react-hook-form';
-import { ContentFormValues } from './content.schema';
+import { UploadRequest } from '@/models/content.model';
 
 const ContentCategorySection = () => {
-  const { control, setValue } = useFormContext<ContentFormValues>();
+  const { control, setValue } = useFormContext<UploadRequest>();
 
   const { errors } = useFormState({
     control,
   });
   const selectedCategories = useWatch({
     control,
-    name: 'categories',
+    name: 'tagIds',
   });
 
   const handleToggleCategory = (
@@ -57,7 +57,7 @@ const ContentCategorySection = () => {
               selected
               onDelete={() =>
                 setValue(
-                  'categories',
+                  'tagIds',
                   selectedCategories.filter((c: string) => c !== cat),
                 )
               }
@@ -68,22 +68,23 @@ const ContentCategorySection = () => {
           ))
         )}
       </div>
-
-      <Controller
-        name="categories"
-        control={control}
-        render={({ field }) => (
-          <CategoryAccordion
-            selectedCategories={field.value}
-            onToggle={(val) =>
-              handleToggleCategory(val, field.value, field.onChange)
-            }
-          />
+      <div className="h-78">
+        <Controller
+          name="tagIds"
+          control={control}
+          render={({ field }) => (
+            <CategoryAccordion
+              selectedCategories={field.value}
+              onToggle={(val) =>
+                handleToggleCategory(val, field.value, field.onChange)
+              }
+            />
+          )}
+        />
+        {errors.tagIds && (
+          <p className="body3 mt-1 text-red-500">{errors.tagIds.message}</p>
         )}
-      />
-      {errors.categories && (
-        <p className="body3 mt-1 text-red-500">{errors.categories.message}</p>
-      )}
+      </div>
     </div>
   );
 };

@@ -7,14 +7,14 @@ import {
   useFormState,
   useWatch,
 } from 'react-hook-form';
-import { CONTENT_TYPE_OPTIONS, ContentFormValues } from './content.schema';
+import { CONTENT_TYPE_OPTIONS, UploadRequest } from '@/models/content.model';
 
 interface ContentInfoSectionProps {
   isEdit: boolean;
 }
 
 const ContentInfoSection = ({ isEdit }: ContentInfoSectionProps) => {
-  const { control, register } = useFormContext<ContentFormValues>();
+  const { control, register } = useFormContext<UploadRequest>();
 
   const { errors } = useFormState({
     control,
@@ -22,7 +22,7 @@ const ContentInfoSection = ({ isEdit }: ContentInfoSectionProps) => {
 
   const currentContentType = useWatch({
     control,
-    name: 'contentType',
+    name: 'videoType',
   });
 
   return (
@@ -37,7 +37,7 @@ const ContentInfoSection = ({ isEdit }: ContentInfoSectionProps) => {
         >
           <span className="body2 text-gray-900">콘텐츠 유형</span>
           <Controller
-            name="contentType"
+            name="videoType"
             control={control}
             render={({ field }) => (
               <div className="flex gap-2">
@@ -81,7 +81,7 @@ const ContentInfoSection = ({ isEdit }: ContentInfoSectionProps) => {
           <span className="body2 text-gray-900">영상 연동</span>
           <Input
             disabled={currentContentType !== 'SHORT'}
-            {...register('videoLink')}
+            {...register('otherVideoUrl')}
             placeholder="연동하실 롱폼 영상주소"
           />
         </div>

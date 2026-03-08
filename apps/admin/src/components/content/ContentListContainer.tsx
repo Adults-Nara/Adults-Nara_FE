@@ -2,7 +2,6 @@
 import { useState } from 'react';
 
 import { CONTENT_COLUMNS } from './contentColumns';
-import { MOCK_CONTENTS } from '@/types/content';
 import { DataTable, Pagination } from '@components/common';
 import {
   Button,
@@ -13,43 +12,101 @@ import {
   Unpower,
   Upload,
 } from '@repo/ui';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ROUTES } from '@/constant/routes';
 import { useDialogStore } from '@/store/useDialogStore';
+import { useContentsList } from '@/lib/tanstack/query/content.query';
+import { useAuthStore } from '@/store/useAuthStore';
+import {
+  useContentDelete,
+  useContentStatusUpload,
+} from '@/lib/tanstack/mutation/content.mutation';
 
 interface ContentListContainerProps {
   currentPage: number;
+  currentKeyword: string;
 }
 
-const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
+const ContentListContainer = ({
+  currentPage,
+  currentKeyword,
+}: ContentListContainerProps) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [keyword, setKeyword] = useState(currentKeyword);
   const router = useRouter();
-  const totalPages = 150; // 실제로는 서버에서 받아온 totalCount / limit 값으로 계산
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { openDialog } = useDialogStore();
+  const role = useAuthStore((state) => state.role);
+
+  const { mutate: statusMutate } = useContentStatusUpload();
+  const { mutate: deleteMutate } = useContentDelete();
+
+  //음수체크
+  const safePage = Math.max(1, currentPage || 1);
+  const { data, isLoading, isError } = useContentsList(role, {
+    page: safePage,
+    keyword: currentKeyword,
+  });
+  const totalPages = data?.totalPages ?? 0;
+
+  const createMutationCallbacks = (successMessage: string) => ({
+    onSuccess: () => {
+      // TODO: 토스트로 변경
+      console.log(successMessage);
+      setSelectedIds([]);
+    },
+    onError: (error: Error) => {
+      // TODO: 토스트로 변경
+      console.error(error.message);
+    },
+  });
 
   const handlerEdit = (id: string) => {
     router.push(ROUTES.EDIT_CONTENT(id));
   };
   const handlerDelete = (id: string) => {
     openDialog('content', 'delete', {
-      onConfirm: () => console.log(id),
+      onConfirm: () =>
+        deleteMutate(
+          { videoIds: [id] },
+          createMutationCallbacks(`영상 삭제 성공 ${id}`),
+        ),
     });
   };
 
   const handlerAllActive = () => {
     openDialog('content', 'activate', {
-      onConfirm: () => console.log(selectedIds),
+      onConfirm: () =>
+        statusMutate(
+          { videoIds: selectedIds, visibility: 'PUBLIC' },
+          createMutationCallbacks(`영상 활성화 성공 성공 ${selectedIds}`),
+        ),
     });
   };
   const handlerAllDeactivated = () => {
     openDialog('content', 'deactivate', {
-      onConfirm: () => console.log(selectedIds),
+      onConfirm: () =>
+        statusMutate(
+          { videoIds: selectedIds, visibility: 'PRIVATE' },
+          createMutationCallbacks(`영상 비활성화 성공 ${selectedIds}`),
+        ),
     });
   };
   const handlerAllDelete = () => {
     openDialog('content', 'delete', {
-      onConfirm: () => console.log(selectedIds),
+      onConfirm: () =>
+        deleteMutate(
+          { videoIds: selectedIds },
+          createMutationCallbacks(`영상 다중삭제 성공 ${selectedIds}`),
+        ),
     });
+  };
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    params.set('keyword', keyword);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const columns = CONTENT_COLUMNS(handlerEdit, handlerDelete);
@@ -59,7 +116,7 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
       <div className="flex flex-col">
         <span className="title1">콘텐츠 리스트</span>
         <span className="title3 text-gray-700">
-          {`총 ${MOCK_CONTENTS.length}개의 콘텐츠`}
+          {`총 ${data?.totalElements ?? 0}개의 콘텐츠`}
         </span>
       </div>
       {/* 검색섹션 */}
@@ -68,6 +125,11 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
           leftIcon={<SearchIcon className="h-7 w-7" />}
           placeholder="제목, 설명, 카테고리로 검색"
           className="w-100 bg-white"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleSearch();
+          }}
         />
         <Button
           onClick={() => router.push(ROUTES.NEW_CONTENT)}
@@ -102,11 +164,16 @@ const ContentListContainer = ({ currentPage }: ContentListContainerProps) => {
       {/* 테이블 */}
       <DataTable
         columns={columns}
-        data={MOCK_CONTENTS}
+        data={data?.content ?? []}
+        getRowId={(row) => row.videoId}
+        isLoading={isLoading}
+        isError={isError}
         selectedIds={selectedIds}
         onSelectChange={setSelectedIds}
       />
-      <Pagination totalPages={totalPages} currentPage={currentPage} />
+      {!isError && (
+        <Pagination totalPages={totalPages} currentPage={safePage} />
+      )}
     </div>
   );
 };

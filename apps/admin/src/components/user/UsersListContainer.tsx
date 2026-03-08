@@ -102,6 +102,7 @@ const UsersListContainer = ({ currentPage, type }: UsersListContainerProps) => {
       <DataTable
         columns={columns}
         data={mockUsers}
+        getRowId={(row) => row.id}
         selectedIds={selectedIds}
         onSelectChange={setSelectedIds}
       />

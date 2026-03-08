@@ -1,7 +1,11 @@
 'use client';
 
 import { FormProvider, useForm } from 'react-hook-form';
-import { ContentFormValues, contentSchema } from './content.schema';
+import {
+  ContentDetailResponses,
+  UploadRequest,
+  contentSchema,
+} from '@/models/content.model';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ContentInfoSection from './ContentInfoSection';
 import ContentCategorySection from './ContentCategorySection';
@@ -11,25 +15,27 @@ import { Button, Delete, Upload } from '@repo/ui';
 
 interface ContentFormProps {
   mode: 'create' | 'edit';
-  defaultValues?: ContentFormValues;
-  onSubmit: (data: ContentFormValues, thumbnail: File | null) => void;
+  defaultValues?: ContentDetailResponses;
+  onSubmit: (data: UploadRequest, thumbnail: File | null) => void;
   onDelete?: () => void;
+  setVideoId?: (videoId: string) => void;
 }
 const ContentForm = ({
   mode,
   defaultValues,
   onSubmit,
   onDelete,
+  setVideoId,
 }: ContentFormProps) => {
   // 썸네일 파일 상태 (실제 파일 객체)
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const methods = useForm<ContentFormValues>({
+  const methods = useForm<UploadRequest>({
     resolver: zodResolver(contentSchema),
     defaultValues: defaultValues ?? {
-      contentType: 'SHORT',
+      videoType: 'SHORT',
       visibility: 'PUBLIC',
-      categories: [],
-      videoLink: '',
+      tagIds: [],
+      otherVideoUrl: '',
       title: '',
       description: '',
     },
@@ -48,17 +54,18 @@ const ContentForm = ({
           <ContentUploadSection
             setThumbnailFile={setThumbnailFile}
             initialThumbnail={defaultValues?.thumbnailUrl}
+            setVideoId={setVideoId}
             isEdit={isEdit}
           />
 
-          <div className="custom-scrollbar flex h-115 w-full flex-col gap-2 overflow-y-auto rounded-lg border border-gray-500 bg-white px-6 py-4">
-            <div className="flex gap-3">
+          <div className="custom-scrollbar flex h-fit w-full flex-col gap-2 overflow-y-auto rounded-lg border border-gray-500 bg-white px-6 py-4">
+            <div className="flex h-full gap-3">
               <ContentInfoSection isEdit={isEdit} />
 
               <ContentCategorySection />
             </div>
           </div>
-          <div className="mt-2 flex justify-end gap-4">
+          <div className="flex justify-end gap-4">
             {isEdit && (
               <Button
                 type="button"

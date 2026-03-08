@@ -44,3 +44,10 @@ export const BackofficeCheckEmail = async (email: string) => {
   );
   return response.data;
 };
+
+export const BackofficeMe = async () => {
+  const response = await httpClient<ApiResponse<User>>(API_ENDPOINTS.AUTH.ME, {
+    method: 'GET',
+  });
+  return response.data;
+};
