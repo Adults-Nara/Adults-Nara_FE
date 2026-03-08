@@ -1,8 +1,9 @@
 'use client';
 import ReactPlayer from 'react-player';
 import { useRef, useState, ReactNode, useEffect } from 'react';
-
-export interface VirtualSwipePlayerProps<T> {
+export interface VirtualSwipePlayerProps<
+  T extends { videoId: string | number },
+> {
   currentVideo: T;
   upVideo: T | null;
   downVideo: T | null;
@@ -13,16 +14,16 @@ export interface VirtualSwipePlayerProps<T> {
   videoUrl: string | undefined; // final playable url
   videoLoading: boolean; // is url or data loading
   getThumbnailUrl: (video: T) => string;
-
   // Progress & events
   watchProgress?: number; // start position
   onWatchProgressUpdate?: (currentTime: number) => void; // every 10s callback
+  onStopWatching?: (video: T, watchTime: number) => void;
 
   onSwipe: (direction: 'up' | 'down' | 'left' | 'right') => void;
   renderController?: (video: T) => ReactNode;
 }
 
-export function VirtualSwipePlayer<T>({
+export function VirtualSwipePlayer<T extends { videoId: string | number }>({
   currentVideo,
   upVideo,
   downVideo,
@@ -33,6 +34,7 @@ export function VirtualSwipePlayer<T>({
   getThumbnailUrl,
   watchProgress = 0,
   onWatchProgressUpdate,
+  onStopWatching,
   onSwipe,
   renderController,
 }: VirtualSwipePlayerProps<T>) {
@@ -43,6 +45,25 @@ export function VirtualSwipePlayer<T>({
   useEffect(() => {
     setIsPlaying(true);
   }, [currentVideo, videoUrl, videoLoading]);
+
+  // 최신 onStopWatching 콜백 참조 유지
+  const latestStopWatchingRef = useRef(onStopWatching);
+  useEffect(() => {
+    latestStopWatchingRef.current = onStopWatching;
+  }, [onStopWatching]);
+
+  // 영상을 벗어날 때 (currentVideo 변경 또는 언마운트)
+  useEffect(() => {
+    return () => {
+      if (latestStopWatchingRef.current && videoRef.current) {
+        latestStopWatchingRef.current(
+          currentVideo,
+          Math.floor(videoRef.current.currentTime),
+        );
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentVideo.videoId]);
 
   // 10초마다 시청 위치 업데이트 (onWatchProgressUpdate 프롭이 제공됐을 때만 실행)
   useEffect(() => {
@@ -151,7 +172,7 @@ export function VirtualSwipePlayer<T>({
     setOffset({ x: 0, y: 0 });
   };
 
-  if (videoLoading || !videoUrl) return <>로딩중..</>;
+  if (!videoUrl && !videoLoading) return <>에러: 비디오 URL 없음</>;
   return (
     <div
       className="relative h-dvh w-full touch-none overflow-hidden bg-black"
@@ -168,31 +189,60 @@ export function VirtualSwipePlayer<T>({
       >
         {/* [중앙] 플레이어 */}
         <div className="absolute inset-0 h-full w-full">
-          <ReactPlayer
-            ref={videoRef}
-            src={videoUrl}
-            playing={isPlaying}
-            controls={false}
-            config={{
-              hls: {
-                startPosition: watchProgress,
-                xhrSetup: (xhr: XMLHttpRequest) => {
-                  xhr.withCredentials = true; // 쿠키 포함
+          {videoUrl && (
+            <ReactPlayer
+              key={`player-${currentVideo.videoId}`}
+              ref={videoRef}
+              src={videoUrl}
+              playing={isPlaying}
+              controls={false}
+              config={{
+                hls: {
+                  startPosition: watchProgress,
+                  xhrSetup: (xhr: XMLHttpRequest) => {
+                    xhr.withCredentials = true; // 쿠키 포함
+                  },
                 },
-              },
-            }}
-            loop
-            playsInline
-            width="100%"
-            height="100%"
-            style={{ objectFit: 'cover' }}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-          />
+              }}
+              loop
+              playsInline
+              width="100%"
+              height="100%"
+              style={{ objectFit: 'cover' }}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+            />
+          )}
 
           {renderController && renderController(currentVideo)}
         </div>
-        {!isPlaying && (
+
+        {/* 로딩 스피너 오버레이 (영상이 안 왔을 때) */}
+        {videoLoading && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50">
+            <svg
+              className="h-10 w-10 animate-spin text-white"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                fill="none"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </div>
+        )}
+
+        {!isPlaying && !videoLoading && (
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/20">
             <svg
               width="72"

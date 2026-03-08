@@ -16,7 +16,7 @@ export interface ShortsTourTabProps {
 
 const ONBOARDING_DATA: ShortFormVideoData[] = [
   {
-    id: 'ob-1',
+    videoId: 'ob-1',
     videoUrl:
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     thumbnail: '',
@@ -29,7 +29,7 @@ const ONBOARDING_DATA: ShortFormVideoData[] = [
     longformUrl: '',
   },
   {
-    id: 'ob-2',
+    videoId: 'ob-2',
     videoUrl:
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     thumbnail: '',
@@ -42,7 +42,7 @@ const ONBOARDING_DATA: ShortFormVideoData[] = [
     longformUrl: '',
   },
   {
-    id: 'ob-3',
+    videoId: 'ob-3',
     videoUrl:
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
     thumbnail: '',
@@ -122,7 +122,7 @@ export const ShortsTourTab = React.memo(
         // BaseShortFormController expects RecommendationVideoItem-like structures for the title/uploader.
         // In the next step we will generalize BaseShortFormController too, but for now we map it.
         const mappedVideo = {
-          videoId: video.id,
+          videoId: video.videoId,
           userId: 0,
           uploaderNickname: video.uploader.name,
           uploaderProfileImageUrl: video.uploader.profileImg,

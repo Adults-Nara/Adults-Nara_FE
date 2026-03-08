@@ -1,35 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-  getRecommendationFeed,
-  getRecommendationRelated,
-  getVideoS3Url,
-} from '@/services/video.api';
-
-export function useRelatedVideos(videoId: string) {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['recommendation-related', videoId],
-    queryFn: () => getRecommendationRelated(videoId),
-  });
-
-  return {
-    videos: data?.content ?? [],
-    isLoading,
-    isError,
-  };
-}
-
-export function useFeedVideo() {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['recommendation-feed'],
-    queryFn: () => getRecommendationFeed(),
-  });
-
-  return {
-    videos: data?.content ?? [],
-    isLoading,
-    isError,
-  };
-}
+import { getVideoS3Url } from '@/services/video.api';
 
 export function useVideoS3Url(videoId: string) {
   const { data, isLoading, isError } = useQuery({

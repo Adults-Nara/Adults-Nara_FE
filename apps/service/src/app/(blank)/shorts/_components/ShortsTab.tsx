@@ -1,17 +1,27 @@
 'use client';
 
 import BaseShortsTab from '@/components/shortForm/BaseShortsTab';
-import { getRecommendationFeed } from '@/services/video.api';
-import { useQuery } from '@tanstack/react-query';
-import { useFeedVideo } from '@/lib/tanstack/query/video.query';
+import { useFeedVideoInfinite } from '@/lib/tanstack/query/recommendation.query';
 
 export default function ShortsTab() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['recommendation-feed'],
-    queryFn: getRecommendationFeed,
-  });
+  const FETCH_SIZE = 10;
+  const {
+    data: feedData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isFeedLoading,
+  } = useFeedVideoInfinite(FETCH_SIZE);
 
-  const { videos, isLoading: isLoadingRelated } = useFeedVideo();
-  if (isLoading || isLoadingRelated) return <div>로딩중...</div>;
-  return <BaseShortsTab algorithmList={videos} />;
+  const videos = feedData ? feedData.pages.flatMap((p) => p.content) : [];
+
+  if (isFeedLoading) return <div>로딩중...</div>;
+  return (
+    <BaseShortsTab
+      algorithmList={videos}
+      onRequireMoreVertical={() => {
+        if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+      }}
+    />
+  );
 }

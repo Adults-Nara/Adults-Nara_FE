@@ -6,7 +6,7 @@ import { LeftArrow } from '@repo/ui';
 import { PageHeader } from './_components/PageHeader';
 
 const metadata: LongFormVideoData = {
-  id: 's1',
+  videoId: 's1',
   videoUrl:
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
   thumbnail:
