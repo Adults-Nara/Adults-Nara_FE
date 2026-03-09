@@ -19,6 +19,7 @@ export interface UsersItem {
   nickname: string;
   email: string;
   banStatus: UserBanStatus;
+  banReason: string;
   createdAt: string;
 }
 

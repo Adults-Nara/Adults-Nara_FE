@@ -101,7 +101,7 @@ export const USER_COLUMNS = (
         ) : (
           <div className="flex items-center justify-center gap-3">
             <button
-              onClick={() => onReason(item.banStatus, item.nickname)} //TODO:밴 사유 컬럼없음 체크해봐야할듯
+              onClick={() => onReason(item.banReason, item.nickname)}
               className="body2 hover:text-primary-400 flex cursor-pointer items-center"
             >
               <Comment className="h-5 w-5" />

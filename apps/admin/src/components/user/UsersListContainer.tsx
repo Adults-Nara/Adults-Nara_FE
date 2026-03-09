@@ -57,6 +57,7 @@ const UsersListContainer = ({
 
     statusMutate(payload, {
       onSuccess: () => {
+        setSelectedIds([]);
         //TODO:추후 토스트추가
         if (status == 'ACTIVE') {
           console.log('활성화 성공', userIds, status);
@@ -131,6 +132,7 @@ const UsersListContainer = ({
           { userIds: selectedIds },
           {
             onSuccess: () => {
+              setSelectedIds([]);
               //TODO:추후 토스트추가
               console.log('삭제 성공', selectedIds);
             },
