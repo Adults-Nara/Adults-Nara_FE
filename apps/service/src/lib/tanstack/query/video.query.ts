@@ -5,6 +5,7 @@ export function useVideoS3Url(videoId: string) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['s3-url', videoId],
     queryFn: () => getVideoS3Url(videoId),
+    enabled: !!videoId,
     staleTime: (query) => {
       const expiresAt = query.state.data?.expiresAtEpochSeconds;
       if (!expiresAt) return 0;

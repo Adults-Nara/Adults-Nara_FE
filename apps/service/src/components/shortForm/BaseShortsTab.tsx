@@ -111,29 +111,6 @@ export default function BaseShortsTab({
   // 이웃 영상들 도출
   const currentVideo = hList[colIndex];
 
-  if (!currentVideo) {
-    return (
-      <div className="relative flex h-dvh w-full items-center justify-center bg-black">
-        <svg className="h-10 w-10 animate-spin text-white" viewBox="0 0 24 24">
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-            fill="none"
-          ></circle>
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          ></path>
-        </svg>
-      </div>
-    );
-  }
-
   const upVideo = rowIndex > 0 ? vList[rowIndex - 1] : null;
   const downVideo = rowIndex < vList.length - 1 ? vList[rowIndex + 1] : null;
   const leftVideo = colIndex > 0 ? hList[colIndex - 1] : null;
@@ -176,7 +153,6 @@ export default function BaseShortsTab({
     }
   };
 
-  // Video data fetching & Watch Position updates lifted from VirtualSwipePlayer
   const { data: s3Data, isLoading: isS3Loading } = useVideoS3Url(
     currentVideo?.videoId, // Will be skipped internally if undefined
   );
@@ -201,6 +177,29 @@ export default function BaseShortsTab({
       body: { lastPosition: watchTime },
     });
   };
+
+  if (!currentVideo) {
+    return (
+      <div className="relative flex h-dvh w-full items-center justify-center bg-black">
+        <svg className="h-10 w-10 animate-spin text-white" viewBox="0 0 24 24">
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+            fill="none"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+      </div>
+    );
+  }
 
   return (
     <VirtualSwipePlayer<RecommendationVideoItem>

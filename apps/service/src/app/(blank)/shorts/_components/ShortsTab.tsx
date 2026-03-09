@@ -15,13 +15,15 @@ export default function ShortsTab() {
 
   const videos = feedData ? feedData.pages.flatMap((p) => p.content) : [];
 
-  if (isFeedLoading) return <div>로딩중...</div>;
   return (
-    <BaseShortsTab
-      algorithmList={videos}
-      onRequireMoreVertical={() => {
-        if (hasNextPage && !isFetchingNextPage) fetchNextPage();
-      }}
-    />
+    <>
+      {isFeedLoading && <div>로딩중...</div>}
+      <BaseShortsTab
+        algorithmList={videos}
+        onRequireMoreVertical={() => {
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+        }}
+      />
+    </>
   );
 }
