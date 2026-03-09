@@ -42,6 +42,7 @@ const RecentHistory = () => {
 
   const items = data?.pages[0].items;
 
+  if (items.length === 0) <span>시청이력이 없습니다.</span>;
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">

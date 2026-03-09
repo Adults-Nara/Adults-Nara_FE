@@ -60,11 +60,11 @@ export const API_ENDPOINTS = {
     REWARD_PURCHASE: '/point/reward/purchase',
   },
   SEARCH: {
-    BASE: '/api/v1/search',
-    AUTOCOMPLETE: '/api/v1/search/autocomplete',
+    BASE: '/search',
+    AUTOCOMPLETE: '/search/autocomplete',
   },
   RANKING: {
-    BASE: '/api/v1/ranking',
+    BASE: '/ranking',
   },
   BOOKMARKS: {
     BASE: '/bookmarks',

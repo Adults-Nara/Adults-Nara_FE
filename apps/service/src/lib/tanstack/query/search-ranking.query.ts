@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   searchVideos,
   autocomplete,
@@ -7,9 +7,28 @@ import {
 import { getBookmarkRanking } from '@/services/ranking.api';
 
 export function useSearchVideos(params: SearchVideosParams) {
-  return useQuery({
-    queryKey: ['search', 'videos', params],
-    queryFn: () => searchVideos(params),
+  return useInfiniteQuery({
+    queryKey: [
+      'search',
+      'videos',
+      params.keyword,
+      params.videoType,
+      params.tag,
+    ],
+
+    queryFn: ({ pageParam = 0 }) =>
+      searchVideos({
+        ...params,
+        page: pageParam,
+      }),
+
+    initialPageParam: 0,
+
+    getNextPageParam: (lastPage) => {
+      if (lastPage.last) return undefined;
+      return lastPage.number + 1;
+    },
+    // enabled: !!params.keyword,
   });
 }
 
@@ -18,6 +37,7 @@ export function useAutocomplete(keyword: string) {
     queryKey: ['search', 'autocomplete', keyword],
     queryFn: () => autocomplete(keyword),
     enabled: !!keyword && keyword.trim().length > 0,
+    placeholderData: (prev) => prev,
   });
 }
 
