@@ -15,7 +15,7 @@ export function mapSearchToThumbanil(item: VideoSearchResponse): ThumbnailData {
     thumbnailSrc: item.thumbnailUrl,
     title: item.title,
     uploader: 'uploadr', //업로더이름 & 프로필사진 없음
-    progress: 0.5, // 시청이력 없음
+    progress: 10, // 시청이력 없음
     duration: formatVideoTime(item.duration),
     views: item.viewCount,
     date: item.createdAt,

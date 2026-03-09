@@ -28,7 +28,6 @@ export function useSearchVideos(params: SearchVideosParams) {
       if (lastPage.last) return undefined;
       return lastPage.number + 1;
     },
-    // enabled: !!params.keyword,
   });
 }
 

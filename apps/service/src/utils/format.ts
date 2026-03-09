@@ -45,12 +45,18 @@ export const formatRelativeTime = (date: string | Date): string => {
 };
 
 export const formatVideoTime = (seconds: number): string => {
-  const m = Math.floor(seconds / 60)
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60)
     .toString()
     .padStart(2, '0');
   const s = Math.floor(seconds % 60)
     .toString()
     .padStart(2, '0');
+
+  if (h > 0) {
+    return `${h.toString().padStart(2, '0')}:${m}:${s}`;
+  }
+
   return `${m}:${s}`;
 };
 

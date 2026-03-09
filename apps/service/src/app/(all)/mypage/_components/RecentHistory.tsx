@@ -41,34 +41,39 @@ const RecentHistory = () => {
   if (isError) return <span>시청이력 오류..</span>;
 
   const items = data?.pages[0].items;
-
-  if (items.length === 0) <span>시청이력이 없습니다.</span>;
+  const noneItems = items.length === 0;
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">
         <span className="title1">최근 시청 이력</span>
-        <button
-          className="body3 text-primary-500 cursor-pointer"
-          onClick={() => open('최근 시청 이력', <SheetRecentHistory />)}
-        >
-          모두보기{' >'}
-        </button>
+        {!noneItems && (
+          <button
+            className="body3 text-primary-500 cursor-pointer"
+            onClick={() => open('최근 시청 이력', <SheetRecentHistory />)}
+          >
+            모두보기{' >'}
+          </button>
+        )}
       </div>
       <div className="overflow-hidden px-0.5 py-0.5" ref={videoListRef}>
         <div className="flex gap-4">
-          {items.map((data) => {
-            const mapped = mapWatchHistoryToThumbnail(data);
-            return (
-              //TODO: 추후 클릭이벤트 라우팅 수정해야됨
-              <div
-                key={data.videoId}
-                className="flex-[0_0_60%]"
-                onClick={() => router.push(`/long/${data.videoId}`)}
-              >
-                <VideoVerticalCard data={mapped} />
-              </div>
-            );
-          })}
+          {noneItems ? (
+            <span>시청이력이 없습니다.</span>
+          ) : (
+            items.map((data) => {
+              const mapped = mapWatchHistoryToThumbnail(data);
+              return (
+                //TODO: 추후 클릭이벤트 라우팅 수정해야됨
+                <div
+                  key={data.videoId}
+                  className="flex-[0_0_60%]"
+                  onClick={() => router.push(`/long/${data.videoId}`)}
+                >
+                  <VideoVerticalCard data={mapped} />
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>
