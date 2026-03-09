@@ -150,6 +150,7 @@ const UsersListContainer = ({
     const params = new URLSearchParams(searchParams);
     params.set('page', '1');
     params.set('keyword', keyword);
+    setSelectedIds([]);
     router.push(`${pathname}?${params.toString()}`);
   };
 
