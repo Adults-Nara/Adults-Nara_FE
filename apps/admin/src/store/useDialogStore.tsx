@@ -1,13 +1,14 @@
+import { UserBanStatus } from '@/models/users.model';
 import { create } from 'zustand';
 
 // 다이얼로그 종류 정의
-type UserType = 'user' | 'uploader' | 'content' | null;
+type UserType = 'VIEWER' | 'UPLOADER' | 'content' | null;
 type DialogType = 'deactivate' | 'reason' | 'activate' | 'delete' | null;
 
 interface DialogData {
   name?: string;
   reason?: string;
-  onConfirm?: (text?: string, period?: string) => void;
+  onConfirm?: (text?: string, period?: UserBanStatus) => void;
 }
 
 interface DialogStore {
