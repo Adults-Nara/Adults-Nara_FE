@@ -2,6 +2,7 @@
 import ReactPlayer from 'react-player';
 import { useRef, useState, ReactNode, useEffect } from 'react';
 import { ShortFormVideoData } from '@/types/video';
+import { useIsLoggedIn } from '@/store/useAuthStore';
 export interface VirtualSwipePlayerProps {
   currentVideo: ShortFormVideoData;
   upVideo: ShortFormVideoData | null;
@@ -26,7 +27,7 @@ export interface VirtualSwipePlayerProps {
 export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   const playerRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
-
+  const isLogin = useIsLoggedIn();
   // 로딩 상태나 URL이 바뀌면 플레이 상태 초기화
   useEffect(() => {
     setIsPlaying(true);
@@ -55,7 +56,12 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
 
   // 10초마다 시청 위치 업데이트 (onWatchProgressUpdate 프롭이 제공됐을 때만 실행)
   useEffect(() => {
-    if (!isPlaying || props.videoLoading || !props.onWatchProgressUpdate)
+    if (
+      !isPlaying ||
+      props.videoLoading ||
+      !props.onWatchProgressUpdate ||
+      !isLogin
+    )
       return;
 
     const interval = setInterval(() => {
@@ -204,6 +210,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
               style={{ objectFit: 'cover' }}
               onPlay={() => {
                 setIsPlaying(true);
+                if (!isLogin) return;
                 if (
                   props.onStartWatching &&
                   playerRef.current?.currentTime === 0

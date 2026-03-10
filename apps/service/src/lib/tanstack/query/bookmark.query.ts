@@ -4,14 +4,15 @@ import {
   getBookmarkStatus,
   getBookmarkSummary,
 } from '@/services/bookmark.api';
+import { useIsLoggedIn } from '@/store/useAuthStore';
 
 export function useBookmarkListInfinite(
   videoType: 'SHORT' | 'LONG',
   size: number = 10,
   windowSize: number = 30,
   index: number = 0,
-  enabled: boolean = true,
 ) {
+  const isLogin = useIsLoggedIn();
   const maxPages = windowSize / size;
   const initailPage = Math.floor(index / size);
   return useInfiniteQuery({
@@ -24,19 +25,19 @@ export function useBookmarkListInfinite(
       if (!lastPage || lastPage.items.length < size) {
         return undefined;
       }
-
       return lastPageParam + 1;
     },
     maxPages,
-    enabled,
+    enabled: isLogin,
   });
 }
 
 export function useBookmarkStatus(videoId: number) {
+  const isLogin = useIsLoggedIn();
   return useQuery({
     queryKey: ['bookmarkStatus', videoId],
     queryFn: () => getBookmarkStatus(videoId),
-    enabled: !!videoId,
+    enabled: isLogin && !!videoId,
   });
 }
 

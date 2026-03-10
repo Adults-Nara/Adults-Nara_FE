@@ -221,10 +221,7 @@ export default function BaseShortsTab({
     });
   };
 
-  if (
-    !currentVideo ||
-    currentVideo.videoId === ('loading' as string | number)
-  ) {
+  if (!currentVideo || currentVideo.videoId === undefined) {
     return <LoadingSpinner />;
   } else {
     const virtualSwipePlayerProps: VirtualSwipePlayerProps = {

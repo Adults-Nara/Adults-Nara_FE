@@ -15,6 +15,7 @@ import {
 } from '@/lib/tanstack/mutation/interaction.mutation';
 import { useBookmarkStatus } from '@/lib/tanstack/query/bookmark.query';
 import { useToggleBookmark } from '@/lib/tanstack/mutation/bookmark.mutation';
+import { useIsLoggedIn } from '@/store/useAuthStore';
 
 interface ShortTabActionButtonsProps {
   videoId: string;
@@ -34,6 +35,7 @@ export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
   // 낙관적 업데이트를 위해, useState 사용
   const [liked, setLiked] = useState<boolean | null>();
   const [bookmarked, setBookmarked] = useState<boolean | null>();
+  const isLogin = useIsLoggedIn();
 
   useEffect(() => {
     if (!interaction) return;
@@ -55,6 +57,11 @@ export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
 
   // 좋아요, 싫어요 로직
   const handleLike = (changeTo: boolean) => {
+    if (!isLogin) {
+      // TODO : 로그인 모달 띄우기
+      console.log('로그인이 필요합니다.');
+      return;
+    }
     if (changeTo === liked) {
       setLiked(null);
     } else {
@@ -70,6 +77,11 @@ export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
 
   // 북마크 로직
   const handleBookmark = () => {
+    if (!isLogin) {
+      // TODO : 로그인 모달 띄우기
+      console.log('로그인이 필요합니다.');
+      return;
+    }
     setBookmarked(!bookmarked);
 
     // API 호출
