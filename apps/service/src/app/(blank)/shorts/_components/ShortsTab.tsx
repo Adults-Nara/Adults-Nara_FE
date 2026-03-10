@@ -33,8 +33,9 @@ export default function ShortsTab({ params }: ShortsTabProps) {
   const targetVideoId = params.v || null;
 
   // 1. 단건 영상 조회 (타겟 영상이 있을 경우)
-  const { data: detailData, isLoading: detailLoading } =
-    useVideoDetail(targetVideoId);
+  const { data: detailData, isLoading: detailLoading } = useVideoDetail(
+    Number(targetVideoId),
+  );
 
   // 2. 피드 또는 북마크 리스트 영상 무한 조회 (타겟 영상 이후 이어붙일 데이터)
   const feedQuery = useFeedVideoInfinite(FETCH_SIZE, !isBookmark);

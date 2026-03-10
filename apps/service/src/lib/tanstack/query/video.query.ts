@@ -25,7 +25,7 @@ export function useVideoS3Url(videoId: string) {
   };
 }
 
-export function useVideoDetail(videoId: string | null) {
+export function useVideoDetail(videoId: number) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['video-detail', videoId],
     queryFn: () => getVideoDetail(videoId!),
