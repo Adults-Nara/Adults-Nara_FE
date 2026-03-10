@@ -21,7 +21,10 @@ export function useRelatedVideosInfinite(videoId: string, size: number = 3) {
   });
 }
 
-export function useFeedVideoInfinite(size: number = 3) {
+export function useFeedVideoInfinite(
+  size: number = 10,
+  enabled: boolean = true,
+) {
   return useInfiniteQuery({
     queryKey: ['recommendation-feed'],
     queryFn: ({ pageParam = 0 }) => getRecommendationFeed(pageParam, size),
@@ -32,5 +35,6 @@ export function useFeedVideoInfinite(size: number = 3) {
       }
       return allPages.length;
     },
+    enabled,
   });
 }

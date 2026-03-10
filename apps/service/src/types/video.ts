@@ -10,6 +10,7 @@ export interface VideoData {
   isBookmarked: boolean;
   isLiked?: boolean | null;
   tags?: string[];
+  watchProgress?: number;
 }
 
 export interface LongFormVideoData extends VideoData {
