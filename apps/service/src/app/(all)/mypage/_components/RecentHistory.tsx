@@ -20,8 +20,8 @@ export function mapWatchHistoryToThumbnail(
     duration: formatVideoTime(item.duration),
     progress: item.watchProgressPercent,
     views: item.viewCount,
-    date: item.watchedAt, //이거말고 업로드 날짜 필요할듯?
-    type: 'long', //비디오타입 받으면 좋을듯
+    date: item.uploadedAt,
+    type: item.videoType === 'LONG' ? 'long' : 'short',
   };
 }
 
