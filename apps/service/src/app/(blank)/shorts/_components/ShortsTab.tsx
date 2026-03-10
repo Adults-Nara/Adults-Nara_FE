@@ -14,6 +14,7 @@ import { BookmarkListResponse } from '@/models/bookmark.model';
 import { ShortFormVideoData } from '@/types/video';
 import {
   mapBookmarkToShortsData,
+  mapVideoDetailToShortsData,
   mapRecommendationToShortsData,
 } from '@/utils/videoMapper';
 
@@ -90,11 +91,7 @@ export default function ShortsTab({ params }: ShortsTabProps) {
 
     // 단건 데이터가 존재하면 배열 맨 앞에 꽂고, 무한스크롤 데이터 중 중복 항목 제거
     if (targetVideoId && detailData) {
-      // (단건 조회 API의 응답 규격이 RecommendationVideoItem이라고 가정)
-      // 만약 다르면 별도의 Mapper 적용 요망
-      const formattedDetail = mapRecommendationToShortsData(
-        detailData as unknown as RecommendationVideoItem,
-      );
+      const formattedDetail = mapVideoDetailToShortsData(detailData);
 
       formattedVideos = [
         formattedDetail,

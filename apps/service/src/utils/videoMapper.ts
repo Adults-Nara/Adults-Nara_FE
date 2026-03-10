@@ -1,6 +1,7 @@
 import { ShortFormVideoData } from '@/types/video';
 import { RecommendationVideoItem } from '@/models/recommendations.model';
 import { BookmarkListResponse } from '@/models/bookmark.model';
+import { VideoDetailResponse } from '@/models/video.model';
 
 export const mapRecommendationToShortsData = (
   item: RecommendationVideoItem,
@@ -42,5 +43,31 @@ export const mapBookmarkToShortsData = (
     isBookmarked: true, // It's from bookmark API
     longformUrl: '',
     watchProgress: item.watchProgressPercent ?? 0,
+  };
+};
+
+export const mapVideoDetailToShortsData = (
+  detail: VideoDetailResponse,
+): ShortFormVideoData => {
+  const watchProgress = detail.watchHistory?.lastPosition ?? 0;
+
+  return {
+    videoId: detail.videoId,
+    videoUrl: '',
+    thumbnail: detail.thumbnailUrl ?? '',
+    uploader: {
+      name: detail.userNickname ?? '알 수 없음',
+      profileImg: detail.userProfile ?? null,
+    },
+    title: detail.title ?? '',
+    watchProgress,
+    longformUrl: detail.otherVideoUrl ?? '',
+
+    likes: 0,
+    // TODO : detail 에서 comments 개수와 dislikes 개수 제공 요청.
+    dislikes: 0,
+    comments: 0,
+    isBookmarked: false,
+    tags: [...(detail.tagIds ?? []), ...(detail.aiTagIds ?? [])],
   };
 };

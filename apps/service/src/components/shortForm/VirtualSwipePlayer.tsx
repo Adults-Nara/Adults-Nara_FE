@@ -24,7 +24,7 @@ export interface VirtualSwipePlayerProps {
 }
 
 export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
 
   // 로딩 상태나 URL이 바뀌면 플레이 상태 초기화
@@ -41,9 +41,9 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   // 영상을 벗어날 때 (currentVideo 변경 또는 언마운트)
   useEffect(() => {
     return () => {
-      // 컴포넌트 언마운트 시점에 videoRef.current가 유효한지 안전하게 검사
-      if (latestStopWatchingRef.current && videoRef.current) {
-        let currentTime = videoRef.current.currentTime || 0;
+      // 컴포넌트 언마운트 시점에 playerRef.current가 유효한지 안전하게 검사
+      if (latestStopWatchingRef.current && playerRef.current) {
+        let currentTime = playerRef.current.currentTime || 0;
         latestStopWatchingRef.current(
           Number(props.currentVideo.videoId),
           Math.floor(currentTime),
@@ -60,8 +60,8 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
 
     const interval = setInterval(() => {
       // ReactPlayer 인스턴스를 통해 시청 위치 가져오기
-      if (videoRef.current) {
-        const currentTime = videoRef.current.currentTime;
+      if (playerRef.current) {
+        const currentTime = playerRef.current.currentTime;
         if (currentTime !== undefined) {
           props.onWatchProgressUpdate?.(Math.floor(currentTime));
         }
@@ -186,17 +186,13 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           {props.videoUrl && (
             <ReactPlayer
               key={`player-${props.currentVideo.videoId}`}
-              ref={(player: unknown) => {
-                // player가 렌더링 되지 않은 상황을 고려
-                if (player) {
-                  const p = player as {
-                    getInternalPlayer: () => HTMLVideoElement;
-                  };
-                  if (typeof p.getInternalPlayer === 'function') {
-                    videoRef.current = p.getInternalPlayer();
-                  }
+              onReady={() => {
+                // URL이 준비되면 시청 위치로 이동
+                if (playerRef.current && props.watchProgress) {
+                  playerRef.current.currentTime = props.watchProgress;
                 }
               }}
+              ref={playerRef}
               src={props.videoUrl}
               playing={isPlaying}
               muted={false}
@@ -210,7 +206,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                 setIsPlaying(true);
                 if (
                   props.onStartWatching &&
-                  videoRef.current?.currentTime === 0
+                  playerRef.current?.currentTime === 0
                 ) {
                   props.onStartWatching(Number(props.currentVideo.videoId));
                 }

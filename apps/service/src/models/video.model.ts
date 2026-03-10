@@ -3,20 +3,24 @@ export interface VideoS3UrlResponse {
   expiresAtEpochSeconds: number;
 }
 
+export interface VideoDetailWatchHistory {
+  videoId: string;
+  lastPosition: number;
+  duration: number;
+}
+
 export interface VideoDetailResponse {
   videoId: string;
-  userId: number;
-  uploaderNickname: string;
-  uploaderProfileImageUrl: string | null;
   title: string;
   description: string;
   thumbnailUrl: string;
-  duration: number;
-  tags: string[];
-  viewCount: number;
-  likeCount: number;
-  uploadDate: string;
-  videoType: 'SHORT' | 'LONG';
-  watchProgress: number;
+  visibility: 'PRIVATE' | 'PUBLIC';
+  tagIds: string[];
+  createdAt: string;
   otherVideoUrl: string;
+  userProfile: string;
+  userNickname: string;
+  aiTagIds: string[];
+  summary: string;
+  watchHistory: VideoDetailWatchHistory | null;
 }

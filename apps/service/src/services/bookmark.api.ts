@@ -37,8 +37,7 @@ export const getBookmarkList = async (
 
 export const getBookmarkStatus = async (videoId: number) => {
   const response = await httpClient<ApiResponse<BookmarkStatusResponseDto>>(
-    API_ENDPOINTS.BOOKMARKS?.STATUS(videoId) ||
-      `/api/v1/bookmarks/${videoId}/status`,
+    API_ENDPOINTS.BOOKMARKS?.STATUS(videoId),
     { method: 'GET' },
   );
   return response.data;
