@@ -2,8 +2,10 @@
 import { useRanking } from '@/lib/tanstack/query/search-ranking.query';
 import useEmblaCarousel from 'embla-carousel-react';
 import TopVideoItem from './TopVideoItem';
+import { useRouter } from 'next/navigation';
 
 const TopTenSection = () => {
+  const router = useRouter();
   const { data, isError, isPending } = useRanking();
 
   const [videoRef] = useEmblaCarousel({
@@ -23,22 +25,31 @@ const TopTenSection = () => {
           사용자들이 가장 많이 저장한 영상이에요
         </span>
       </div>
-      <div className="overflow-hidden px-3 py-0.5" ref={videoRef}>
-        <div className="flex gap-4">
-          {data.map((data, index) => {
-            return (
-              <div key={index} className="flex-[0_0_90%]">
-                <TopVideoItem
-                  rank={data.rank}
-                  thumbnail={data.thumbnailUrl}
-                  title={data.title}
-                  score={data.rankingScore}
-                />
-              </div>
-            );
-          })}
+      {data.length === 0 ? (
+        <span>상위 10위 영상이 없습니다.</span>
+      ) : (
+        <div className="overflow-hidden px-3 py-0.5" ref={videoRef}>
+          <div className="flex gap-4">
+            {data.map((data) => {
+              return (
+                //TODO: 추후 라우팅경로 확인
+                <div
+                  key={data.videoId}
+                  onClick={() => router.push(`long/${data.videoId}`)}
+                  className="flex-[0_0_90%]"
+                >
+                  <TopVideoItem
+                    rank={data.rank}
+                    thumbnail={data.thumbnailSrc}
+                    title={data.title}
+                    score={data.rankingScore}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

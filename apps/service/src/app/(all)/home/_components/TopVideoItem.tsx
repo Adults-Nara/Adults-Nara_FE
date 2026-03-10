@@ -1,3 +1,4 @@
+import Thumbnail from '@/components/thumbnail/Thumbnail';
 import { Crown, Heart } from 'lucide-react';
 import Image from 'next/image';
 
@@ -49,13 +50,7 @@ export default function TopVideoItem({
     <div className="group relative aspect-video w-full overflow-hidden rounded-xl shadow-md transition-all duration-300">
       {/* 이미지 및 오버레이 */}
       <div className="absolute inset-0">
-        <Image
-          src={thumbnail}
-          alt={title}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 768px) 100vw, 33vw"
-        />
+        <Thumbnail type="long" src={thumbnail} alt={title} />
         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/10 to-transparent transition-all duration-300 group-hover:from-black/90" />
       </div>
 

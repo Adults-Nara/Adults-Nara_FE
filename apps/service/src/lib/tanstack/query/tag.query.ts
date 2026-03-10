@@ -1,3 +1,4 @@
+import { useIsLoggedIn } from './../../../store/useAuthStore';
 import { useQuery } from '@tanstack/react-query';
 import {
   getParentTagsWithChild,
@@ -33,13 +34,22 @@ export function useParentTagsWithChild() {
 
 // 내 관심 태그(자식) 목록 조회
 export function useMyChildTags() {
+  const IsLoggin = useIsLoggedIn();
   const { data, isPending, isError } = useQuery({
     queryKey: TAG_KEYS.myChildTags,
     queryFn: getMyChildTags,
+    enabled: IsLoggin,
   });
 
+  if (!IsLoggin)
+    return {
+      tags: [],
+      isPending: false,
+      isError: false,
+    };
+
   return {
-    tags: data ?? [],
+    tags: data,
     isPending,
     isError,
   };
@@ -47,7 +57,7 @@ export function useMyChildTags() {
 
 // 태그별 영상 목록 조회
 export function useVideosByTag(tagId: number) {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isPending, isError } = useQuery({
     queryKey: TAG_KEYS.videosByTag(tagId),
     queryFn: () => getVideosByTag(tagId),
     enabled: !!tagId,
@@ -55,7 +65,7 @@ export function useVideosByTag(tagId: number) {
 
   return {
     videos: data ?? [],
-    isLoading,
+    isPending,
     isError,
   };
 }

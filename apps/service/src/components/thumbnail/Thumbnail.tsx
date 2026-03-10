@@ -26,10 +26,22 @@ const Thumbnail = ({
     >
       {isShort ? (
         <div className="relative aspect-9/16 h-full">
-          <Image src={src} alt={alt} fill className="object-cover" />
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
         </div>
       ) : (
-        <Image src={src} alt={alt} fill className="object-cover" />
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 33vw"
+        />
       )}
       {progress !== undefined && !isShort && progress > 0 && (
         <div

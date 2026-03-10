@@ -1,65 +1,88 @@
 'use client';
-import VideoVerticalCard from '@/components/thumbnail/VideoVerticalCard';
-import { MOCK_VIDEO_DATA } from '@/constant/mockData';
-import { Chip } from '@repo/ui';
-import useEmblaCarousel from 'embla-carousel-react';
-import { useState } from 'react';
 
-// 임시 데이터 (나중에 API 연동)
-const categories = [
-  '건강',
-  '요리',
-  '애완동물',
-  '음식',
-  '뉴스',
-  '드라마',
-  '교양',
-  '원예',
-];
+import { useMyChildTags, useVideosByTag } from '@/lib/tanstack/query/tag.query';
+import { CATEGORY_MAP } from '@/types/category';
+import { useEffect, useMemo, useState } from 'react';
+import CategoryTagList from './CategoryTagList';
+import CategoryVedioList from './CategoryVedioList';
+
+type CategoryItem = { label: string; value: string };
+
+export type MyTag = {
+  tagId: string;
+  tagName: string;
+};
+
+export function createTagList(serverTags: MyTag[], total = 10): MyTag[] {
+  // 서버 태그 id 목록
+  const serverTagIds = new Set(serverTags.map((tag) => tag.tagId));
+
+  // 전체 카테고리 펼치기
+  const allCategories: CategoryItem[] = Object.values(CATEGORY_MAP).flat();
+
+  // 서버 태그 제외
+  const filtered = allCategories.filter(
+    (item) => !serverTagIds.has(item.value),
+  );
+
+  // 랜덤 섞기
+  const shuffled = [...filtered].sort(() => Math.random() - 0.5);
+
+  // 부족한 개수
+  const needCount = total - serverTags.length;
+
+  // 추가 태그
+  const additional = shuffled.slice(0, needCount).map((item) => ({
+    tagId: item.value,
+    tagName: item.label,
+  }));
+
+  // 합치기
+  return [...serverTags, ...additional];
+}
 
 const CategorySection = () => {
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const {
+    tags,
+    isError: isTagsError,
+    isPending: isTagsPending,
+  } = useMyChildTags();
 
-  const [categoryRef] = useEmblaCarousel({
-    align: 'start',
-    containScroll: 'trimSnaps',
-    dragFree: true,
-  });
-  const [videoListRef] = useEmblaCarousel({
-    align: 'start',
-    containScroll: 'trimSnaps',
-    dragFree: false,
-  });
+  const resultTagList = useMemo(() => {
+    if (!tags) return [];
+    return createTagList(tags);
+  }, [tags]);
+
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+  const {
+    videos,
+    isError: isListError,
+    isPending: isListPending,
+  } = useVideosByTag(Number(selectedCategory));
+
+  useEffect(() => {
+    if (resultTagList.length && !selectedCategory) {
+      setSelectedCategory(resultTagList[0].tagId);
+    }
+  }, [resultTagList, selectedCategory]);
 
   return (
     <div className="flex flex-col gap-4">
       <span className="title1 pl-3">주제별 인기 영상</span>
-      <div className="overflow-hidden px-3" ref={categoryRef}>
-        <div className="flex gap-2.5">
-          {categories.map((cat, index) => (
-            <Chip
-              key={index}
-              selected={selectedCategory === cat}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat}
-            </Chip>
-          ))}
-        </div>
-      </div>
+      <CategoryTagList
+        tags={resultTagList}
+        selected={selectedCategory}
+        onSelect={setSelectedCategory}
+        isPending={isTagsPending}
+        isError={isTagsError}
+      />
 
-      <div className="overflow-hidden px-3 py-0.5" ref={videoListRef}>
-        <div className="flex gap-4">
-          {/* 임시데이터 (API연동 필요) */}
-          {MOCK_VIDEO_DATA.map((data, index) => {
-            return (
-              <div key={index} className="flex-[0_0_60%]">
-                <VideoVerticalCard data={data} />
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <CategoryVedioList
+        videos={videos}
+        isPending={isListPending}
+        isError={isListError}
+      />
     </div>
   );
 };
