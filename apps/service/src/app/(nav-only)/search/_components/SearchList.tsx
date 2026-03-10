@@ -8,6 +8,7 @@ import { ThumbnailData } from '@/types/video';
 import { formatVideoTime } from '@/utils/format';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
 export function mapSearchToThumbanil(item: VideoSearchResponse): ThumbnailData {
   return {
@@ -28,6 +29,8 @@ const SearchList = () => {
   const searchParams = useSearchParams();
   const currentKeyword = searchParams.get('keyword') ?? '';
   const currentTag = searchParams.get('tag') ?? '';
+
+  const [type, setType] = useState<'all' | 'short' | 'long'>('all');
 
   const {
     data,
@@ -69,6 +72,28 @@ const SearchList = () => {
           ? `"${currentKeyword}" (으)로 검색된 결과`
           : `"${currentTag}" 주제가 포함된 결과`}
       </span>
+      <div className="flex w-full rounded-full bg-gray-200 p-1">
+        <button
+          onClick={() => setType('all')}
+          className={`flex-1 rounded-full py-2 text-sm font-medium transition ${type === 'all' ? 'bg-white shadow' : 'text-gray-700'}`}
+        >
+          전체
+        </button>
+
+        <button
+          onClick={() => setType('short')}
+          className={`flex-1 rounded-full py-2 text-sm font-medium transition ${type === 'short' ? 'bg-white shadow' : 'text-gray-700'}`}
+        >
+          짧은 영상
+        </button>
+
+        <button
+          onClick={() => setType('long')}
+          className={`flex-1 rounded-full py-2 text-sm font-medium transition ${type === 'long' ? 'bg-white shadow' : 'text-gray-700'}`}
+        >
+          긴 영상
+        </button>
+      </div>
 
       <div className="flex flex-col">
         {videos.map((data) => {

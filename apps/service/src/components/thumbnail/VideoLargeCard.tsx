@@ -11,7 +11,7 @@ const VideoLargeCard = ({ data }: VideoLargeCardProps) => {
   return (
     <div className="flex w-full flex-col overflow-hidden">
       <Thumbnail
-        type="long"
+        type={data.type}
         src={data.thumbnailSrc}
         duration={data.duration}
         progress={data.progress}
