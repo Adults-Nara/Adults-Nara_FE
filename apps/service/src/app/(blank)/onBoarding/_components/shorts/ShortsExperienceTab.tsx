@@ -344,22 +344,27 @@ export const ShortsExperienceTab = React.memo(
 
     const renderController = useCallback(
       (video: ShortFormVideoData) => {
-        const mappedVideo = {
+        const mappedVideo: ShortFormVideoData = {
           videoId: String(video.videoId),
-          userId: 0,
-          uploaderNickname: video.uploader.name,
-          uploaderProfileImageUrl: video.uploader.profileImg,
+          uploader: {
+            name: video.uploader.name,
+            profileImg: video.uploader.profileImg,
+          },
           title: video.title,
-          description: '',
-          thumbnailUrl: video.thumbnail,
-          duration: 0,
+
+          thumbnail: video.thumbnail,
+
           tags: [],
-          viewCount: 0,
-          likeCount: video.likes,
-          uploadDate: '',
-          videoType: 'SHORT' as const,
+
+          likes: video.likes,
+          dislikes: video.dislikes,
+          comments: video.comments,
+          isBookmarked: video.isBookmarked,
+          isLiked: video.isLiked,
+
           watchProgress: 0,
-          otherVideoUrl: video.longformUrl,
+          longformUrl: '',
+          videoUrl: '',
         };
 
         return (
@@ -437,7 +442,7 @@ export const ShortsExperienceTab = React.memo(
           </button>
         </div>
 
-        <VirtualSwipePlayer<ShortFormVideoData>
+        <VirtualSwipePlayer
           currentVideo={currentVideo}
           upVideo={upVideo}
           downVideo={downVideo}

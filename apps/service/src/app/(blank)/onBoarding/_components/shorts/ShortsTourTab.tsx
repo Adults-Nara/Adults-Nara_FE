@@ -121,22 +121,27 @@ export const ShortsTourTab = React.memo(
 
         // BaseShortFormController expects RecommendationVideoItem-like structures for the title/uploader.
         // In the next step we will generalize BaseShortFormController too, but for now we map it.
-        const mappedVideo = {
-          videoId: video.videoId,
-          userId: 0,
-          uploaderNickname: video.uploader.name,
-          uploaderProfileImageUrl: video.uploader.profileImg,
+        const mappedVideo: ShortFormVideoData = {
+          videoId: String(video.videoId),
+          uploader: {
+            name: video.uploader.name,
+            profileImg: video.uploader.profileImg,
+          },
           title: video.title,
-          description: '',
-          thumbnailUrl: video.thumbnail,
-          duration: 0,
+
+          thumbnail: video.thumbnail,
+
           tags: [],
-          viewCount: 0,
-          likeCount: video.likes,
-          uploadDate: '',
-          videoType: 'SHORT' as const,
+
+          likes: video.likes,
+          dislikes: video.dislikes,
+          comments: video.comments,
+          isBookmarked: video.isBookmarked,
+          isLiked: video.isLiked,
+
           watchProgress: 0,
-          otherVideoUrl: video.longformUrl,
+          longformUrl: '',
+          videoUrl: '',
         };
 
         return (
@@ -178,7 +183,7 @@ export const ShortsTourTab = React.memo(
         className="relative h-dvh w-full overflow-hidden bg-black"
         onPointerUpCapture={handlePointerUp}
       >
-        <VirtualSwipePlayer<ShortFormVideoData>
+        <VirtualSwipePlayer
           currentVideo={currentVideo}
           upVideo={null}
           downVideo={tutorialStep === 1 ? ONBOARDING_DATA[1] : null}
