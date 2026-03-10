@@ -8,7 +8,7 @@ export const getRecommendationFeed = async (
   size: number = 3,
 ) => {
   const response = await httpClient<ApiResponse<RecommendationVideoResponse>>(
-    `${API_ENDPOINTS.RECOMMENDATION.FEED}?page=${page}&size=${size}`,
+    `${API_ENDPOINTS.RECOMMENDATION.FEED_VERTICAL}?videoType=SHORT&page=${page}&size=${size}`,
     { method: 'GET' },
   );
   return response.data;
@@ -20,7 +20,7 @@ export const getRecommendationRelated = async (
   size: number = 3,
 ) => {
   const response = await httpClient<ApiResponse<RecommendationVideoResponse>>(
-    `${API_ENDPOINTS.RECOMMENDATION.RELATED(videoId)}?page=${page}&size=${size}`,
+    `${API_ENDPOINTS.RECOMMENDATION.RELATED(videoId)}?videoType=SHORT&page=${page}&size=${size}`,
     { method: 'GET' },
   );
   return response.data;

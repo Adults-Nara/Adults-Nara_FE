@@ -4,7 +4,7 @@ import { ShortsHeader } from './_components/ShortsHeader';
 export default async function ShortsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ index?: number; listType?: string }>;
+  searchParams: Promise<{ v?: string; listType?: string }>;
 }) {
   const params = await searchParams;
   return (

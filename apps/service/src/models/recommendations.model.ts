@@ -1,21 +1,20 @@
 export interface RecommendationVideoItem {
   videoId: string;
-  userId: number;
-  uploaderNickname: string;
-  uploaderProfileImageUrl: string | null;
+  thumbnailSrc: string;
   title: string;
-  description: string;
-  thumbnailUrl: string;
+  uploader: string;
+  uploaderProfileImageUrl: string | null;
+  progress: number;
   duration: number;
-  tags: string[];
-  viewCount: number;
-  likeCount: number;
-  uploadDate: string;
+  views: number;
+  date: string;
+  userId: number;
   videoType: 'SHORT' | 'LONG';
-  watchProgress: number;
-  otherVideoUrl: string;
 }
 
 export interface RecommendationVideoResponse {
   content: RecommendationVideoItem[];
+  currentPage: number;
+  size: number;
+  hasNext: boolean;
 }

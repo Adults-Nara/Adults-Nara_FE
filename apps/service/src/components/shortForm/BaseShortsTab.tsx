@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { BaseShortFormController } from '@/components/shortForm/BaseShortFormController';
 import {
   VirtualSwipePlayer,
@@ -16,22 +17,40 @@ import {
   useStopWatching,
 } from '@/lib/tanstack/mutation/watch-history.mutation';
 import { LoadingSpinner } from '../LoadingSpinner';
+
+// 무한 스크롤 메모리 초과 방지, window 형식. offset 보정 함수.
+function applyWindowing<T>(
+  prevList: T[],
+  newItemsToAdd: T[],
+  windowSize: number,
+  setIndexOffset: React.Dispatch<React.SetStateAction<number>>,
+): T[] {
+  const appended = [...prevList, ...newItemsToAdd];
+  if (appended.length <= windowSize) return appended;
+
+  const cutSize = appended.length - windowSize;
+  setIndexOffset((prevIndex) => Math.max(0, prevIndex - cutSize));
+  return appended.slice(cutSize);
+}
+
 interface BaseShortsTabProps {
   algorithmList: ShortFormVideoData[];
   onRequireMoreVertical?: () => void;
-  initialIndex?: number;
 }
 
 export default function BaseShortsTab({
   algorithmList,
   onRequireMoreVertical,
-  initialIndex,
 }: BaseShortsTabProps) {
   const [vList, setVList] = useState<ShortFormVideoData[]>(algorithmList);
   const lastAlgorithmLengthRef = useRef(algorithmList.length);
-  const [rowIndex, setRowIndex] = useState(initialIndex || 0);
+  const [rowIndex, setRowIndex] = useState(0);
   const [colIndex, setColIndex] = useState(0);
   const [hList, setHList] = useState<ShortFormVideoData[]>([]);
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   // 페이징
   const FETCH_SIZE = 10; // api에 요청하는 개수
@@ -47,19 +66,14 @@ export default function BaseShortsTab({
         // 처음 리스트를 받아온 경우
         if (prev.length === 0) return algorithmList;
 
-        // 기존 리스트 "뒤"에 추가된 경우 (아래로 스와이프)
-        const appended = [...prev, ...algorithmList.slice(-addedCount)];
-        if (appended.length > WINDOW_SIZE) {
-          const cutSize = appended.length - WINDOW_SIZE;
-          setRowIndex((r) => Math.max(0, r - cutSize)); // rowIndex offset 업데이트
-          return appended.slice(cutSize);
-        }
-        return appended;
+        // 기존 리스트 뒤에 다음 페이지 영상 리스트가 추가된 경우
+        const newItems = algorithmList.slice(-addedCount);
+        return applyWindowing(prev, newItems, WINDOW_SIZE, setRowIndex);
       });
     }
   }, [algorithmList]);
 
-  // initialIndex 등으로 인해 현재 rowIndex가 화면에 아직 로드되지 않은 인덱스를 바라보는 경우
+  // 현재 rowIndex가 화면에 아직 로드되지 않은 인덱스를 바라보는 경우
   // 다음 페이지를 계속 요청하도록 처리 (아래 방향)
   useEffect(() => {
     if (rowIndex >= vList.length && onRequireMoreVertical) {
@@ -108,16 +122,9 @@ export default function BaseShortsTab({
         // 처음 리스트를 받아온 경우
         if (prev.length === 0) return [source, ...allRelated];
 
-        // 기존 리스트에 추가
-        const appended = [...prev, ...allRelated.slice(-addedCount)];
-
-        // 윈도우 사이즈보다 큰 경우, 앞 부분 WINDOW_SIZE만큼 삭제 (즉, FETCH_SIZE만큼 삭제)
-        if (appended.length > WINDOW_SIZE) {
-          const cutSize = appended.length - WINDOW_SIZE;
-          setColIndex((c) => Math.max(0, c - cutSize)); // colIndex offset 업데이트
-          return appended.slice(cutSize);
-        }
-        return appended;
+        // 기존 리스트 뒤에 다음 페이지 영상 리스트가 추가된 경우
+        const newItems = allRelated.slice(-addedCount);
+        return applyWindowing(prev, newItems, WINDOW_SIZE, setColIndex);
       });
     } else if (
       lastRelatedLengthRef.current === 0 &&
@@ -131,6 +138,20 @@ export default function BaseShortsTab({
 
   // 이웃 영상들 도출
   const currentVideo = hList[colIndex];
+
+  // URL Shallow Routing (비디오 ID 동기화)
+  useEffect(() => {
+    if (!currentVideo?.videoId) return;
+
+    // 현재 URL 파라미터가 이미 이 비디오를 가리키고 있는지 확인 (불필요한 history.replace 방지)
+    const currentParam = searchParams.get('v');
+    if (currentParam === String(currentVideo.videoId)) return;
+
+    // 히스토리 조작 시 리렌더링 없이 URL만 업데이트 (Next.js native shallow routing)
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set('v', String(currentVideo.videoId));
+    router.replace(`${pathname}?${newParams.toString()}`, { scroll: false });
+  }, [currentVideo?.videoId, pathname, router, searchParams]);
 
   const upVideo = rowIndex > 0 ? vList[rowIndex - 1] : null;
   const downVideo = rowIndex < vList.length - 1 ? vList[rowIndex + 1] : null;
@@ -183,6 +204,10 @@ export default function BaseShortsTab({
     currentVideo ? Number(currentVideo.videoId) : 0,
   );
 
+  const handleStartWatching = (videoId: number) => {
+    updatePosition({ lastPosition: 0 });
+  };
+
   const handleWatchProgressUpdate = (currentTime: number) => {
     updatePosition({ lastPosition: currentTime });
   };
@@ -212,6 +237,7 @@ export default function BaseShortsTab({
       videoLoading: isS3Loading,
       getThumbnailUrl: (v) => v.thumbnail,
       watchProgress: currentVideo.watchProgress ?? 0,
+      onStartWatching: handleStartWatching,
       onWatchProgressUpdate: handleWatchProgressUpdate,
       onStopWatching: handleStopWatching,
       onSwipe: handleSwipe,

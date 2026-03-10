@@ -8,19 +8,19 @@ export const mapRecommendationToShortsData = (
   return {
     videoId: item.videoId,
     videoUrl: '', // Will be fetched via S3 url
-    thumbnail: item.thumbnailUrl ?? '',
+    thumbnail: item.thumbnailSrc ?? '',
     uploader: {
-      name: item.uploaderNickname ?? '알 수 없음',
+      name: item.uploader ?? '알 수 없음',
       profileImg: item.uploaderProfileImageUrl ?? null,
     },
     title: item.title,
-    likes: item.likeCount ?? 0,
+    likes: 0, // No longer provided in vertical feed
     dislikes: 0,
     comments: 0,
     isBookmarked: false, // Default or fetch if available
-    longformUrl: item.otherVideoUrl ?? '',
-    watchProgress: item.watchProgress ?? 0,
-    tags: item.tags ?? [],
+    longformUrl: '', // No longer provided in vertical feed
+    watchProgress: item.progress ?? 0,
+    tags: [], // No longer provided in vertical feed
   };
 };
 
