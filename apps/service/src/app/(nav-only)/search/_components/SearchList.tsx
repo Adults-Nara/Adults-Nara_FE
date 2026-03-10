@@ -12,14 +12,15 @@ import { useSearchParams } from 'next/navigation';
 export function mapSearchToThumbanil(item: VideoSearchResponse): ThumbnailData {
   return {
     id: item.videoId.toString(),
-    thumbnailSrc: item.thumbnailUrl,
+    thumbnailSrc: item.thumbnailSrc,
     title: item.title,
-    uploader: 'uploadr', //업로더이름 & 프로필사진 없음
-    progress: 10, // 시청이력 없음
+    uploader: item.uploader,
+    ProfileImageUrl: item.uploaderProfileImageUrl,
+    progress: item.progress,
     duration: formatVideoTime(item.duration),
-    views: item.viewCount,
-    date: item.createdAt,
-    type: 'long',
+    views: item.views,
+    date: item.date,
+    type: item.videoType === 'LONG' ? 'long' : 'short',
   };
 }
 

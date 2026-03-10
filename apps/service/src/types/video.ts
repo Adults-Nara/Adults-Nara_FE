@@ -29,5 +29,6 @@ export interface ThumbnailData {
   progress: number;
   views: number;
   date: string;
+  ProfileImageUrl?: string;
   type?: 'long' | 'short';
 }
