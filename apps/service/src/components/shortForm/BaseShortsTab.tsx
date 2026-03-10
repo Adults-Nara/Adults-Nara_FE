@@ -73,11 +73,19 @@ export default function BaseShortsTab({
     }
   }, [algorithmList]);
 
+  const lastRequestedRowRef = useRef<number>(-1);
+
   // 현재 rowIndex가 화면에 아직 로드되지 않은 인덱스를 바라보는 경우
   // 다음 페이지를 계속 요청하도록 처리 (아래 방향)
   useEffect(() => {
     if (rowIndex >= vList.length && onRequireMoreVertical) {
-      onRequireMoreVertical();
+      if (lastRequestedRowRef.current !== rowIndex) {
+        lastRequestedRowRef.current = rowIndex;
+        onRequireMoreVertical();
+      }
+    } else if (rowIndex < vList.length) {
+      // 데이터가 정상적으로 들어오면 락 해제
+      lastRequestedRowRef.current = -1;
     }
   }, [rowIndex, vList.length, onRequireMoreVertical]);
 
