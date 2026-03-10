@@ -44,7 +44,6 @@ export default function ShortsTab({ params }: ShortsTabProps) {
     FETCH_SIZE,
     WINDOW_SIZE,
     0, // index 파라미터는 더 이상 무의미하므로 0부터 시작
-    isBookmark,
   );
 
   const { fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
