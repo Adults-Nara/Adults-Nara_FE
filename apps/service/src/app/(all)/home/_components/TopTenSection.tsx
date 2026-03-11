@@ -3,6 +3,7 @@ import { useRanking } from '@/lib/tanstack/query/search-ranking.query';
 import useEmblaCarousel from 'embla-carousel-react';
 import TopVideoItem from './TopVideoItem';
 import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/constant/routes';
 
 const TopTenSection = () => {
   const router = useRouter();
@@ -32,10 +33,11 @@ const TopTenSection = () => {
           <div className="flex gap-4">
             {data.map((data) => {
               return (
-                //TODO: 추후 라우팅경로 확인
                 <div
                   key={data.videoId}
-                  onClick={() => router.push(`long/${data.videoId}`)}
+                  onClick={() =>
+                    router.push(`${ROUTES.LONG}?v=${data.videoId}`)
+                  }
                   className="flex-[0_0_90%]"
                 >
                   <TopVideoItem

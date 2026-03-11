@@ -1,11 +1,13 @@
 'use client';
 import VideoHorizontalCard from '@/components/thumbnail/VideoHorizontalCard';
-import { useBookmarkList } from '@/lib/tanstack/query/bookmark.query';
+import { useBookmarkListInfinite } from '@/lib/tanstack/query/bookmark.query';
 import useObserver from '@/hooks/useObserver';
 import Link from 'next/link';
 import { ThumbnailData } from '@/types/video';
 import { BookmarkListResponse } from '@/models/bookmark.model';
 import { formatVideoTime } from '@/utils/format';
+import { ROUTES } from '@/constant/routes';
+import { useSheetStore } from '@/store/useSheetStore';
 
 interface SheetBookmarkListProps {
   videoType: 'LONG' | 'SHORT';
@@ -29,6 +31,7 @@ export function mapBookmarkListToThumbnail(
 }
 
 const SheetBookmarkList = ({ videoType }: SheetBookmarkListProps) => {
+  const { close } = useSheetStore();
   const {
     data,
     fetchNextPage,
@@ -36,7 +39,7 @@ const SheetBookmarkList = ({ videoType }: SheetBookmarkListProps) => {
     isFetchingNextPage,
     isError,
     isPending,
-  } = useBookmarkList(videoType);
+  } = useBookmarkListInfinite(videoType);
 
   const observerRef = useObserver({
     hasNextPage,
@@ -57,8 +60,15 @@ const SheetBookmarkList = ({ videoType }: SheetBookmarkListProps) => {
     <div className="flex flex-col gap-2 px-4 py-3">
       {videos.map((video) => {
         return (
-          //TODO:추후 링크 href 변경
-          <Link key={video.id} href={`/long/${video.id}`}>
+          <Link
+            key={video.id}
+            onClick={() => close()}
+            href={
+              video.type === 'short'
+                ? `${ROUTES.SHORTS}?v=${video.id}&listType=bookmarkList`
+                : `${ROUTES.LONG}?v=${video.id}&listType=bookmarkList`
+            }
+          >
             <VideoHorizontalCard data={video} />
           </Link>
         );

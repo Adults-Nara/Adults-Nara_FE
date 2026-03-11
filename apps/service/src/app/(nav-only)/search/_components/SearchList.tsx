@@ -1,6 +1,7 @@
 'use client';
 
 import VideoLargeCard from '@/components/thumbnail/VideoLargeCard';
+import { ROUTES } from '@/constant/routes';
 import useObserver from '@/hooks/useObserver';
 import { useSearchVideos } from '@/lib/tanstack/query/search-ranking.query';
 import { VideoSearchResponse } from '@/models/search.model';
@@ -99,8 +100,14 @@ const SearchList = () => {
       <div className="flex flex-col">
         {videos.map((data) => {
           return (
-            //TODO: 추후 클릭이벤트 라우팅 수정해야됨
-            <Link key={data.videoId} href={`/long/${data.videoId}`}>
+            <Link
+              key={data.videoId}
+              href={
+                data.videoType === 'SHORT'
+                  ? `${ROUTES.SHORTS}?v=${data.videoId}`
+                  : `${ROUTES.LONG}?v=${data.videoId}`
+              }
+            >
               <VideoLargeCard data={mapSearchToThumbanil(data)} />
             </Link>
           );

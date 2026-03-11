@@ -8,6 +8,7 @@ import { ThumbnailData } from '@/types/video';
 import { formatVideoTime } from '@/utils/format';
 import { useRouter } from 'next/navigation';
 import SheetRecentHistory from './SheetRecentHistory';
+import { ROUTES } from '@/constant/routes';
 
 export function mapWatchHistoryToThumbnail(
   item: WatchHistoryItemResponse,
@@ -65,9 +66,17 @@ const RecentHistory = () => {
               return (
                 //TODO: 추후 클릭이벤트 라우팅 수정해야됨
                 <div
-                  key={data.videoId}
+                  key={mapped.id}
                   className="flex-[0_0_60%]"
-                  onClick={() => router.push(`/long/${data.videoId}`)}
+                  onClick={() =>
+                    router.push(
+                      `${
+                        mapped.type === 'short'
+                          ? `${ROUTES.SHORTS}?v=${mapped.id}`
+                          : `${ROUTES.LONG}?v=${mapped.id}`
+                      }`,
+                    )
+                  }
                 >
                   <VideoVerticalCard data={mapped} />
                 </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import VideoVerticalCard from '@/components/thumbnail/VideoVerticalCard';
+import { ROUTES } from '@/constant/routes';
 import { TagVideoResponse } from '@/models/tag.model';
 import { ThumbnailData } from '@/types/video';
 import { formatVideoTime } from '@/utils/format';
@@ -49,10 +50,9 @@ const CategoryVedioList = ({
       <div className="flex gap-4">
         {videos.map((data) => {
           return (
-            //TODO: 추후 라우팅경로 확인
             <div
               key={data.videoId}
-              onClick={() => router.push(`long/${data.videoId}`)}
+              onClick={() => router.push(`${ROUTES.LONG}?v=${data.videoId}`)}
               className="flex-[0_0_60%]"
             >
               <VideoVerticalCard data={mapTagListToThumbnail(data)} />
