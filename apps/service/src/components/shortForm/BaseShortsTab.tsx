@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, startTransition } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { BaseShortFormController } from '@/components/shortForm/BaseShortFormController';
@@ -204,12 +204,19 @@ export default function BaseShortsTab({
           return newList;
         });
       }
-      setRowIndex(nextRow);
-      setColIndex(0); // 새 층에선 무조건 원본(0번)
+
+      startTransition(() => {
+        setRowIndex(nextRow);
+        setColIndex(0); // 새 층에선 무조건 원본(0번)
+      });
     } else if (direction === 'left') {
-      setColIndex((prev) => prev - 1);
+      startTransition(() => {
+        setColIndex((prev) => prev - 1);
+      });
     } else if (direction === 'right') {
-      setColIndex((prev) => prev + 1);
+      startTransition(() => {
+        setColIndex((prev) => prev + 1);
+      });
       if (
         colIndex + 1 >= hList.length - FETCH_SIZE &&
         hasNextPage &&
@@ -220,9 +227,11 @@ export default function BaseShortsTab({
     }
   };
 
-  const { data: s3Data, isLoading: isS3Loading } = useVideoS3Url(
-    currentVideo?.videoId, // Will be skipped internally if undefined
-  );
+  const {
+    data: s3Data,
+    isPending: isS3Pending,
+    isError: isS3Error,
+  } = useVideoS3Url(currentVideo?.videoId);
   const s3Url = s3Data?.masterUrl;
 
   const { mutate: updatePosition } = useUpdateWatchPosition(
@@ -247,9 +256,11 @@ export default function BaseShortsTab({
       });
     }
   };
-
-  if (!currentVideo || currentVideo.videoId === undefined) {
-    return <LoadingSpinner />;
+  if (isS3Error) {
+    return <>영상을 불러오지 못했습니다.</>;
+  }
+  if (!currentVideo || currentVideo.videoId === undefined || isS3Pending) {
+    return <LoadingSpinner thumbnail={currentVideo?.thumbnail || ''} />;
   } else {
     const virtualSwipePlayerProps: VirtualSwipePlayerProps = {
       currentVideo,
@@ -258,7 +269,7 @@ export default function BaseShortsTab({
       leftVideo,
       rightVideo,
       videoUrl: s3Url,
-      videoLoading: isS3Loading,
+      videoLoading: isS3Pending || isS3Error,
       getThumbnailUrl: (v) => v.thumbnail,
       watchProgress: currentVideo.watchProgress ?? 0,
       onStartWatching: handleStartWatching,

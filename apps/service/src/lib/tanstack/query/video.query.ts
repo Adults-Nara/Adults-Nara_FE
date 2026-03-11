@@ -13,14 +13,14 @@ export const videoS3UrlQueryOptions = (videoId: string) =>
   });
 
 export function useVideoS3Url(videoId: string) {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isPending, isError } = useQuery({
     ...videoS3UrlQueryOptions(videoId),
     enabled: !!videoId,
   });
 
   return {
     data,
-    isLoading,
+    isPending,
     isError,
   };
 }

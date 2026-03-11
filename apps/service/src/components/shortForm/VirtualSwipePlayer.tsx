@@ -173,7 +173,6 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     setOffset({ x: 0, y: 0 });
   };
 
-  if (!props.videoUrl && !props.videoLoading) return <LoadingSpinner />;
   return (
     <div
       className="relative h-dvh w-full touch-none overflow-hidden bg-black"

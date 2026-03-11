@@ -1,6 +1,7 @@
-export const LoadingSpinner = () => {
+export const LoadingSpinner = ({ thumbnail }: { thumbnail: string }) => {
   return (
     <div className="relative flex h-dvh w-full items-center justify-center bg-black">
+      <img src={thumbnail} alt="thumbnail" />
       <svg className="h-10 w-10 animate-spin text-white" viewBox="0 0 24 24">
         <circle
           className="opacity-25"
