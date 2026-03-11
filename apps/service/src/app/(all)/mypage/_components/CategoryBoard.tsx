@@ -31,6 +31,7 @@ const CategoryBoard = () => {
       <div className="flex w-full flex-wrap gap-2">
         {tagPendin && <div>선호주제 로딩중...</div>}
         {tagError && <div>선호주제에러 발생</div>}
+        {tags.length === 0 && <div>선호주제없음...</div>}
         {!tagPendin &&
           !tagError &&
           tags.map((cat) => {

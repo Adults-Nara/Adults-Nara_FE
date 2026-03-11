@@ -49,7 +49,7 @@ export function useMyChildTags() {
     };
 
   return {
-    tags: data,
+    tags: data ?? [],
     isPending,
     isError,
   };
