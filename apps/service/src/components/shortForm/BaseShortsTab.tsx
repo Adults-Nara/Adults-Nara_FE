@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { BaseShortFormController } from '@/components/shortForm/BaseShortFormController';
 import {
   VirtualSwipePlayer,
@@ -11,7 +12,10 @@ import { mapRecommendationToShortsData } from '@/utils/videoMapper';
 import { ShortTabActionButtons } from '@/app/(blank)/shorts/_components/ShortTabActionButtons';
 import { ShortFormVideoData } from '@/types/video';
 import { useRelatedVideosInfinite } from '@/lib/tanstack/query/recommendation.query';
-import { useVideoS3Url } from '@/lib/tanstack/query/video.query';
+import {
+  useVideoS3Url,
+  videoS3UrlQueryOptions,
+} from '@/lib/tanstack/query/video.query';
 import {
   useUpdateWatchPosition,
   useStopWatching,
@@ -54,6 +58,7 @@ export default function BaseShortsTab({
   const searchParams = useSearchParams();
 
   const isLogin = useIsLoggedIn();
+  const queryClient = useQueryClient();
 
   // 페이징
   const FETCH_SIZE = 10; // api에 요청하는 개수
@@ -78,9 +83,9 @@ export default function BaseShortsTab({
 
   const lastRequestedRowRef = useRef<number>(-1);
 
-  // 현재 rowIndex가 화면에 아직 로드되지 않은 인덱스를 바라보는 경우
-  // 다음 페이지를 계속 요청하도록 처리 (아래 방향)
+  // 현재 rowIndex가 화면에 아직 로드되지 않은 인덱스를 받아와야하는 경우,
   useEffect(() => {
+    // 다음 페이지를 계속 요청하도록 처리 (아래 방향)
     if (rowIndex >= vList.length && onRequireMoreVertical) {
       if (lastRequestedRowRef.current !== rowIndex) {
         lastRequestedRowRef.current = rowIndex;
@@ -168,6 +173,15 @@ export default function BaseShortsTab({
   const downVideo = rowIndex < vList.length - 1 ? vList[rowIndex + 1] : null;
   const leftVideo = colIndex > 0 ? hList[colIndex - 1] : null;
   const rightVideo = colIndex < hList.length - 1 ? hList[colIndex + 1] : null;
+
+  // 인접 영상 S3 URL 미리 가져오기 (비디오 멈춤 현상(Autoplay block) 방지)
+  useEffect(() => {
+    [upVideo, downVideo, leftVideo, rightVideo].forEach((v) => {
+      if (v?.videoId) {
+        queryClient.prefetchQuery(videoS3UrlQueryOptions(String(v.videoId)));
+      }
+    });
+  }, [upVideo, downVideo, leftVideo, rightVideo, queryClient]);
 
   // VirtualSwipePlayer이 스와이프 완료를 알려주면 상태 업데이트
   const handleSwipe = (direction: 'up' | 'down' | 'left' | 'right') => {

@@ -3,6 +3,7 @@ import ReactPlayer from 'react-player';
 import { useRef, useState, ReactNode, useEffect } from 'react';
 import { ShortFormVideoData } from '@/types/video';
 import { useIsLoggedIn } from '@/store/useAuthStore';
+import { LoadingSpinner } from '../LoadingSpinner';
 export interface VirtualSwipePlayerProps {
   currentVideo: ShortFormVideoData;
   upVideo: ShortFormVideoData | null;
@@ -172,7 +173,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     setOffset({ x: 0, y: 0 });
   };
 
-  if (!props.videoUrl && !props.videoLoading) return <>에러: 비디오 URL 없음</>;
+  if (!props.videoUrl && !props.videoLoading) return <LoadingSpinner />;
   return (
     <div
       className="relative h-dvh w-full touch-none overflow-hidden bg-black"
