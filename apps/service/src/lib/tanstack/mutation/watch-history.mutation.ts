@@ -17,12 +17,20 @@ export function useUpdateWatchPosition(videoId: number) {
   });
 }
 
-export function useStopWatching(videoId: number) {
+export function useStopWatching() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: WatchPositionRequest) => stopWatching(videoId, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['watchHistory', videoId] });
+    mutationFn: ({
+      videoId,
+      body,
+    }: {
+      videoId: number;
+      body: WatchPositionRequest;
+    }) => stopWatching(videoId, body),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['watchHistory', variables.videoId],
+      });
       queryClient.invalidateQueries({ queryKey: ['recentWatchHistory'] });
     },
   });

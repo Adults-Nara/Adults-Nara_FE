@@ -1,0 +1,44 @@
+import { useInfiniteQuery, infiniteQueryOptions } from '@tanstack/react-query';
+import {
+  getRecommendationFeed,
+  getRecommendationRelated,
+} from '@/services/recommendation.api';
+
+export function useRelatedVideosInfinite(videoId: string, size: number = 3) {
+  return useInfiniteQuery({
+    queryKey: ['recommendation-related', videoId],
+    queryFn: ({ pageParam = 0 }) =>
+      getRecommendationRelated(videoId, pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage || !lastPage.hasNext) {
+        return undefined;
+      }
+      return lastPage.currentPage + 1;
+    },
+    enabled: !!videoId,
+  });
+}
+
+export const feedVideoQueryOptions = (size: number = 10) =>
+  infiniteQueryOptions({
+    queryKey: ['recommendation-feed'],
+    queryFn: ({ pageParam = 0 }) => getRecommendationFeed(pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage || !lastPage.hasNext) {
+        return undefined;
+      }
+      return lastPage.currentPage + 1;
+    },
+  });
+
+export function useFeedVideoInfinite(
+  size: number = 10,
+  enabled: boolean = true,
+) {
+  return useInfiniteQuery({
+    ...feedVideoQueryOptions(size),
+    enabled,
+  });
+}

@@ -18,7 +18,7 @@ export interface ShortsExperienceTabProps {
 const EXPERIENCE_DATA: ShortFormVideoData[][] = [
   [
     {
-      id: 'exp-1',
+      videoId: 'exp-1',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       thumbnail: '',
@@ -32,7 +32,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
       tags: ['음식', '여행'],
     },
     {
-      id: 'exp-2',
+      videoId: 'exp-2',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
       thumbnail: '',
@@ -48,7 +48,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
   ],
   [
     {
-      id: 'exp-3',
+      videoId: 'exp-3',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       thumbnail: '',
@@ -62,7 +62,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
       tags: ['반려동물', '운동'],
     },
     {
-      id: 'exp-4',
+      videoId: 'exp-4',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
       thumbnail: '',
@@ -78,7 +78,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
   ],
   [
     {
-      id: 'exp-5',
+      videoId: 'exp-5',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       thumbnail: '',
@@ -92,7 +92,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
       tags: ['음악', '건강'],
     },
     {
-      id: 'exp-6',
+      videoId: 'exp-6',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
       thumbnail: '',
@@ -108,7 +108,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
   ],
   [
     {
-      id: 'exp-5',
+      videoId: 'exp-5',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       thumbnail: '',
@@ -122,7 +122,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
       tags: ['음악', '건강'],
     },
     {
-      id: 'exp-6',
+      videoId: 'exp-6',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
       thumbnail: '',
@@ -138,7 +138,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
   ],
   [
     {
-      id: 'exp-5',
+      videoId: 'exp-5',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       thumbnail: '',
@@ -152,7 +152,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
       tags: ['음악', '건강'],
     },
     {
-      id: 'exp-6',
+      videoId: 'exp-6',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
       thumbnail: '',
@@ -168,7 +168,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
   ],
   [
     {
-      id: 'exp-7',
+      videoId: 'exp-7',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       thumbnail: '',
@@ -182,7 +182,7 @@ const EXPERIENCE_DATA: ShortFormVideoData[][] = [
       tags: ['음악', '건강'],
     },
     {
-      id: 'exp-8',
+      videoId: 'exp-8',
       videoUrl:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
       thumbnail: '',
@@ -344,22 +344,27 @@ export const ShortsExperienceTab = React.memo(
 
     const renderController = useCallback(
       (video: ShortFormVideoData) => {
-        const mappedVideo = {
-          videoId: video.id,
-          userId: 0,
-          uploaderNickname: video.uploader.name,
-          uploaderProfileImageUrl: video.uploader.profileImg,
+        const mappedVideo: ShortFormVideoData = {
+          videoId: String(video.videoId),
+          uploader: {
+            name: video.uploader.name,
+            profileImg: video.uploader.profileImg,
+          },
           title: video.title,
-          description: '',
-          thumbnailUrl: video.thumbnail,
-          duration: 0,
+
+          thumbnail: video.thumbnail,
+
           tags: [],
-          viewCount: 0,
-          likeCount: video.likes,
-          uploadDate: '',
-          videoType: 'SHORT' as const,
+
+          likes: video.likes,
+          dislikes: video.dislikes,
+          comments: video.comments,
+          isBookmarked: video.isBookmarked,
+          isLiked: video.isLiked,
+
           watchProgress: 0,
-          otherVideoUrl: video.longformUrl,
+          longformUrl: '',
+          videoUrl: '',
         };
 
         return (
@@ -437,7 +442,7 @@ export const ShortsExperienceTab = React.memo(
           </button>
         </div>
 
-        <VirtualSwipePlayer<ShortFormVideoData>
+        <VirtualSwipePlayer
           currentVideo={currentVideo}
           upVideo={upVideo}
           downVideo={downVideo}

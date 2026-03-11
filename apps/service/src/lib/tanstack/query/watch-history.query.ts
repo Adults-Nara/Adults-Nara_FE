@@ -3,11 +3,14 @@ import {
   getWatchHistory,
   getRecentWatchHistory,
 } from '@/services/watch-history.api';
+import { useIsLoggedIn } from '@/store/useAuthStore';
 
 export function useWatchHistory(videoId: number) {
+  const isLogin = useIsLoggedIn();
   return useQuery({
     queryKey: ['watchHistory', videoId],
     queryFn: () => getWatchHistory(videoId),
+    enabled: isLogin && !!videoId,
   });
 }
 

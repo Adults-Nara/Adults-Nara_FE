@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
   },
 
   VIDEO: {
+    DETAIL: (videoId: number) => `/videos/${videoId}`,
     S3_URL: (videoId: string) => `/videos/${videoId}/play`,
   },
   TAGS: {

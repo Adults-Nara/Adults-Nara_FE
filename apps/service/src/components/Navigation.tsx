@@ -3,9 +3,11 @@ import { ROUTES } from '@/constant/routes';
 import { Home, Profile, Shorts } from '@repo/ui';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useNavigateWithPrefetch } from '@/hooks/useNavigateWithPrefetch';
 
 const Navigation = () => {
   const pathname = usePathname();
+  const { navigateToShorts, isNavigating } = useNavigateWithPrefetch();
 
   const navItems = [
     { name: '홈', href: ROUTES.HOME, icon: <Home className="h-7 w-7" /> },
@@ -26,6 +28,24 @@ const Navigation = () => {
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const iconElement = item.icon;
+
+          if (item.name === '쇼츠') {
+            return (
+              <button
+                key={item.name}
+                onClick={navigateToShorts}
+                disabled={isNavigating}
+                className={`flex h-full w-full flex-col items-center justify-center gap-2 transition-transform active:scale-95 ${
+                  isActive
+                    ? 'text-primary-500'
+                    : 'hover:text-primary-600 text-gray-900'
+                } ${isNavigating ? 'cursor-wait opacity-50' : ''}`}
+              >
+                {iconElement}
+                <span className="body4">{item.name}</span>
+              </button>
+            );
+          }
 
           return (
             <Link

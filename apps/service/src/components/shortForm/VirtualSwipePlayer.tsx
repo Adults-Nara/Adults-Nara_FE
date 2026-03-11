@@ -1,63 +1,87 @@
 'use client';
 import ReactPlayer from 'react-player';
 import { useRef, useState, ReactNode, useEffect } from 'react';
-
-export interface VirtualSwipePlayerProps<T> {
-  currentVideo: T;
-  upVideo: T | null;
-  downVideo: T | null;
-  leftVideo: T | null;
-  rightVideo: T | null;
+import { ShortFormVideoData } from '@/types/video';
+import { useIsLoggedIn } from '@/store/useAuthStore';
+import { LoadingSpinner } from '../LoadingSpinner';
+export interface VirtualSwipePlayerProps {
+  currentVideo: ShortFormVideoData;
+  upVideo: ShortFormVideoData | null;
+  downVideo: ShortFormVideoData | null;
+  leftVideo: ShortFormVideoData | null;
+  rightVideo: ShortFormVideoData | null;
 
   // Data extraction
   videoUrl: string | undefined; // final playable url
   videoLoading: boolean; // is url or data loading
-  getThumbnailUrl: (video: T) => string;
-
+  getThumbnailUrl: (video: ShortFormVideoData) => string;
   // Progress & events
   watchProgress?: number; // start position
+  onStartWatching?: (videoId: number) => void; // Called when video begins playing
   onWatchProgressUpdate?: (currentTime: number) => void; // every 10s callback
+  onStopWatching?: (videoId: number, watchTime: number) => void;
 
   onSwipe: (direction: 'up' | 'down' | 'left' | 'right') => void;
-  renderController?: (video: T) => ReactNode;
+  renderController?: (video: ShortFormVideoData) => ReactNode;
 }
 
-export function VirtualSwipePlayer<T>({
-  currentVideo,
-  upVideo,
-  downVideo,
-  leftVideo,
-  rightVideo,
-  videoUrl,
-  videoLoading,
-  getThumbnailUrl,
-  watchProgress = 0,
-  onWatchProgressUpdate,
-  onSwipe,
-  renderController,
-}: VirtualSwipePlayerProps<T>) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
+  const playerRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
-
+  const isLogin = useIsLoggedIn();
   // 로딩 상태나 URL이 바뀌면 플레이 상태 초기화
   useEffect(() => {
     setIsPlaying(true);
-  }, [currentVideo, videoUrl, videoLoading]);
+  }, [props.currentVideo, props.videoUrl, props.videoLoading]);
+
+  // 최신 onStopWatching 콜백 참조 유지
+  const latestStopWatchingRef = useRef(props.onStopWatching);
+  useEffect(() => {
+    latestStopWatchingRef.current = props.onStopWatching;
+  }, [props.onStopWatching]);
+
+  // 영상을 벗어날 때 (currentVideo 변경 또는 언마운트)
+  useEffect(() => {
+    return () => {
+      // 컴포넌트 언마운트 시점에 playerRef.current가 유효한지 안전하게 검사
+      if (latestStopWatchingRef.current && playerRef.current) {
+        let currentTime = playerRef.current.currentTime || 0;
+        latestStopWatchingRef.current(
+          Number(props.currentVideo.videoId),
+          Math.floor(currentTime),
+        );
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.currentVideo.videoId]);
 
   // 10초마다 시청 위치 업데이트 (onWatchProgressUpdate 프롭이 제공됐을 때만 실행)
   useEffect(() => {
-    if (!isPlaying || videoLoading || !onWatchProgressUpdate) return;
+    if (
+      !isPlaying ||
+      props.videoLoading ||
+      !props.onWatchProgressUpdate ||
+      !isLogin
+    )
+      return;
 
     const interval = setInterval(() => {
-      // ReactPlayer 대신 HTMLVideoElement를 직접 참조 중이므로 currentTime 바로 접근
-      const currentTime = videoRef.current?.currentTime;
-      if (currentTime !== undefined) {
-        onWatchProgressUpdate(Math.floor(currentTime));
+      // ReactPlayer 인스턴스를 통해 시청 위치 가져오기
+      if (playerRef.current) {
+        const currentTime = playerRef.current.currentTime;
+        if (currentTime !== undefined) {
+          props.onWatchProgressUpdate?.(Math.floor(currentTime));
+        }
       }
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [isPlaying, videoLoading, currentVideo, onWatchProgressUpdate]);
+  }, [
+    isPlaying,
+    props.videoLoading,
+    props.currentVideo,
+    props.onWatchProgressUpdate,
+  ]);
 
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
@@ -86,10 +110,10 @@ export function VirtualSwipePlayer<T>({
     }
 
     if (dragAxis.current === 'x') {
-      if ((dx > 0 && !leftVideo) || (dx < 0 && !rightVideo)) return;
+      if ((dx > 0 && !props.leftVideo) || (dx < 0 && !props.rightVideo)) return;
       setOffset({ x: dx, y: 0 });
     } else {
-      if ((dy > 0 && !upVideo) || (dy < 0 && !downVideo)) return;
+      if ((dy > 0 && !props.upVideo) || (dy < 0 && !props.downVideo)) return;
       setOffset({ x: 0, y: dy });
     }
   };
@@ -107,10 +131,8 @@ export function VirtualSwipePlayer<T>({
     const timeElapsed = Date.now() - touchStart.current.time;
 
     if (distance < 10 && timeElapsed < 400) {
-      // 짧은 터치: 재생/일시정지 토글
-      if (videoRef.current) {
-        setIsPlaying((prev) => !prev);
-      }
+      // 짧은 터치 로직
+      setIsPlaying((prev) => !prev);
       return;
     }
 
@@ -123,20 +145,20 @@ export function VirtualSwipePlayer<T>({
     setIsAnimating(true);
 
     if (dragAxis.current === 'x') {
-      if (offset.x < -thresholdX && rightVideo) {
+      if (offset.x < -thresholdX && props.rightVideo) {
         setOffset({ x: -window.innerWidth, y: 0 });
         swipedDirection = 'right'; // 손가락은 왼쪽으로 밀었지만, 우측 영상이 나오는 것
-      } else if (offset.x > thresholdX && leftVideo) {
+      } else if (offset.x > thresholdX && props.leftVideo) {
         setOffset({ x: window.innerWidth, y: 0 });
         swipedDirection = 'left';
       } else {
         setOffset({ x: 0, y: 0 }); // 제자리 복귀
       }
     } else if (dragAxis.current === 'y') {
-      if (offset.y < -thresholdY && downVideo) {
+      if (offset.y < -thresholdY && props.downVideo) {
         setOffset({ x: 0, y: -window.innerHeight });
         swipedDirection = 'down';
-      } else if (offset.y > thresholdY && upVideo) {
+      } else if (offset.y > thresholdY && props.upVideo) {
         setOffset({ x: 0, y: window.innerHeight });
         swipedDirection = 'up';
       } else {
@@ -145,13 +167,12 @@ export function VirtualSwipePlayer<T>({
     }
 
     if (swipedDirection) {
-      onSwipe(swipedDirection);
+      props.onSwipe(swipedDirection);
     }
     setIsAnimating(false);
     setOffset({ x: 0, y: 0 });
   };
 
-  if (videoLoading || !videoUrl) return <>로딩중..</>;
   return (
     <div
       className="relative h-dvh w-full touch-none overflow-hidden bg-black"
@@ -168,31 +189,68 @@ export function VirtualSwipePlayer<T>({
       >
         {/* [중앙] 플레이어 */}
         <div className="absolute inset-0 h-full w-full">
-          <ReactPlayer
-            ref={videoRef}
-            src={videoUrl}
-            playing={isPlaying}
-            controls={false}
-            config={{
-              hls: {
-                startPosition: watchProgress,
-                xhrSetup: (xhr: XMLHttpRequest) => {
-                  xhr.withCredentials = true; // 쿠키 포함
-                },
-              },
-            }}
-            loop
-            playsInline
-            width="100%"
-            height="100%"
-            style={{ objectFit: 'cover' }}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-          />
+          {props.videoUrl && (
+            <ReactPlayer
+              key={`player-${props.currentVideo.videoId}`}
+              onReady={() => {
+                // URL이 준비되면 시청 위치로 이동
+                if (playerRef.current && props.watchProgress) {
+                  playerRef.current.currentTime = props.watchProgress;
+                }
+              }}
+              ref={playerRef}
+              src={props.videoUrl}
+              playing={isPlaying}
+              muted={false}
+              controls={false}
+              loop
+              playsInline
+              width="100%"
+              height="100%"
+              style={{ objectFit: 'cover' }}
+              onPlay={() => {
+                setIsPlaying(true);
+                if (!isLogin) return;
+                if (
+                  props.onStartWatching &&
+                  playerRef.current?.currentTime === 0
+                ) {
+                  props.onStartWatching(Number(props.currentVideo.videoId));
+                }
+              }}
+              onPause={() => setIsPlaying(false)}
+            />
+          )}
 
-          {renderController && renderController(currentVideo)}
+          {props.renderController && props.renderController(props.currentVideo)}
         </div>
-        {!isPlaying && (
+
+        {/* 로딩 스피너 오버레이 (영상이 안 왔을 때) */}
+        {props.videoLoading && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50">
+            <svg
+              className="h-10 w-10 animate-spin text-white"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                fill="none"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </div>
+        )}
+
+        {!isPlaying && !props.videoLoading && (
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/20">
             <svg
               width="72"
@@ -206,30 +264,30 @@ export function VirtualSwipePlayer<T>({
           </div>
         )}
         {/* 상하좌우 썸네일 */}
-        {upVideo && (
+        {props.upVideo && (
           <img
-            src={getThumbnailUrl(upVideo)}
+            src={props.getThumbnailUrl(props.upVideo)}
             alt=""
             className="absolute inset-0 h-full w-full -translate-y-full object-cover"
           />
         )}
-        {downVideo && (
+        {props.downVideo && (
           <img
-            src={getThumbnailUrl(downVideo)}
+            src={props.getThumbnailUrl(props.downVideo)}
             alt=""
             className="absolute inset-0 h-full w-full translate-y-full object-cover"
           />
         )}
-        {leftVideo && (
+        {props.leftVideo && (
           <img
-            src={getThumbnailUrl(leftVideo)}
+            src={props.getThumbnailUrl(props.leftVideo)}
             alt=""
             className="absolute inset-0 h-full w-full -translate-x-full object-cover"
           />
         )}
-        {rightVideo && (
+        {props.rightVideo && (
           <img
-            src={getThumbnailUrl(rightVideo)}
+            src={props.getThumbnailUrl(props.rightVideo)}
             alt=""
             className="absolute inset-0 h-full w-full translate-x-full object-cover"
           />

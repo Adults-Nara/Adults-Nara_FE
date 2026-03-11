@@ -1,5 +1,5 @@
 export interface VideoData {
-  id: string;
+  videoId: string;
   videoUrl: string;
   thumbnail: string;
   uploader: { name: string; profileImg: string | null };
@@ -10,6 +10,7 @@ export interface VideoData {
   isBookmarked: boolean;
   isLiked?: boolean | null;
   tags?: string[];
+  watchProgress?: number;
 }
 
 export interface LongFormVideoData extends VideoData {
