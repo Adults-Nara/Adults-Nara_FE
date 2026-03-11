@@ -17,6 +17,7 @@ import {
   useStopWatching,
 } from '@/lib/tanstack/mutation/watch-history.mutation';
 import { LoadingSpinner } from '../LoadingSpinner';
+import { useIsLoggedIn } from '@/store/useAuthStore';
 
 // 무한 스크롤 메모리 초과 방지, window 형식. offset 보정 함수.
 function applyWindowing<T>(
@@ -51,6 +52,8 @@ export default function BaseShortsTab({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const isLogin = useIsLoggedIn();
 
   // 페이징
   const FETCH_SIZE = 10; // api에 요청하는 개수
@@ -223,10 +226,12 @@ export default function BaseShortsTab({
   const { mutate: stopWatching } = useStopWatching();
 
   const handleStopWatching = (videoId: number, watchTime: number) => {
-    stopWatching({
-      videoId,
-      body: { lastPosition: watchTime },
-    });
+    if (isLogin) {
+      stopWatching({
+        videoId,
+        body: { lastPosition: watchTime },
+      });
+    }
   };
 
   if (!currentVideo || currentVideo.videoId === undefined) {
