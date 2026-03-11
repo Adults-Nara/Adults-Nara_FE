@@ -16,7 +16,7 @@ export interface ShortsTourTabProps {
 
 const ONBOARDING_DATA: ShortFormVideoData[] = [
   {
-    id: 'ob-1',
+    videoId: 'ob-1',
     videoUrl:
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     thumbnail: '',
@@ -29,7 +29,7 @@ const ONBOARDING_DATA: ShortFormVideoData[] = [
     longformUrl: '',
   },
   {
-    id: 'ob-2',
+    videoId: 'ob-2',
     videoUrl:
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     thumbnail: '',
@@ -42,7 +42,7 @@ const ONBOARDING_DATA: ShortFormVideoData[] = [
     longformUrl: '',
   },
   {
-    id: 'ob-3',
+    videoId: 'ob-3',
     videoUrl:
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
     thumbnail: '',
@@ -119,6 +119,31 @@ export const ShortsTourTab = React.memo(
       (video: ShortFormVideoData) => {
         const isInteractive = tutorialStep >= 4;
 
+        // BaseShortFormController expects RecommendationVideoItem-like structures for the title/uploader.
+        // In the next step we will generalize BaseShortFormController too, but for now we map it.
+        const mappedVideo: ShortFormVideoData = {
+          videoId: String(video.videoId),
+          uploader: {
+            name: video.uploader.name,
+            profileImg: video.uploader.profileImg,
+          },
+          title: video.title,
+
+          thumbnail: video.thumbnail,
+
+          tags: [],
+
+          likes: video.likes,
+          dislikes: video.dislikes,
+          comments: video.comments,
+          isBookmarked: video.isBookmarked,
+          isLiked: video.isLiked,
+
+          watchProgress: 0,
+          longformUrl: '',
+          videoUrl: '',
+        };
+
         return (
           <>
             <div
@@ -136,7 +161,7 @@ export const ShortsTourTab = React.memo(
               onTouchEnd={(e) => e.stopPropagation()}
             />
             <BaseShortFormController
-              data={video}
+              data={mappedVideo}
               isReady={true}
               actionSlot={
                 <div className="flex flex-col gap-5 pb-6">
@@ -164,6 +189,9 @@ export const ShortsTourTab = React.memo(
           downVideo={tutorialStep === 1 ? ONBOARDING_DATA[1] : null}
           leftVideo={tutorialStep === 2 ? ONBOARDING_DATA[2] : null}
           rightVideo={tutorialStep === 2 ? ONBOARDING_DATA[2] : null}
+          videoUrl={currentVideo.videoUrl}
+          videoLoading={false}
+          getThumbnailUrl={(v) => v.thumbnail}
           onSwipe={handleSwipe}
           renderController={renderController}
         />

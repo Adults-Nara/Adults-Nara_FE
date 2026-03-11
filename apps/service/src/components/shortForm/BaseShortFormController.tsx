@@ -1,7 +1,7 @@
 // components/video/BaseShortFormController.tsx
 import { ReactNode } from 'react';
-import { ShortFormVideoData } from '@/types/video';
 import { VideoInfoSection } from './VideoInfoSection';
+import { ShortFormVideoData } from '@/types/video';
 
 interface ControllerProps {
   data: ShortFormVideoData;
