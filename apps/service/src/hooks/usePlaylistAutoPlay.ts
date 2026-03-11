@@ -1,6 +1,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 import { useBookmarkListInfinite } from '@/lib/tanstack/query/bookmark.query';
+import { useRelatedVideosInfinite } from '@/lib/tanstack/query/recommendation.query';
 
 export function usePlaylistAutoPlay(currentVideoId: string) {
   const router = useRouter();
@@ -14,6 +15,13 @@ export function usePlaylistAutoPlay(currentVideoId: string) {
     hasNextPage,
     fetchNextPage,
   } = useBookmarkListInfinite('LONG', 10, 30, 0);
+
+  // 일반 영상일 때 관련 추천 영상을 가져옴
+  const { data: relatedData } = useRelatedVideosInfinite(
+    currentVideoId,
+    3,
+    'LONG',
+  );
 
   const handleVideoEnd = useCallback(() => {
     if (listType === 'bookmarkList') {
@@ -57,6 +65,16 @@ export function usePlaylistAutoPlay(currentVideoId: string) {
           alert('찜 목록의 마지막 영상입니다.');
         }
       }
+    } else {
+      // 일반 영상인 경우 추천 영상 첫 번째로 넘어가기
+      if (relatedData && relatedData.pages && relatedData.pages.length > 0) {
+        const firstRelatedVideo = relatedData.pages[0].content?.[0];
+        if (firstRelatedVideo) {
+          router.push(`/long?v=${firstRelatedVideo.videoId}`, {
+            scroll: false,
+          });
+        }
+      }
     }
   }, [
     currentVideoId,
@@ -64,6 +82,7 @@ export function usePlaylistAutoPlay(currentVideoId: string) {
     bookmarkData,
     hasNextPage,
     fetchNextPage,
+    relatedData,
     router,
   ]);
 
