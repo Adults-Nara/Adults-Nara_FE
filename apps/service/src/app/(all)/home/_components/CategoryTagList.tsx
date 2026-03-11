@@ -1,4 +1,4 @@
-'use cliet';
+'use client';
 import useEmblaCarousel from 'embla-carousel-react';
 import { Chip } from '@repo/ui';
 

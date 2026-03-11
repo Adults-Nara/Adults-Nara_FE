@@ -81,6 +81,7 @@ const UserProfile = () => {
                 <DropdownMenuGroup>
                   <DropdownMenuItem
                     onClick={() => {
+                      //TODO: 추후 수정API 연동
                       setIsEdit(true);
                       setNickname(data.nickname);
                     }}

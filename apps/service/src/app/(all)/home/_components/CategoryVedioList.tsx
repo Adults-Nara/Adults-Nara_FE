@@ -6,7 +6,7 @@ import { TagVideoResponse } from '@/models/tag.model';
 import { ThumbnailData } from '@/types/video';
 import { formatVideoTime } from '@/utils/format';
 import useEmblaCarousel from 'embla-carousel-react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export function mapTagListToThumbnail(item: TagVideoResponse): ThumbnailData {
   return {
@@ -33,7 +33,6 @@ const CategoryVedioList = ({
   isError,
   isPending,
 }: CategoryVedioListProps) => {
-  const router = useRouter();
   const [videoListRef] = useEmblaCarousel({
     align: 'start',
     containScroll: 'trimSnaps',
@@ -50,13 +49,13 @@ const CategoryVedioList = ({
       <div className="flex gap-4">
         {videos.map((data) => {
           return (
-            <div
+            <Link
               key={data.videoId}
-              onClick={() => router.push(`${ROUTES.LONG}?v=${data.videoId}`)}
+              href={`${ROUTES.LONG}?v=${data.videoId}`}
               className="flex-[0_0_60%]"
             >
               <VideoVerticalCard data={mapTagListToThumbnail(data)} />
-            </div>
+            </Link>
           );
         })}
       </div>

@@ -9,6 +9,7 @@ import { formatVideoTime } from '@/utils/format';
 import { useRouter } from 'next/navigation';
 import SheetRecentHistory from './SheetRecentHistory';
 import { ROUTES } from '@/constant/routes';
+import Link from 'next/link';
 
 export function mapWatchHistoryToThumbnail(
   item: WatchHistoryItemResponse,
@@ -41,7 +42,7 @@ const RecentHistory = () => {
   if (isPending) return <span>시청이력 로딩중..</span>;
   if (isError) return <span>시청이력 오류..</span>;
 
-  const items = data?.pages[0].items;
+  const items = data.pages[0].items;
   const noneItems = items.length === 0;
   return (
     <div className="flex flex-col gap-4">
@@ -64,22 +65,17 @@ const RecentHistory = () => {
             items.map((data) => {
               const mapped = mapWatchHistoryToThumbnail(data);
               return (
-                //TODO: 추후 클릭이벤트 라우팅 수정해야됨
-                <div
+                <Link
                   key={mapped.id}
                   className="flex-[0_0_60%]"
-                  onClick={() =>
-                    router.push(
-                      `${
-                        mapped.type === 'short'
-                          ? `${ROUTES.SHORTS}?v=${mapped.id}`
-                          : `${ROUTES.LONG}?v=${mapped.id}`
-                      }`,
-                    )
-                  }
+                  href={`${
+                    mapped.type === 'short'
+                      ? `${ROUTES.SHORTS}?v=${mapped.id}`
+                      : `${ROUTES.LONG}?v=${mapped.id}`
+                  }`}
                 >
                   <VideoVerticalCard data={mapped} />
-                </div>
+                </Link>
               );
             })
           )}

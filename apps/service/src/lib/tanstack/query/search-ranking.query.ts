@@ -14,6 +14,7 @@ export function useSearchVideos(params: SearchVideosParams) {
       params.keyword,
       params.videoType,
       params.tag,
+      params.size,
     ],
 
     queryFn: ({ pageParam = 0 }) =>
@@ -36,7 +37,7 @@ export function useAutocomplete(keyword: string) {
     queryKey: ['search', 'autocomplete', keyword],
     queryFn: () => autocomplete(keyword),
     enabled: !!keyword && keyword.trim().length > 0,
-    placeholderData: (prev) => prev,
+    // placeholderData: (prev) => prev,
   });
 }
 

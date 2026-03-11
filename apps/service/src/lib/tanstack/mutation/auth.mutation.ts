@@ -30,8 +30,8 @@ export function useLogout() {
       window.location.href = ROUTES.LOGIN;
     },
     onError: (error) => {
-      console.error('로그인 URL 요청 실패:', error);
-      alert('카카오 로그인 페이지를 불러올 수 없습니다.');
+      console.error('로그아웃 요청 실패:', error);
+      alert('로그아웃에 실패했습니다. 다시 시도해 주세요');
     },
   });
 }

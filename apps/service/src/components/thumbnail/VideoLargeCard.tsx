@@ -17,10 +17,9 @@ const VideoLargeCard = ({ data }: VideoLargeCardProps) => {
         progress={data.progress}
       />
       <div className="flex w-full gap-3 bg-white px-2 py-3">
-        {/* API연동시 이미지 태그추가 */}
         <div className="bg-primary-100 relative h-12.5 w-12.5 shrink-0 rounded-full">
           <Image
-            src={`${data.ProfileImageUrl ?? '/defaultProfile.png'}`}
+            src={`${data.ProfileImageUrl?.trim() ?? '/defaultProfile.png'}`}
             alt={data.uploader}
             width={50}
             height={50}

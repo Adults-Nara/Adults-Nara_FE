@@ -2,11 +2,10 @@
 import { useRanking } from '@/lib/tanstack/query/search-ranking.query';
 import useEmblaCarousel from 'embla-carousel-react';
 import TopVideoItem from './TopVideoItem';
-import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constant/routes';
+import Link from 'next/link';
 
 const TopTenSection = () => {
-  const router = useRouter();
   const { data, isError, isPending } = useRanking();
 
   const [videoRef] = useEmblaCarousel({
@@ -33,11 +32,9 @@ const TopTenSection = () => {
           <div className="flex gap-4">
             {data.map((data) => {
               return (
-                <div
+                <Link
                   key={data.videoId}
-                  onClick={() =>
-                    router.push(`${ROUTES.LONG}?v=${data.videoId}`)
-                  }
+                  href={`${ROUTES.LONG}?v=${data.videoId}`}
                   className="flex-[0_0_90%]"
                 >
                   <TopVideoItem
@@ -46,7 +43,7 @@ const TopTenSection = () => {
                     title={data.title}
                     score={data.rankingScore}
                   />
-                </div>
+                </Link>
               );
             })}
           </div>

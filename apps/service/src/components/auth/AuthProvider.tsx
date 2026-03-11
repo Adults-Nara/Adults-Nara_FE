@@ -13,7 +13,7 @@ export default function AuthProvider({
 }) {
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
   const [isInitialized, setIsInitialized] = useState(false);
-  const { accessToken } = useAuthStore.getState();
+  const accessToken = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
     const initAuth = async () => {

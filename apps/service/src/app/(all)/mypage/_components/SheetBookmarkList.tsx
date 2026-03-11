@@ -51,11 +51,14 @@ const SheetBookmarkList = ({ videoType }: SheetBookmarkListProps) => {
   if (isPending) return <div>로딩중...</div>;
   if (isError) return <div>에러</div>;
 
-  const items = data?.pages.flatMap((page) => page.items) ?? [];
+  const items = data.pages.flatMap((page) => page.items) ?? [];
   const videos = items.map((item) =>
     mapBookmarkListToThumbnail(item, videoType),
   );
 
+  if (videos.length === 0) {
+    return <div className="px-4 py-6 text-center">북마크가 없습니다.</div>;
+  }
   return (
     <div className="flex flex-col gap-2 px-4 py-3">
       {videos.map((video) => {

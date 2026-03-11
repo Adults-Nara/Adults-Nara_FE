@@ -16,11 +16,13 @@ interface SearchLayerProps {
 const highlightKeyword = (text: string, keyword: string) => {
   if (!keyword) return text;
 
-  const parts = text.split(new RegExp(`(${keyword})`, 'gi'));
+  const escapeRegExp = (value: string) =>
+    value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${escapeRegExp(keyword)})`, 'gi'));
 
   return parts.map((part, i) =>
     part.toLowerCase() === keyword.toLowerCase() ? (
-      <span key={i} className="text-primary-400 font-semibold">
+      <span key={i} className="text-primary-400 body2">
         {part}
       </span>
     ) : (

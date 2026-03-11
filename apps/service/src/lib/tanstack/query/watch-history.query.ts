@@ -15,11 +15,13 @@ export function useWatchHistory(videoId: number) {
 }
 
 export function useRecentWatchHistory(size?: number) {
+  const isLogin = useIsLoggedIn();
   return useInfiniteQuery({
     queryKey: ['recentWatchHistory', size],
     queryFn: ({ pageParam = 0 }) => getRecentWatchHistory(pageParam, size),
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages) =>
       lastPage.hasMore ? pages.length : undefined,
+    enabled: isLogin,
   });
 }

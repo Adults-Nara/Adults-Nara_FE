@@ -30,8 +30,9 @@ const BookmarkList = () => {
       <div className="overflow-hidden px-0.5 py-0.5" ref={videoListRef}>
         <div className="flex gap-4">
           {!hasShortForm ? null : (
-            <div
-              className="flex-[0_0_70%]"
+            <button
+              type="button"
+              className="flex-[0_0_70%] cursor-pointer text-left"
               onClick={() =>
                 open(
                   '짧은영상 찜한 목록',
@@ -40,17 +41,18 @@ const BookmarkList = () => {
               }
             >
               <BookmarkItem data={data.shortForm} type="short" />
-            </div>
+            </button>
           )}
           {!hasLongForm ? null : (
-            <div
-              className="flex-[0_0_70%]"
+            <button
+              type="button"
+              className="flex-[0_0_70%] cursor-pointer text-left"
               onClick={() =>
                 open('긴영상 찜한 목록', <SheetBookmarkList videoType="LONG" />)
               }
             >
               <BookmarkItem data={data.longForm} type="long" />
-            </div>
+            </button>
           )}
           {!hasShortForm && !hasLongForm && <span>찜한 영상이 없습니다.</span>}
         </div>

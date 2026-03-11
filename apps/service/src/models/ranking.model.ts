@@ -10,5 +10,5 @@ export interface RankingResponse {
   duration: number;
   views: number;
   date: string;
-  videoType: 'SHORT' | 'long';
+  videoType: 'SHORT' | 'LONG';
 }
