@@ -1,21 +1,14 @@
+import { Suspense } from 'react';
 import { LongFormVideoData } from '@/types/video';
-import { VideoInfo } from './_components/VideoInfo';
-import { VideoPlayer } from './_components/VideoPlayer';
 import RecommendedSection from '@/app/(all)/home/_components/RecommendedSection';
-import { LeftArrow } from '@repo/ui';
-import { PageHeader } from './_components/PageHeader';
+import { VideoInfoManager } from './_components/VideoInfoManager';
+import { VideoPlaybackManager } from './_components/VideoPlaybackManager';
 
-const metadata: LongFormVideoData = {
+// 임시 더미 메타데이터
+const metadata = {
   videoId: 's1',
-  videoUrl:
-    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
   thumbnail:
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg',
-  likes: 1000,
-  dislikes: 100,
-  comments: 50,
-  isBookmarked: false,
-  isLiked: null,
   title: 'For Bigger Blazes',
   viewCount: 123456,
   uploadDate: '2023-01-01',
@@ -23,30 +16,33 @@ const metadata: LongFormVideoData = {
     name: 'Sample Uploader',
     profileImg: null,
   },
+  comments: 50,
+  likes: 1000,
+  dislikes: 100,
+  isLiked: null,
+  isBookmarked: false,
   description: 'This is a sample video description.',
   tags: ['sample', 'video', 'test'],
-};
+} as LongFormVideoData;
 
 export default function LongPage() {
+  // 디테일 api 호출 (TODO) - 추후 VideoInfoManager 등으로 분리 권장
+
   return (
     <div className="flex h-screen flex-col">
       <div className="flex-none shrink-0">
-        <VideoPlayer
-          src={metadata.videoUrl}
-          thumbnail={metadata.thumbnail ?? undefined}
-        />
+        {/* Suspense로 감싸 검색 파라미터를 읽는 클라이언트 컴포넌트를 분리 (깜빡임 방지) */}
+        <Suspense fallback={<div className="h-full w-full bg-black"></div>}>
+          <VideoPlaybackManager thumbnail={metadata.thumbnail ?? undefined} />
+        </Suspense>
       </div>
 
       <div className="scrollbar-hide flex-1 overflow-y-auto">
-        <VideoInfo
-          title={metadata.title}
-          viewCount={metadata.viewCount}
-          uploadDate={metadata.uploadDate}
-          uploader={metadata.uploader}
-          comments={metadata.comments}
-          isLiked={metadata.isLiked}
-          isBookmarked={metadata.isBookmarked}
-        />
+        {/* Suspense로 감싸 검색 파라미터를 읽는 클라이언트 컴포넌트를 분리 */}
+        <Suspense fallback={<div className="p-3">정보를 불러오는 중...</div>}>
+          <VideoInfoManager />
+        </Suspense>
+
         {/* 추천 영상 */}
         <RecommendedSection />
       </div>

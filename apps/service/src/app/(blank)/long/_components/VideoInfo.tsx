@@ -11,9 +11,15 @@ import {
   Like,
   LikeFill,
 } from '@repo/ui';
-import { useState } from 'react';
+import { useIsLoggedIn } from '@/store/useAuthStore';
+import { useToggleBookmark } from '@/lib/tanstack/mutation/bookmark.mutation';
+import {
+  useLikeVideo,
+  useDislikeVideo,
+} from '@/lib/tanstack/mutation/interaction.mutation';
 
 interface VideoInfoProps {
+  videoId: number;
   title: string;
   viewCount: number;
   uploadDate: string;
@@ -24,6 +30,7 @@ interface VideoInfoProps {
 }
 
 export function VideoInfo({
+  videoId,
   title,
   viewCount,
   uploadDate,
@@ -32,19 +39,30 @@ export function VideoInfo({
   isLiked,
   isBookmarked,
 }: VideoInfoProps) {
-  const [isLikedState, setIsLiked] = useState(isLiked);
-  const [isBookmarkedState, setIsBookmarked] = useState(isBookmarked);
+  const isLogin = useIsLoggedIn();
+  const { mutate: toggleBookmarkMutate } = useToggleBookmark();
+  const { mutate: likeVideoMutate } = useLikeVideo();
+  const { mutate: dislikeVideoMutate } = useDislikeVideo();
 
   const handleLike = (changeTo: boolean) => {
-    if (changeTo == isLikedState) {
-      setIsLiked(null);
+    if (!isLogin) {
+      console.log('로그인이 필요합니다.');
+      return;
+    }
+
+    if (changeTo) {
+      likeVideoMutate(videoId);
     } else {
-      setIsLiked(changeTo);
+      dislikeVideoMutate(videoId);
     }
   };
+
   const toggleBookmark = () => {
-    // TODO : api
-    setIsBookmarked((prev) => !prev);
+    if (!isLogin) {
+      console.log('로그인이 필요합니다.');
+      return;
+    }
+    toggleBookmarkMutate(videoId);
   };
 
   return (
@@ -78,16 +96,16 @@ export function VideoInfo({
       {/* 반응 */}
       <div className="flex flex-row flex-wrap gap-1 text-gray-800">
         <Button variant="noneline" size="lg" onClick={() => handleLike(true)}>
-          {isLikedState ? <LikeFill /> : <Like />}
+          {isLiked === true ? <LikeFill /> : <Like />}
           좋아요
         </Button>
 
         <Button variant="noneline" size="lg" onClick={() => handleLike(false)}>
-          {isLikedState === false ? <DislikeFill /> : <Dislike />}
+          {isLiked === false ? <DislikeFill /> : <Dislike />}
           싫어요
         </Button>
         <Button variant="noneline" size="lg" onClick={() => toggleBookmark()}>
-          {isBookmarkedState ? <BookmarkFill /> : <Bookmark />}
+          {isBookmarked ? <BookmarkFill /> : <Bookmark />}
           찜하기
         </Button>
         <Button variant="noneline" size="lg">

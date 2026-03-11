@@ -8,18 +8,20 @@ interface VideoPlayerProps {
   src: string;
   thumbnail?: string;
   progress?: number; // 초기 재생 위치(%)
+  onEnded?: () => void; // 영상 재생 완료 콜백
 }
 
 export function VideoPlayer({
   src,
   progress = 0,
   thumbnail,
+  onEnded,
 }: VideoPlayerProps) {
   const playerRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [playbackRate, setPlaybackRate] = useState<number>(1);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(true);
@@ -152,6 +154,7 @@ export function VideoPlayer({
         onEnded={() => {
           togglePlay();
           setShowControls(true);
+          onEnded?.(); // 부모 컴포넌트(Manager 등)로 재생 완료 알림
         }}
       />
 
