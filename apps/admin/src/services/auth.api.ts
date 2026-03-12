@@ -35,6 +35,12 @@ export const BackofficeSignUp = async (data: BackofficeSignRequest) => {
   return response.data;
 };
 
+export const BackofficeAccount = async () => {
+  await httpClient(API_ENDPOINTS.AUTH.ACCOUNT, {
+    method: 'DELETE',
+  });
+};
+
 export const BackofficeCheckEmail = async (email: string) => {
   const response = await httpClient<ApiResponse<boolean>>(
     API_ENDPOINTS.AUTH.CHECK_EMAIL(email),

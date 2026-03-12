@@ -1,7 +1,27 @@
 'use client';
 import { ROUTES } from '@/constant/routes';
+import {
+  useBackofficeAccount,
+  useBackofficeLogout,
+} from '@/lib/tanstack/mutation/auth.mutation';
 import { useBackofficeMe } from '@/lib/tanstack/query/auth.query';
-import { Button, cn, FilmIcon, Logo, Upload, Users } from '@repo/ui';
+import { useAuthStore } from '@/store/useAuthStore';
+import {
+  Button,
+  cn,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  FilmIcon,
+  Logo,
+  Logout,
+  Settings,
+  Upload,
+  Users,
+  UserX,
+} from '@repo/ui';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -9,6 +29,33 @@ import { usePathname } from 'next/navigation';
 const Sidebar = () => {
   const pathname = usePathname();
   const { data: userData, isError, isPending, refetch } = useBackofficeMe();
+  const { mutate: logoutMutate } = useBackofficeLogout();
+  const { mutate: accountMutate } = useBackofficeAccount();
+
+  const handleLogout = () => {
+    logoutMutate(undefined, {
+      onSuccess: () => {
+        //TODO:토스트로 추후변경
+        console.log('로그아웃 성공');
+      },
+      onError: (error) => {
+        console.error('로그아웃 요청 실패:', error);
+        alert('로그아웃에 실패했습니다. 다시 시도해 주세요');
+      },
+    });
+  };
+  const handleAccount = () => {
+    accountMutate(undefined, {
+      onSuccess: () => {
+        //TODO:토스트로 추후변경
+        console.log('회원탈퇴 성공');
+      },
+      onError: (error) => {
+        console.error('회원탈퇴 요청 실패:', error);
+        alert('탈퇴에 실패했습니다. 다시 시도해 주세요');
+      },
+    });
+  };
 
   const getLinkStyle = (href: string) =>
     cn(
@@ -82,6 +129,25 @@ const Sidebar = () => {
           <span className="title3">{userData.nickname}</span>
           <span className="body3 text-gray-700">{userData.email}</span>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button>
+              <Settings className="h-5 w-5 cursor-pointer" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={handleLogout} variant="destructive">
+                <Logout />
+                로그아웃
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleAccount} variant="destructive">
+                <UserX />
+                회원탈퇴
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

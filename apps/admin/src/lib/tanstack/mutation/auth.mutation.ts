@@ -1,3 +1,5 @@
+import { ROUTES } from '@/constant/routes';
+import { BackofficeAccount } from './../../../services/auth.api';
 import {
   BackofficeLoginRequest,
   BackofficeSignRequest,
@@ -5,9 +7,11 @@ import {
 import {
   BackofficeCheckEmail,
   BackofficeLogin,
+  BackofficeLogout,
   BackofficeSignUp,
 } from '@/services/auth.api';
-import { useMutation } from '@tanstack/react-query';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useBackofficeLogin() {
   return useMutation({
@@ -24,5 +28,31 @@ export function useBackofficeSign() {
 export function useBackofficeCheckEmail() {
   return useMutation({
     mutationFn: (email: string) => BackofficeCheckEmail(email),
+  });
+}
+
+export function useBackofficeLogout() {
+  const queryClient = useQueryClient();
+  const { setAccessToken } = useAuthStore.getState();
+  return useMutation({
+    mutationFn: () => BackofficeLogout(),
+    onSuccess: () => {
+      queryClient.clear();
+      setAccessToken(null, null);
+      window.location.href = ROUTES.LOGIN;
+    },
+  });
+}
+
+export function useBackofficeAccount() {
+  const queryClient = useQueryClient();
+  const { setAccessToken } = useAuthStore.getState();
+  return useMutation({
+    mutationFn: () => BackofficeAccount(),
+    onSuccess: () => {
+      queryClient.clear();
+      setAccessToken(null, null);
+      window.location.href = ROUTES.LOGIN;
+    },
   });
 }
