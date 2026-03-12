@@ -14,7 +14,9 @@ export function usePlaylistAutoPlay(currentVideoId: string) {
     data: bookmarkData,
     hasNextPage,
     fetchNextPage,
-  } = useBookmarkListInfinite('LONG', 10, 30, 0);
+  } = useBookmarkListInfinite('LONG', 10, 30, 0, {
+    enabled: listType === 'bookmarkList',
+  });
 
   // 일반 영상일 때 관련 추천 영상을 가져옴
   const { data: relatedData } = useRelatedVideosInfinite(
@@ -60,9 +62,6 @@ export function usePlaylistAutoPlay(currentVideoId: string) {
             }
           });
           return;
-        } else {
-          // 마지막 영상인 경우 안내
-          alert('찜 목록의 마지막 영상입니다.');
         }
       }
     } else {
