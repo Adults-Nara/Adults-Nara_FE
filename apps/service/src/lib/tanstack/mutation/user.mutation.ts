@@ -5,15 +5,9 @@ import { UpdateUserRequest } from '@/models/user.model';
 export function useUpdateUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      userId,
-      data,
-    }: {
-      userId: number;
-      data: UpdateUserRequest;
-    }) => updateUser(userId, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['user', variables.userId] });
+    mutationFn: (data: UpdateUserRequest) => updateUser(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
 }
@@ -21,10 +15,9 @@ export function useUpdateUser() {
 export function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ userId, reason }: { userId: number; reason: string }) =>
-      deleteUser(userId, reason),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['user', variables.userId] });
+    mutationFn: (reason: string) => deleteUser(reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
 }

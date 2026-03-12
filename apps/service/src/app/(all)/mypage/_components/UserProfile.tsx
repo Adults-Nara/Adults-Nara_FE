@@ -1,5 +1,10 @@
 'use client';
+import { ROUTES } from '@/constant/routes';
 import { useLogout } from '@/lib/tanstack/mutation/auth.mutation';
+import {
+  useDeleteUser,
+  useUpdateUser,
+} from '@/lib/tanstack/mutation/user.mutation';
 import { useUserMe } from '@/lib/tanstack/query/user.query';
 import {
   Pen,
@@ -16,6 +21,7 @@ import {
   Button,
 } from '@repo/ui';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const UserProfile = () => {
@@ -23,9 +29,44 @@ const UserProfile = () => {
   const [nickname, setNickname] = useState('');
   const { data, isPending, isError } = useUserMe();
   const { mutate: logout } = useLogout();
+  const { mutate: editMutate } = useUpdateUser();
+  const { mutate: deleteMutate } = useDeleteUser();
+  const router = useRouter();
 
   const handleSave = () => {
-    setIsEdit(false);
+    if (nickname.trim().length === 0) {
+      //TODO: 추후 토스트 변경
+      return console.log('값을 입력해주세요');
+    }
+
+    editMutate(
+      { nickname: nickname.trim() },
+      {
+        onSuccess: () => {
+          //TODO: 추후 토스트로 변경
+          console.log('수정성공');
+          setIsEdit(false);
+        },
+        onError: () => {
+          //TODO: 추후 토스트로 변경
+          console.log('수정실패');
+        },
+      },
+    );
+  };
+
+  const handleDelete = () => {
+    deleteMutate('직접 탈퇴', {
+      onSuccess: () => {
+        //TODO: 추후 토스트로 변경
+        console.log('탈퇴 성공');
+        router.replace(ROUTES.HOME);
+      },
+      onError: () => {
+        //TODO: 추후 토스트로 변경
+        console.log('탈퇴 실패');
+      },
+    });
   };
 
   //TODO: 추후 로딩 에러 화면 구현
@@ -79,7 +120,6 @@ const UserProfile = () => {
                 <DropdownMenuGroup>
                   <DropdownMenuItem
                     onClick={() => {
-                      //TODO: 추후 수정API 연동
                       setIsEdit(true);
                       setNickname(data.nickname);
                     }}
@@ -95,7 +135,10 @@ const UserProfile = () => {
                     <Logout />
                     로그아웃
                   </DropdownMenuItem>
-                  <DropdownMenuItem variant="destructive">
+                  <DropdownMenuItem
+                    onClick={handleDelete}
+                    variant="destructive"
+                  >
                     <UserX />
                     회원탈퇴
                   </DropdownMenuItem>

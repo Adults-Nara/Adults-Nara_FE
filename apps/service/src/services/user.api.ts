@@ -15,17 +15,17 @@ export const getUserDetail = async (userId: number) => {
   return response.data;
 };
 
-export const deleteUser = async (userId: number, reason: string) => {
+export const deleteUser = async (reason: string) => {
   const response = await httpClient<ApiResponse<void>>(
-    `${API_ENDPOINTS.USERS.DETAIL(userId)}?reason=${encodeURIComponent(reason)}`,
+    `${API_ENDPOINTS.USERS.DELETE}?reason=${encodeURIComponent(reason)}`,
     { method: 'DELETE' },
   );
   return response.data;
 };
 
-export const updateUser = async (userId: number, data: UpdateUserRequest) => {
+export const updateUser = async (data: UpdateUserRequest) => {
   const response = await httpClient<ApiResponse<UserResponse>>(
-    API_ENDPOINTS.USERS.DETAIL(userId),
+    API_ENDPOINTS.USERS.UPDATE,
     {
       method: 'PATCH',
       body: JSON.stringify(data),

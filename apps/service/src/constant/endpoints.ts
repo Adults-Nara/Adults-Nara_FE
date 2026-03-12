@@ -46,6 +46,8 @@ export const API_ENDPOINTS = {
   USERS: {
     DETAIL: (userId: number) => `/users/${userId}`,
     DEACTIVATE: (userId: number) => `/users/${userId}/deactivate`,
+    UPDATE: '/users/me',
+    DELETE: '/users/me',
   },
   COMMENTS: {
     BASE: (videoId: number) => `/comment/videos/${videoId}`,
