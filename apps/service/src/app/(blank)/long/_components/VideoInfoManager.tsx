@@ -6,6 +6,7 @@ import { useBookmarkStatus } from '@/lib/tanstack/query/bookmark.query';
 import { useInteraction } from '@/lib/tanstack/query/interaction.query';
 import { VideoInfo } from './VideoInfo';
 import { VideoInfoSkeleton } from './VideoInfoSkeleton';
+import { VideoDescription } from './VideoDescription';
 
 export function VideoInfoManager() {
   const searchParams = useSearchParams();
@@ -42,19 +43,28 @@ export function VideoInfoManager() {
         : null;
 
   return (
-    <VideoInfo
-      videoId={videoId as number}
-      title={detailData.title}
-      // TODO: 백엔드 API 업데이트 후 실제 값 매핑 (현재 VideoDetailResponse에 없음)
-      viewCount={0}
-      comments={0}
-      uploadDate={detailData.createdAt}
-      uploader={{
-        name: detailData.userNickname,
-        profileImg: detailData.userProfile,
-      }}
-      isLiked={isLiked}
-      isBookmarked={isBookmarked}
-    />
+    <div className="flex flex-col gap-4">
+      <VideoInfo
+        videoId={videoId as number}
+        title={detailData.title}
+        // TODO: 백엔드 API 업데이트 후 실제 값 매핑 (현재 VideoDetailResponse에 없음)
+        viewCount={0}
+        comments={0}
+        uploadDate={detailData.createdAt}
+        uploader={{
+          name: detailData.userNickname,
+          profileImg: detailData.userProfile,
+        }}
+        isLiked={isLiked}
+        isBookmarked={isBookmarked}
+      />
+      <div className="px-4 pb-4">
+        <VideoDescription
+          aiSummary={detailData.summary}
+          description={detailData.description}
+          tags={detailData.tagIds}
+        />
+      </div>
+    </div>
   );
 }
