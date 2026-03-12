@@ -30,9 +30,11 @@ export function useLikeVideo() {
       return { previousStatus, queryKey };
     },
     onError: (err, videoId, context) => {
-      if (context?.previousStatus) {
-        queryClient.setQueryData(context.queryKey, context.previousStatus);
-      }
+      // previousStatus가 undefined여도 명시적으로 복구
+      queryClient.setQueryData(
+        context?.queryKey ?? [],
+        context?.previousStatus,
+      );
     },
     onSettled: (_, __, videoId) => {
       queryClient.invalidateQueries({

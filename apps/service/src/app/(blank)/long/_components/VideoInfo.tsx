@@ -40,12 +40,21 @@ export function VideoInfo({
   isBookmarked,
 }: VideoInfoProps) {
   const isLogin = useIsLoggedIn();
-  const { mutate: toggleBookmarkMutate } = useToggleBookmark();
-  const { mutate: likeVideoMutate } = useLikeVideo();
-  const { mutate: dislikeVideoMutate } = useDislikeVideo();
+  const { mutate: toggleBookmarkMutate, isPending: isToggleBookmarkPending } =
+    useToggleBookmark();
+  const { mutate: likeVideoMutate, isPending: isLikeVideoPending } =
+    useLikeVideo();
+  const { mutate: dislikeVideoMutate, isPending: isDislikeVideoPending } =
+    useDislikeVideo();
 
   const handleLike = (changeTo: boolean) => {
+    if (isLikeVideoPending || isDislikeVideoPending) {
+      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
+      console.log('반응 처리 중입니다. 잠시만 기다려주세요.');
+      return;
+    }
     if (!isLogin) {
+      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
       console.log('로그인이 필요합니다.');
       return;
     }

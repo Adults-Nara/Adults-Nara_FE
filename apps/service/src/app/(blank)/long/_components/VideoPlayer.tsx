@@ -172,7 +172,7 @@ export function VideoPlayer({
         playbackRate={playbackRate}
         controls={false}
         onReady={() => {
-          if (playerRef.current && progress > 0 && playerRef) {
+          if (playerRef.current && progress > 0) {
             playerRef.current.currentTime = progress;
           }
         }}
@@ -181,6 +181,8 @@ export function VideoPlayer({
         className="pointer-events-none h-full w-full"
         onEnded={() => {
           togglePlay();
+          setIsPlaying(false);
+          stopHideTimer();
           setShowControls(true);
           if (playerRef.current) {
             onStopWatching?.(playerRef.current.currentTime);

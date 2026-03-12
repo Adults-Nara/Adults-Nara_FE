@@ -30,16 +30,29 @@ export function useToggleBookmark() {
       );
 
       // 에러 시 롤백에 사용할 컨텍스트 반환
-      return { previousStatus, videoId };
+      return {
+        previousStatus,
+        hadPreviousStatus: previousStatus !== undefined,
+        videoId,
+      };
     },
-    onError: (err, videoId, context) => {
-      // 4. 에러 발생 시 스냅샷으로 롤백
-      if (context?.previousStatus) {
-        queryClient.setQueryData(
-          ['bookmarkStatus', context.videoId],
-          context.previousStatus,
-        );
+    onError: (_err, _videoId, context) => {
+      if (!context) return;
+
+      // 캐시가 없었던 경우: 생성된 optimistic 데이터 제거
+      if (!context.hadPreviousStatus) {
+        queryClient.removeQueries({
+          queryKey: ['bookmarkStatus', context.videoId],
+          exact: true,
+        });
+        return;
       }
+
+      // 캐시가 있었던 경우: 이전 상태로 복구
+      queryClient.setQueryData(
+        ['bookmarkStatus', context.videoId],
+        context.previousStatus,
+      );
     },
     onSettled: (_, __, videoId) => {
       // 5. 성공이든 실패든 무조건 서버 최신 상태로 한 번 더 동기화
