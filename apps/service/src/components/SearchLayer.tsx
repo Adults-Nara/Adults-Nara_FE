@@ -82,7 +82,7 @@ const SearchLayer = ({ onClose, initial = '' }: SearchLayerProps) => {
         />
       </div>
 
-      {!keyword ? (
+      {!normalizedKeyword ? (
         /* 값이 없을 때: 주제별 검색 */
         <div className="flex flex-col gap-3 rounded-b-lg bg-white px-4 py-5">
           <span className="title2">주제별 검색</span>

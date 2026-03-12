@@ -51,7 +51,7 @@ const CategorySection = () => {
   const resultTagList = useMemo(() => {
     if (isTagsPending || !tags) return [];
     return createTagList(tags);
-  }, [tags]);
+  }, [tags, isTagsPending]);
 
   const [selectedCategory, setSelectedCategory] = useState('');
   const currentCategory =
