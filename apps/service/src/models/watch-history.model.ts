@@ -17,6 +17,8 @@ export interface WatchHistoryItemResponse {
   watchProgressPercent: number;
   watchedAt: string;
   duration: number;
+  videoType: 'SHORT' | 'LONG';
+  uploadedAt: string;
 }
 
 export interface WatchHistoryPageResponse {

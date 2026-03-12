@@ -16,6 +16,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'picsum.photos', // 썸네일 테스트용
       },
+      {
+        protocol: 'http',
+        hostname: 'k.kakaocdn.net', // 카카오 프로필
+      },
+      {
+        protocol: 'https',
+        hostname: 'stream.asinna.store', // 썸네일용
+      },
     ],
   },
   reactCompiler: true,

@@ -1,10 +1,14 @@
 export interface VideoSearchResponse {
-  videoId: number;
+  videoId: string;
+  thumbnailSrc: string;
   title: string;
-  thumbnailUrl: string;
-  viewCount: number;
+  uploader: string;
+  uploaderProfileImageUrl: string;
+  progress: number;
   duration: number;
-  createdAt: string;
+  views: number;
+  date: string;
+  videoType: 'SHORT' | 'LONG';
 }
 
 export interface PageVideoSearchResponse {

@@ -1,6 +1,9 @@
 'use client';
 
 import { ROUTES } from '@/constant/routes';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useAutocomplete } from '@/lib/tanstack/query/search-ranking.query';
+import { MainCategory } from '@/types/category';
 import { Chip, Input, LeftArrow, SearchIcon } from '@repo/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -10,13 +13,34 @@ interface SearchLayerProps {
   initial?: string;
 }
 
+const highlightKeyword = (text: string, keyword: string) => {
+  if (!keyword) return text;
+
+  const escapeRegExp = (value: string) =>
+    value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${escapeRegExp(keyword)})`, 'gi'));
+
+  return parts.map((part, i) =>
+    part.toLowerCase() === keyword.toLowerCase() ? (
+      <span key={i} className="text-primary-400 body2">
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+};
+
 const SearchLayer = ({ onClose, initial = '' }: SearchLayerProps) => {
   const [keyword, setKeyword] = useState(initial);
+  const normalizedKeyword = keyword.trim();
   const route = useRouter();
+  const debouncedKeyword = useDebounce(normalizedKeyword, 300);
+  const { data, isPending, isError } = useAutocomplete(debouncedKeyword);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && keyword) {
-      route.push(ROUTES.SEARCH(keyword));
+    if (e.key === 'Enter' && normalizedKeyword) {
+      route.push(ROUTES.SEARCH(normalizedKeyword));
     }
   };
 
@@ -38,33 +62,6 @@ const SearchLayer = ({ onClose, initial = '' }: SearchLayerProps) => {
     };
   }, [onClose]);
 
-  // 임시 데이터 (나중에 API 연동)
-  const categories = [
-    '애완동물',
-    '드라마',
-    '요리',
-    '건강',
-    '원예',
-    '낚시',
-    '뉴스',
-    '교양',
-    '애완동물',
-    '드라마',
-    '요리',
-    '건강',
-    '원예',
-    '낚시',
-    '뉴스',
-    '교양',
-  ];
-  const suggestions = [
-    '건강보험료 개편',
-    '건강보험료',
-    '건강되찾기프로젝트',
-    '건강박수',
-    '건강체조',
-  ];
-
   return (
     <div className="fixed inset-0 z-50 mx-auto flex w-full max-w-112.5 flex-col bg-black/40">
       {/* 상단 검색바 영역 */}
@@ -85,14 +82,20 @@ const SearchLayer = ({ onClose, initial = '' }: SearchLayerProps) => {
         />
       </div>
 
-      {!keyword ? (
+      {!normalizedKeyword ? (
         /* 값이 없을 때: 주제별 검색 */
         <div className="flex flex-col gap-3 rounded-b-lg bg-white px-4 py-5">
           <span className="title2">주제별 검색</span>
           <div className="flex flex-wrap gap-2">
-            {categories.map((cat, i) => (
-              <Chip onClick={() => setKeyword(cat)} key={i}>
-                {cat}
+            {MainCategory.map((cat, i) => (
+              <Chip
+                onClick={() => {
+                  route.push(`/search?tag=${cat.label}`);
+                  onClose();
+                }}
+                key={cat.key}
+              >
+                {cat.label}
               </Chip>
             ))}
           </div>
@@ -100,14 +103,22 @@ const SearchLayer = ({ onClose, initial = '' }: SearchLayerProps) => {
       ) : (
         /* 값이 있을 때: 자동완성 리스트 */
         <div className="flex flex-col gap-6 rounded-b-lg bg-white px-6 py-5">
-          {suggestions.map((item, i) => (
+          {/* TODO: 추후 로딩 에러 화면 구현 */}
+          {isPending && <span>자동완성 로딩중...</span>}
+          {isError && <span>자동완성 에러</span>}
+          {!isPending && !isError && data?.length === 0 && (
+            <span>검색 결과가 없습니다</span>
+          )}
+          {data?.map((item, i) => (
             <button
               key={i}
               onClick={() => route.push(ROUTES.SEARCH(item))}
               className="flex items-center gap-3"
             >
               <SearchIcon className="h-5 w-5 text-gray-700" />
-              <span className="body2">{item}</span>
+              <span className="body2">
+                {highlightKeyword(item, debouncedKeyword)}
+              </span>
             </button>
           ))}
         </div>

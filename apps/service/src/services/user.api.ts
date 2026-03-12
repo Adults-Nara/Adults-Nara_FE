@@ -41,3 +41,11 @@ export const deactivateUser = async (userId: number) => {
   );
   return response.data;
 };
+
+export const getUserMe = async () => {
+  const response = await httpClient<ApiResponse<UserDetailResponse>>(
+    API_ENDPOINTS.AUTH.ME,
+    { method: 'GET' },
+  );
+  return response.data;
+};

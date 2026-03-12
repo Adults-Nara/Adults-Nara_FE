@@ -1,6 +1,7 @@
 export const ROUTES = {
   HOME: '/home',
   SHORTS: '/shorts',
+  LONG: '/long',
   MYPAGE: '/mypage',
   CATEGORY: '/mypage/category',
   POINT: '/mypage/point',
@@ -8,11 +9,6 @@ export const ROUTES = {
     if (!query?.trim()) return '/search';
     const params = new URLSearchParams({ keyword: query.trim() });
     return `/search?${params.toString()}`;
-  },
-  WATCH: (query?: string) => {
-    if (!query?.trim()) return '/watch';
-    const params = new URLSearchParams({ src: query.trim() });
-    return `/watch?${params.toString()}`;
   },
   LOGIN: '/login',
 } as const;

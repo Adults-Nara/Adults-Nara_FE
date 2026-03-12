@@ -6,4 +6,5 @@ export interface User {
   role: 'VIEWER' | 'UPLOADER' | 'ADMIN';
   accessToken: string;
   isNewUser: boolean;
+  onboardingCompleted: boolean;
 }
