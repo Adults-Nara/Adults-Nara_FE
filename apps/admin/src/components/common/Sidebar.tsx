@@ -5,7 +5,7 @@ import {
   useBackofficeLogout,
 } from '@/lib/tanstack/mutation/auth.mutation';
 import { useBackofficeMe } from '@/lib/tanstack/query/auth.query';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useDialogStore } from '@/store/useDialogStore';
 import {
   Button,
   cn,
@@ -28,6 +28,7 @@ import { usePathname } from 'next/navigation';
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const { openDialog } = useDialogStore();
   const { data: userData, isError, isPending, refetch } = useBackofficeMe();
   const { mutate: logoutMutate } = useBackofficeLogout();
   const { mutate: accountMutate } = useBackofficeAccount();
@@ -45,15 +46,18 @@ const Sidebar = () => {
     });
   };
   const handleAccount = () => {
-    accountMutate(undefined, {
-      onSuccess: () => {
-        //TODO:토스트로 추후변경
-        console.log('회원탈퇴 성공');
-      },
-      onError: (error) => {
-        console.error('회원탈퇴 요청 실패:', error);
-        alert('탈퇴에 실패했습니다. 다시 시도해 주세요');
-      },
+    openDialog('UPLOADER', 'delete', {
+      onConfirm: () =>
+        accountMutate(undefined, {
+          onSuccess: () => {
+            //TODO:토스트로 추후변경
+            console.log('회원탈퇴 성공');
+          },
+          onError: (error) => {
+            console.error('회원탈퇴 요청 실패:', error);
+            alert('탈퇴에 실패했습니다. 다시 시도해 주세요');
+          },
+        }),
     });
   };
 
@@ -121,9 +125,18 @@ const Sidebar = () => {
               className="h-full w-full rounded-full object-cover"
               src={userData.profileImageUrl}
               alt="유저 프로필"
-              fill
+              width={50}
+              height={50}
             />
-          ) : null}
+          ) : (
+            <Image
+              className="h-full w-full rounded-full object-cover"
+              src="/defaultProfile.png"
+              alt="유저 프로필"
+              width={50}
+              height={50}
+            />
+          )}
         </div>
         <div className="flex w-full flex-col">
           <span className="title3">{userData.nickname}</span>

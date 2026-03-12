@@ -1,10 +1,10 @@
 import { ROUTES } from '@/constant/routes';
-import { BackofficeAccount } from './../../../services/auth.api';
 import {
   BackofficeLoginRequest,
   BackofficeSignRequest,
 } from '@/models/auth.model';
 import {
+  BackofficeAccount,
   BackofficeCheckEmail,
   BackofficeLogin,
   BackofficeLogout,
