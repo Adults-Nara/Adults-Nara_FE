@@ -46,10 +46,12 @@ const CategoryBoard = () => {
         )}
       </div>
       <div className="flex w-full flex-col gap-4">
-        {statsPending && <div>시청기록 로딩중...</div>}
-        {statsError && <div>시청기록에러 발생</div>}
-        {stats.length === 0 ? (
-          <span>시청 기록이 없습니다 </span>
+        {statsPending ? (
+          <div>시청기록 로딩중...</div>
+        ) : statsError ? (
+          <div>시청기록에러 발생</div>
+        ) : stats.length === 0 ? (
+          <span>시청 기록이 없습니다.</span>
         ) : (
           stats.slice(0, 3).map((rank, index) => {
             return (

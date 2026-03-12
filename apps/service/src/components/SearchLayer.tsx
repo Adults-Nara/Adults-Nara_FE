@@ -33,13 +33,14 @@ const highlightKeyword = (text: string, keyword: string) => {
 
 const SearchLayer = ({ onClose, initial = '' }: SearchLayerProps) => {
   const [keyword, setKeyword] = useState(initial);
+  const normalizedKeyword = keyword.trim();
   const route = useRouter();
-  const debouncedKeyword = useDebounce(keyword, 300);
+  const debouncedKeyword = useDebounce(normalizedKeyword, 300);
   const { data, isPending, isError } = useAutocomplete(debouncedKeyword);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && keyword) {
-      route.push(ROUTES.SEARCH(keyword));
+    if (e.key === 'Enter' && normalizedKeyword) {
+      route.push(ROUTES.SEARCH(normalizedKeyword));
     }
   };
 

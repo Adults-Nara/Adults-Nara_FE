@@ -22,17 +22,17 @@ export function mapTagListToThumbnail(item: TagVideoResponse): ThumbnailData {
   };
 }
 
-interface CategoryVedioListProps {
+interface CategoryVideoListProps {
   videos: TagVideoResponse[];
   isError: boolean;
   isPending: boolean;
 }
 
-const CategoryVedioList = ({
+const CategoryVideoList = ({
   videos,
   isError,
   isPending,
-}: CategoryVedioListProps) => {
+}: CategoryVideoListProps) => {
   const [videoListRef] = useEmblaCarousel({
     align: 'start',
     containScroll: 'trimSnaps',
@@ -63,4 +63,4 @@ const CategoryVedioList = ({
   );
 };
 
-export default CategoryVedioList;
+export default CategoryVideoList;

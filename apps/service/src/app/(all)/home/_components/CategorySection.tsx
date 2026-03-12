@@ -4,7 +4,7 @@ import { useMyChildTags, useVideosByTag } from '@/lib/tanstack/query/tag.query';
 import { CATEGORY_MAP } from '@/types/category';
 import { useEffect, useMemo, useState } from 'react';
 import CategoryTagList from './CategoryTagList';
-import CategoryVedioList from './CategoryVedioList';
+import CategoryVideoList from './CategoryVideoList';
 
 type CategoryItem = { label: string; value: string };
 
@@ -49,36 +49,35 @@ const CategorySection = () => {
   } = useMyChildTags();
 
   const resultTagList = useMemo(() => {
-    if (!tags) return [];
+    if (isTagsPending || !tags) return [];
     return createTagList(tags);
   }, [tags]);
 
   const [selectedCategory, setSelectedCategory] = useState('');
+  const currentCategory =
+    selectedCategory ||
+    (resultTagList.length > 0 ? resultTagList[0].tagId : '');
 
   const {
     videos,
     isError: isListError,
     isPending: isListPending,
-  } = useVideosByTag(Number(selectedCategory));
-
-  useEffect(() => {
-    if (resultTagList.length && !selectedCategory) {
-      setSelectedCategory(resultTagList[0].tagId);
-    }
-  }, [resultTagList, selectedCategory]);
+  } = useVideosByTag(Number(currentCategory), {
+    enabled: !isTagsPending && !!currentCategory,
+  });
 
   return (
     <div className="flex flex-col gap-4">
       <span className="title1 pl-3">주제별 인기 영상</span>
       <CategoryTagList
         tags={resultTagList}
-        selected={selectedCategory}
+        selected={currentCategory}
         onSelect={setSelectedCategory}
         isPending={isTagsPending}
         isError={isTagsError}
       />
 
-      <CategoryVedioList
+      <CategoryVideoList
         videos={videos}
         isPending={isListPending}
         isError={isListError}

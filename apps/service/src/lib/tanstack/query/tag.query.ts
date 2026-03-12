@@ -56,11 +56,11 @@ export function useMyChildTags() {
 }
 
 // 태그별 영상 목록 조회
-export function useVideosByTag(tagId: number) {
+export function useVideosByTag(tagId: number, options?: { enabled?: boolean }) {
   const { data, isPending, isError } = useQuery({
     queryKey: TAG_KEYS.videosByTag(tagId),
     queryFn: () => getVideosByTag(tagId),
-    enabled: !!tagId,
+    enabled: (options?.enabled ?? true) && !!tagId,
   });
 
   return {

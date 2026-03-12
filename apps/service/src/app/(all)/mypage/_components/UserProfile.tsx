@@ -38,16 +38,14 @@ const UserProfile = () => {
 
   return (
     <div className="flex w-full items-center gap-5 rounded-lg bg-gray-100 px-4 py-6 shadow-[0_5px_15px_0px_rgba(0,0,0,0.1)]">
-      <div className="bg-primary-100 relative h-15 w-15 shrink-0 overflow-hidden rounded-full">
-        {data.profileImageUrl ? (
-          <Image
-            src={data.profileImageUrl}
-            alt={data.nickname}
-            width={60}
-            height={60}
-            className="object-cover"
-          />
-        ) : null}
+      <div className="relative h-15 w-15 shrink-0 overflow-hidden rounded-full">
+        <Image
+          src={data.profileImageUrl ?? `/defaultProfile.png`}
+          alt={data.nickname}
+          width={60}
+          height={60}
+          className="object-cover"
+        />
       </div>
       <div className="flex w-full flex-col gap-1 overflow-hidden">
         {isEdit ? (

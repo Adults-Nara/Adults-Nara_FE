@@ -7,7 +7,7 @@ interface CategoryTagListProps {
     tagId: string;
     tagName: string;
   }[];
-  selected: string;
+  selected: string | null;
   onSelect: (tagId: string) => void;
   isError: boolean;
   isPending: boolean;
