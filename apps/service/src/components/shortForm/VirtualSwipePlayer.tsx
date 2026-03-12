@@ -55,7 +55,17 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
         );
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.currentVideo.videoId]);
+
+  // 영상 자동 재생
+  useEffect(() => {
+    // 100ms 뒤에 재생 시작. 영상이 완전히 로드되기 전에 seekTo가 호출되는 것을 방지하기 위함.
+    const starterTimer = setTimeout(() => {
+      setPlayingVideoId(props.currentVideo.videoId);
+    }, 100);
+
+    // 빠르게 스와이프해서 넘어갈 경우 타이머 취소 (에러 방지)
+    return () => clearTimeout(starterTimer);
   }, [props.currentVideo.videoId]);
 
   // 10초마다 시청 위치 업데이트 (onWatchProgressUpdate 프롭이 제공됐을 때만 실행)
@@ -202,7 +212,6 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                 if (
                   initializedVideoIdRef.current !== props.currentVideo.videoId
                 ) {
-                  setPlayingVideoId(props.currentVideo.videoId); // 재생 시작
                   initializedVideoIdRef.current = props.currentVideo.videoId; // 현재 영상 ID 기억
                 }
               }}
