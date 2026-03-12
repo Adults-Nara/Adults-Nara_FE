@@ -1,6 +1,6 @@
 export interface VideoData {
   videoId: string;
-  videoUrl: string;
+  videoUrl?: string;
   thumbnail: string;
   uploader: { name: string; profileImg: string | null };
   title: string;
