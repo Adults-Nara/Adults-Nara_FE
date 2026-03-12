@@ -232,7 +232,11 @@ export default function BaseShortsTab({
     isPending: isS3Pending,
     isError: isS3Error,
   } = useVideoS3Url(currentVideo?.videoId);
-  const s3Url = s3Data?.masterUrl;
+  const rawS3Url = s3Data?.masterUrl;
+  // stream.asinna.store를 /stream/ 프록시로 치환 → CORS 우회 (next.config.ts rewrites)
+  const s3Url = rawS3Url
+    ? rawS3Url.replace('https://stream.asinna.store', '/stream')
+    : undefined;
 
   const { mutate: updatePosition } = useUpdateWatchPosition(
     currentVideo ? Number(currentVideo.videoId) : 0,
