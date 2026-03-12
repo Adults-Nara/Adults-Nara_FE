@@ -47,15 +47,25 @@ export default function BaseShortsTab({
   algorithmList,
   onRequireMoreVertical,
 }: BaseShortsTabProps) {
-  const [vList, setVList] = useState<ShortFormVideoData[]>(algorithmList);
-  const lastAlgorithmLengthRef = useRef(algorithmList.length);
-  const [rowIndex, setRowIndex] = useState(0);
-  const [colIndex, setColIndex] = useState(0);
-  const [hList, setHList] = useState<ShortFormVideoData[]>([]);
-
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const [vList, setVList] = useState<ShortFormVideoData[]>(algorithmList);
+  const lastAlgorithmLengthRef = useRef(algorithmList.length);
+  const [rowIndex, setRowIndex] = useState(() => {
+    const targetId = searchParams.get('v');
+    if (!targetId) return 0; // 파라미터가 없으면 0층부터
+
+    const targetIndex = algorithmList.findIndex(
+      (video) => String(video.videoId) === targetId,
+    );
+
+    // 리스트에서 타겟 영상을 찾으면 그 층수부터, 못 찾으면 0층부터 시작
+    return targetIndex !== -1 ? targetIndex : 0;
+  });
+  const [colIndex, setColIndex] = useState(0);
+  const [hList, setHList] = useState<ShortFormVideoData[]>([]);
 
   const isLogin = useIsLoggedIn();
   const queryClient = useQueryClient();
