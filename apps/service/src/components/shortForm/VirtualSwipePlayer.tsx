@@ -161,20 +161,20 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     setIsAnimating(true);
 
     if (dragAxis.current === 'x') {
-      if (offset.x < -thresholdX && props.rightVideo) {
+      if (dx < -thresholdX && props.rightVideo) {
         setOffset({ x: -window.innerWidth, y: 0 });
         swipedDirection = 'right'; // 손가락은 왼쪽으로 밀었지만, 우측 영상이 나오는 것
-      } else if (offset.x > thresholdX && props.leftVideo) {
+      } else if (dx > thresholdX && props.leftVideo) {
         setOffset({ x: window.innerWidth, y: 0 });
         swipedDirection = 'left';
       } else {
         setOffset({ x: 0, y: 0 }); // 제자리 복귀
       }
     } else if (dragAxis.current === 'y') {
-      if (offset.y < -thresholdY && props.downVideo) {
+      if (dy < -thresholdY && props.downVideo) {
         setOffset({ x: 0, y: -window.innerHeight });
         swipedDirection = 'down';
-      } else if (offset.y > thresholdY && props.upVideo) {
+      } else if (dy > thresholdY && props.upVideo) {
         setOffset({ x: 0, y: window.innerHeight });
         swipedDirection = 'up';
       } else {
@@ -192,6 +192,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (isAnimating) return;
+    e.preventDefault();
     isDragging.current = true;
     touchStart.current = { x: e.clientX, y: e.clientY, time: Date.now() };
     dragAxis.current = null;
@@ -199,6 +200,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging.current || isAnimating) return;
+    e.preventDefault();
     const dx = e.clientX - touchStart.current.x;
     const dy = e.clientY - touchStart.current.y;
 
@@ -275,13 +277,14 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      onMouseDown={handleMouseDown} // 추가
-      onMouseMove={handleMouseMove} // 추가
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={() => {
         isDragging.current = false;
         setOffset({ x: 0, y: 0 });
       }}
+      onDragStart={(e) => e.preventDefault()}
     >
       <div
         className="relative h-full w-full"
@@ -290,7 +293,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           transition: isAnimating ? 'transform 0.3s ease-out' : 'none',
         }}
       >
-        {/* [중앙] 플레이어 */}
+        {/* 중앙 플레이어 */}
         <div className="absolute inset-0 h-full w-full">
           {props.videoUrl && (
             <ReactPlayer
