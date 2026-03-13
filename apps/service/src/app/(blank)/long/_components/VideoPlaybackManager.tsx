@@ -15,11 +15,7 @@ import {
 } from '@/lib/tanstack/mutation/watch-history.mutation';
 import { useCallback } from 'react';
 
-interface VideoPlaybackManagerProps {
-  thumbnail?: string;
-}
-
-export function VideoPlaybackManager({ thumbnail }: VideoPlaybackManagerProps) {
+export function VideoPlaybackManager() {
   const searchParams = useSearchParams();
 
   // URL에서 v 파라미터(shallow routing) 가져오기.
@@ -103,7 +99,7 @@ export function VideoPlaybackManager({ thumbnail }: VideoPlaybackManagerProps) {
         className="relative w-full overflow-hidden bg-black"
         style={{ aspectRatio: '16/9' }}
       >
-        <LoadingSpinner thumbnail={thumbnail ?? ''} />
+        <LoadingSpinner thumbnail={detailData?.thumbnailUrl ?? ''} />
       </div>
     );
   }
@@ -113,7 +109,7 @@ export function VideoPlaybackManager({ thumbnail }: VideoPlaybackManagerProps) {
     <VideoPlayer
       src={s3Url}
       progress={progress}
-      thumbnail={thumbnail}
+      thumbnail={detailData?.thumbnailUrl ?? ''}
       onEnded={handleVideoEnd}
       onWatchProgressUpdate={handleWatchProgressUpdate}
       onStopWatching={handleStopWatching}

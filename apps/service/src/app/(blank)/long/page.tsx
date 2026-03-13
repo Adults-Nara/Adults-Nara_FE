@@ -7,7 +7,7 @@ export default function LongPage() {
   return (
     <div className="flex h-screen flex-col">
       <div className="flex-none shrink-0">
-        <VideoPlaybackManager thumbnail={undefined} />
+        <VideoPlaybackManager />
       </div>
 
       <div className="scrollbar-hide flex-1 overflow-y-auto">
