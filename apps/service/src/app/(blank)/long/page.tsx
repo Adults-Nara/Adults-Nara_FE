@@ -2,8 +2,6 @@ import { LongFormVideoData } from '@/types/video';
 import { VideoInfo } from './_components/VideoInfo';
 import { VideoPlayer } from './_components/VideoPlayer';
 import RecommendedSection from '@/app/(all)/home/_components/RecommendedSection';
-import { LeftArrow } from '@repo/ui';
-import { PageHeader } from './_components/PageHeader';
 
 const metadata: LongFormVideoData = {
   videoId: 's1',
@@ -32,7 +30,7 @@ export default function LongPage() {
     <div className="flex h-screen flex-col">
       <div className="flex-none shrink-0">
         <VideoPlayer
-          src={metadata.videoUrl}
+          src={metadata.videoUrl || ''}
           thumbnail={metadata.thumbnail ?? undefined}
         />
       </div>
