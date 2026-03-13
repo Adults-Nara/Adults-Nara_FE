@@ -7,19 +7,25 @@ import { VideoControllerOverlay } from './VideoOverlay';
 interface VideoPlayerProps {
   src: string;
   thumbnail?: string;
-  progress?: number; // 초기 재생 위치(%)
+  progress?: number; // 초기 재생 위치(초 단위)
+  onEnded?: () => void; // 영상 재생 완료 콜백
+  onWatchProgressUpdate?: (currentTime: number) => void;
+  onStopWatching?: (currentTime: number) => void;
 }
 
 export function VideoPlayer({
   src,
-  progress = 0,
   thumbnail,
+  progress = 0,
+  onEnded,
+  onWatchProgressUpdate,
+  onStopWatching,
 }: VideoPlayerProps) {
   const playerRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [playbackRate, setPlaybackRate] = useState<number>(1);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(true);
@@ -38,7 +44,7 @@ export function VideoPlayer({
       // 영상 길이 설정 및 초기 재생 위치 적용
       setDuration(node.duration);
       if (progress > 0) {
-        node.currentTime = (progress / 100) * node.duration;
+        node.currentTime = progress;
       }
       setIsReady(true);
     } else {
@@ -46,7 +52,7 @@ export function VideoPlayer({
       node.addEventListener('loadedmetadata', () => {
         setDuration(node.duration);
         if (progress > 0) {
-          node.currentTime = (progress / 100) * node.duration;
+          node.currentTime = progress;
         }
         setIsReady(true);
       });
@@ -66,6 +72,19 @@ export function VideoPlayer({
 
     return () => clearInterval(interval); // 컴포넌트가 꺼지면 타이머도 확실히 꺼집니다.
   }, [isPlaying]);
+
+  // 10초 단위로 시청 기록 업데이트
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    const watchHistoryInterval = setInterval(() => {
+      if (playerRef.current && onWatchProgressUpdate) {
+        onWatchProgressUpdate(playerRef.current.currentTime);
+      }
+    }, 10000);
+
+    return () => clearInterval(watchHistoryInterval);
+  }, [isPlaying, onWatchProgressUpdate]);
 
   // isPlaying 상태를 ref로도 관리하여 타이머 콜백에서 최신 상태 참조 가능하도록 함
   useEffect(() => {
@@ -89,18 +108,24 @@ export function VideoPlayer({
   const togglePlay = useCallback(() => {
     if (isPlayingRef.current) {
       stopHideTimer();
+      if (playerRef.current) {
+        onStopWatching?.(playerRef.current.currentTime);
+      }
     } else {
       resetHideTimer();
     }
     setIsPlaying((isPlaying) => !isPlaying);
-  }, [resetHideTimer, stopHideTimer]);
+  }, [resetHideTimer, stopHideTimer, onStopWatching]);
 
-  // 컴포넌트 언마운트 시, 타이머 정리
+  // 컴포넌트 언마운트 시,
   useEffect(() => {
     return () => {
       clearTimeout(hideTimer.current ?? undefined);
+      if (playerRef.current) {
+        onStopWatching?.(playerRef.current.currentTime);
+      }
     };
-  }, []);
+  }, [onStopWatching]);
 
   // 영상 재생 위치 업데이트
   const handleSeek = useCallback((time: number) => {
@@ -146,12 +171,23 @@ export function VideoPlayer({
         playing={isPlaying}
         playbackRate={playbackRate}
         controls={false}
+        onReady={() => {
+          if (playerRef.current && progress > 0) {
+            playerRef.current.currentTime = progress;
+          }
+        }}
         width="100%"
         height="100%"
         className="pointer-events-none h-full w-full"
         onEnded={() => {
           togglePlay();
+          setIsPlaying(false);
+          stopHideTimer();
           setShowControls(true);
+          if (playerRef.current) {
+            onStopWatching?.(playerRef.current.currentTime);
+          }
+          onEnded?.(); // 부모 컴포넌트(Manager 등)로 재생 완료 알림
         }}
       />
 

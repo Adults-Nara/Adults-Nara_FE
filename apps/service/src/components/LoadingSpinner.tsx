@@ -1,4 +1,4 @@
-export const LoadingSpinner = ({ thumbnail }: { thumbnail: string }) => {
+export const LoadingSpinner = ({ thumbnail }: { thumbnail?: string }) => {
   return (
     <div className="relative flex h-dvh w-full items-center justify-center overflow-hidden bg-black">
       {/* 배경 썸네일 */}

@@ -11,6 +11,7 @@ export function useBookmarkListInfinite(
   size: number = 10,
   windowSize: number = 30,
   index: number = 0,
+  options?: { enabled?: boolean },
 ) {
   const isLogin = useIsLoggedIn();
   const maxPages = windowSize / size;
@@ -28,7 +29,7 @@ export function useBookmarkListInfinite(
       return lastPageParam + 1;
     },
     maxPages,
-    enabled: isLogin,
+    enabled: isLogin && (options?.enabled ?? true),
   });
 }
 
