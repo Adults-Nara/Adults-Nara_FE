@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   getAllPolicies,
   getMyPointBalance,
@@ -21,9 +21,20 @@ export function useMyPointBalance() {
 export function useMyPointTransactionHistory(
   params: PointTransactionHistoryRequest,
 ) {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['pointHistory', params],
-    queryFn: () => getMyPointTransactionHistory(params),
+    queryFn: ({ pageParam = 0 }) =>
+      getMyPointTransactionHistory({
+        ...params,
+        page: pageParam,
+      }),
+
+    initialPageParam: 0,
+
+    getNextPageParam: (lastPage) => {
+      if (lastPage.last) return undefined;
+      return lastPage.number + 1;
+    },
   });
 }
 

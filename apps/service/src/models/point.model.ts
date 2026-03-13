@@ -30,12 +30,26 @@ export interface UserPointBalanceResponse {
 export interface PointTransactionHistoryRequest {
   startDate?: string;
   endDate?: string;
+  page?: number;
+  size?: number;
 }
 
-export interface PointTransactionHistoryResponse {
+export interface PointTransaction {
   transactionId: number;
   amount: number;
   type: PointTransactionType;
   balanceAfterTransaction: number;
   createdAt: string;
+}
+
+export interface PointTransactionHistoryResponse {
+  content: PointTransaction[];
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
 }
