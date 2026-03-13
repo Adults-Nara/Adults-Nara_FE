@@ -1,10 +1,10 @@
 import { useQuery, queryOptions } from '@tanstack/react-query';
 import { getVideoS3Url, getVideoDetail } from '@/services/video.api';
 
-export const videoS3UrlQueryOptions = (videoId: string) =>
+export const videoS3UrlQueryOptions = (videoId?: string) =>
   queryOptions({
     queryKey: ['s3-url', videoId],
-    queryFn: () => getVideoS3Url(videoId),
+    queryFn: () => getVideoS3Url(videoId!),
     staleTime: (query: any) => {
       const expiresAt = query.state.data?.expiresAtEpochSeconds;
       if (!expiresAt) return 0;
@@ -12,7 +12,7 @@ export const videoS3UrlQueryOptions = (videoId: string) =>
     },
   });
 
-export function useVideoS3Url(videoId: string) {
+export function useVideoS3Url(videoId?: string) {
   const { data, isPending, isError } = useQuery({
     ...videoS3UrlQueryOptions(videoId),
     enabled: !!videoId,

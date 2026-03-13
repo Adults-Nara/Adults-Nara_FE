@@ -188,8 +188,6 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     setIsAnimating(false);
     setOffset({ x: 0, y: 0 });
   };
-
-  const mouseStart = useRef({ x: 0, y: 0, time: 0 });
   const isDragging = useRef(false);
 
   const handleMouseDown = (e: React.MouseEvent) => {

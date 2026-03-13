@@ -5,14 +5,15 @@ import {
 } from '@/services/recommendation.api';
 
 export function useRelatedVideosInfinite(
-  videoId: string,
+  videoId?: string,
   size: number = 10,
   videoType: 'SHORT' | 'LONG' = 'SHORT',
+  enabeld: boolean = false,
 ) {
   return useInfiniteQuery({
     queryKey: ['recommendation-related', videoId, videoType, size],
     queryFn: ({ pageParam = 0 }) =>
-      getRecommendationRelated(videoId, pageParam, size, videoType),
+      getRecommendationRelated(videoId!, pageParam, size, videoType),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
       if (!lastPage || !lastPage.hasNext) {
