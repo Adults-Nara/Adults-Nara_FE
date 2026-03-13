@@ -1,11 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
-import { getUserDetail } from '@/services/user.api';
-import { UpdateUserRequest } from '@/models/user.model';
+import { getUserDetail, getUserMe } from '@/services/user.api';
+import { useIsLoggedIn } from '@/store/useAuthStore';
 
 export function useUserDetail(userId: number) {
   return useQuery({
     queryKey: ['user', userId],
     queryFn: () => getUserDetail(userId),
     enabled: !!userId,
+  });
+}
+
+export function useUserMe() {
+  const isLogin = useIsLoggedIn();
+  return useQuery({
+    queryKey: ['user', 'me'],
+    queryFn: () => getUserMe(),
+    enabled: isLogin,
   });
 }

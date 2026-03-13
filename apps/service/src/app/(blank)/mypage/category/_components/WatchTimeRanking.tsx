@@ -1,3 +1,6 @@
+'use client';
+import { useTagWatchStats } from '@/lib/tanstack/query/tag.query';
+import { formatSecondsToTime } from '@/utils/format';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,42 +13,6 @@ import {
   Plus,
 } from '@repo/ui';
 
-//임시 API연동필요
-const MOCK_DATA_RANK = [
-  {
-    category: '등산',
-    time: '5시간 20분',
-  },
-  {
-    category: '트로트',
-    time: '3시간 40분',
-  },
-  {
-    category: '반려동물',
-    time: '2시간',
-  },
-  {
-    category: '부동산',
-    time: '1시간 40분',
-  },
-  {
-    category: '원예',
-    time: '1시간 10분',
-  },
-  {
-    category: '발라드',
-    time: '1시간',
-  },
-  {
-    category: '명상',
-    time: '50분',
-  },
-  {
-    category: '교육',
-    time: '40분',
-  },
-];
-
 interface WatchTimeRankingProps {
   selectedCategories: string[];
   onToggle: (cat: string) => void;
@@ -55,55 +22,69 @@ const WatchTimeRanking = ({
   selectedCategories,
   onToggle,
 }: WatchTimeRankingProps) => {
+  const { stats, isError, isPending } = useTagWatchStats();
+
+  //TODO: 추후 로딩 에러 페이지 구현
+  if (isPending) return <span>시청시간순위 로딩중..</span>;
+  if (isError) return <span>시청시간순위 에러..</span>;
   return (
     <div className="flex flex-col gap-4">
       <span className="title1">주제별 시청시간 순위</span>
       <div className="flex flex-col gap-4 px-2">
-        {MOCK_DATA_RANK.map((rank, index) => {
-          return (
-            <div key={index} className="flex items-center justify-between">
-              <div className="flex items-center gap-5">
-                <span
-                  className={`title2 ${index < 3 ? 'text-primary-500' : ''}`}
-                >
-                  {index + 1}
-                </span>
-                <span className="title2">{rank.category}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="body1 text-gray-700">{rank.time}</span>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="shrink-0">
-                      <More className="h-5 w-5 text-gray-700" />
-                    </button>
-                  </DropdownMenuTrigger>
+        {stats.length === 0 ? (
+          <span>시청 기록이 없습니다 </span>
+        ) : (
+          stats.map((rank, index) => {
+            return (
+              <div
+                key={rank.tagId}
+                className="flex items-center justify-between"
+              >
+                <div className="flex items-center gap-5">
+                  <span
+                    className={`title2 ${index < 3 ? 'text-primary-500' : ''}`}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="title2">{rank.tagName}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="body1 text-gray-700">
+                    {formatSecondsToTime(rank.totalWatchSeconds)}
+                  </span>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="shrink-0">
+                        <More className="h-5 w-5 text-gray-700" />
+                      </button>
+                    </DropdownMenuTrigger>
 
-                  <DropdownMenuContent>
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem
-                        disabled={selectedCategories.includes(rank.category)}
-                        onClick={() => onToggle(rank.category)}
-                      >
-                        <Plus />
-                        선호주제 추가
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        disabled={!selectedCategories.includes(rank.category)}
-                        onClick={() => onToggle(rank.category)}
-                        variant="destructive"
-                      >
-                        <Minus />
-                        선호주제 삭제
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                    <DropdownMenuContent>
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem
+                          disabled={selectedCategories.includes(rank.tagId)}
+                          onClick={() => onToggle(rank.tagId)}
+                        >
+                          <Plus />
+                          선호주제 추가
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          disabled={!selectedCategories.includes(rank.tagId)}
+                          onClick={() => onToggle(rank.tagId)}
+                          variant="destructive"
+                        >
+                          <Minus />
+                          선호주제 삭제
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );

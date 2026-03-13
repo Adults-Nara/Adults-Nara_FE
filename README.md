@@ -1,14 +1,207 @@
-# Adults-Nara_FE
 
-## ⚙️ 기능 소개
-| 기능 미리보기 | 기능 설명 |
-|:---:|:---|
-|<img width="200" alt="image" src="https://github.com/user-attachments/assets/6e9b104b-ef4c-4a85-ac75-a6ce2e6a0572" /> <img width="200" alt="image" src="https://github.com/user-attachments/assets/551fa63c-e31c-4e64-b258-ea492b0b8a07" />| **홈페이지** <br/> - 1. 인기 영상 10위 리스트 (찜하기 기준) <br/> - 2. 주제별 인기영상 리스트 <br/> - 3. 사용자가 선호도기반 추천영상 리스트|
-|<img width="200" alt="image" src="https://github.com/user-attachments/assets/7512abd6-bbaf-4376-8d8f-07a5ed118fe8" /> <img width="200" alt="image" src="https://github.com/user-attachments/assets/96dfc6e2-0b05-415a-b4fa-1c9473d03c3e" />| **마이페이지** <br/> - 1. 사용자 정보 확인 및 수정 <br/> - 2. 선호 주제를 간략하게 볼수있다. <br/>(자세히보기 클릭시 통계 및 선호주제 편집가능) <br/> - 3. 사용자의 리워드 확인 가능 <br/> - 4. 최근 시청 이력 리스트 <br/> - 5. 찜한 영상을 영상 타입별로 재생목록 확인 <br/> (최근시청 이력 및 찜한영상 클릭시 바텀시트로 표현) |
-|<img width="200" alt="image" src="https://github.com/user-attachments/assets/fe585787-6461-44d5-86dd-b224ab2fa1fd" />| **통계 및 선호주제편집** <br/> - 1. 사용자가 시청한 주제별 시청시간 순위 <br/> - 2. 선호주제 확인 및 수정가능 |
-|<img width="200" alt="image" src="https://github.com/user-attachments/assets/c602b938-d750-45a6-bf78-9260d8858329" />| **숏폼페이지** <br/> - 1. 숏폼타입 영상 및 반응 확인가능 <br/> - 2. 세로로 스와이프시 사용자 선호도 기반 추천영상 재생 <br/> - 3. 가로로 스와이프시 현재영상의 주제관련 영상 재생 |
-|<img width="200" alt="image" src="https://github.com/user-attachments/assets/4bee9e6b-de60-4aad-8c61-8fc0afcdb27e" /> <img width="200" alt="image" src="https://github.com/user-attachments/assets/60260671-3c0f-4bd9-ab72-3e5667a819dc" />| **롱폼페이지** <br/> - 1. 롱폼타입 영상 및 반응 확인가능 <br/> - 2. 현재영상 시청완료시 자동으로 연속재생 <br/> - 3. 하단에 현재 영상 기반 추천영상 리스트|
-|<img width="200" alt="image" src="https://github.com/user-attachments/assets/4125a3d8-d6cd-432a-8e9e-76f4e1d7bc08" /> <img width="200" alt="image" src="https://github.com/user-attachments/assets/a4decb51-5795-4c40-b15c-1625ccb5907c" />| **검색** <br/> - 1. 헤더의 돋보기 클릭시 사용가능 <br/> - 2. 입력된 검색어 기반 자동완성 기능 <br/> - 3. 검색어 기반 영상 리스트 확인가능|
+<h2>⚙️ 기능 소개</h2>
+
+<h3>유저 서비스</h3>
+<table>
+<thead>
+<tr>
+<th width="70%">기능 미리보기</th>
+<th width="30%">기능 설명</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td align="center">
+
+<img width="260" src="https://github.com/user-attachments/assets/f3f4ad3a-1b60-4e36-94b5-c30a8428e960" />
+<img width="260" src="https://github.com/user-attachments/assets/551fa63c-e31c-4e64-b258-ea492b0b8a07" />
+
+</td>
+<td>
+
+<b>홈페이지</b><br/>
+
+1. 인기 영상 10위 리스트 <br/>
+유저들의 북마크 기준으로 순위를 정합니다. <br/><br/>
+
+2. 주제별 인기영상 리스트 <br/>
+로그인 유저는 자신이 선택한 선호주제를 먼저 보여주며 나머지는 랜덤한 다른 주제를 보여줍니다. <br/>
+비로그인 유저는 10개 모두 랜덤한 주제를 보여줍니다. <br/><br/>
+
+3. 사용자의 선호도 기반 추천영상 리스트 <br/>
+로그인 유저는 자신의 시청기록과 선호주제에 맞는 추천영상을 보여줍니다. <br/>
+비로그인 유저는 전체적으로 인기있는 추천영상을 보여줍니다.
+</td>
+</tr>
+
+<tr>
+<td align="center">
+
+<img width="260" src="https://github.com/user-attachments/assets/746fcd45-f7f1-4006-8fbe-c08876a8b8e3" />
+<img width="260" src="https://github.com/user-attachments/assets/e4fdc288-126a-45ad-ae83-8765c792d0a7" />
+
+</td>
+<td>
+
+<b>마이페이지</b><br/>
+
+
+1. 사용자 정보 확인 및 수정 <br/>
+2. 선호 주제를 간략하게 확인 가능 <br/>
+(자세히보기 클릭 시 통계 및 선호주제 편집 가능) <br/>
+3. 사용자의 리워드 확인 가능 <br/>
+4. 최근 시청 이력 리스트 <br/>
+5. 찜한 영상을 영상 타입별 재생목록 확인 <br/>
+(최근시청 이력 및 찜한영상 클릭 시 바텀시트로 표현)
+
+</td>
+</tr>
+
+<tr>
+<td align="center">
+
+<img width="260" src="https://github.com/user-attachments/assets/6ed808f7-d618-4293-9d32-48c2a59fdc3a" />
+<img width="260" src="https://github.com/user-attachments/assets/c9da0630-b5c7-455a-abcd-b6c4460e9bed" />
+
+</td>
+<td>
+
+<b>통계 및 선호주제 편집</b><br/>
+
+1. 사용자가 시청한 주제별 시청시간 순위 <br/>
+2. 선호주제 확인 및 수정 가능
+
+<b>포인트 내역 확인</b><br/>
+
+1. 사용자가 얻은 포인트 내역확인가능 <br/>
+
+</td>
+</tr>
+
+<tr>
+<td align="center">
+
+<img width="260" src="https://github.com/user-attachments/assets/c602b938-d750-45a6-bf78-9260d8858329" />
+
+</td>
+<td>
+
+<b>숏폼 페이지</b><br/>
+
+1. 숏폼 타입 영상 및 반응 확인 가능 <br/>
+2. 세로 스와이프 시 사용자 선호도 기반 추천영상 재생 <br/>
+3. 가로 스와이프 시 현재 영상의 주제 관련 영상 재생
+
+</td>
+</tr>
+
+<tr>
+<td align="center">
+
+<img width="260" src="https://github.com/user-attachments/assets/4bee9e6b-de60-4aad-8c61-8fc0afcdb27e" />
+<img width="260" src="https://github.com/user-attachments/assets/60260671-3c0f-4bd9-ab72-3e5667a819dc" />
+
+</td>
+<td>
+
+<b>롱폼 페이지</b><br/>
+
+1. 롱폼 타입 영상 및 반응 확인 가능 <br/>
+2. 현재 영상 시청 완료 시 자동 연속 재생 <br/>
+3. 하단에 현재 영상 기반 추천영상 리스트
+
+</td>
+</tr>
+
+<tr>
+<td align="center">
+
+<img width="260" src="https://github.com/user-attachments/assets/4125a3d8-d6cd-432a-8e9e-76f4e1d7bc08" />
+<img width="260" src="https://github.com/user-attachments/assets/a4decb51-5795-4c40-b15c-1625ccb5907c" />
+
+</td>
+<td>
+
+<b>검색</b><br/>
+
+1. 헤더의 돋보기 클릭 시 사용 가능 <br/>
+2. 입력된 검색어 기반 자동완성 기능 <br/>
+3. 검색어 기반 영상 리스트 확인 가능
+
+</td>
+</tr>
+
+</tbody>
+</table>
+
+<br/><br/>
+<h3>백오피스</h3>
+<table>
+<thead>
+<tr>
+<th width="70%">기능 미리보기</th>
+<th width="30%">기능 설명</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td align="center">
+
+<img width="800"   src="https://github.com/user-attachments/assets/bbc7c0fc-b1ef-4869-8512-33aa282b3304" />
+
+
+</td>
+<td>
+
+<b>콘텐츠 리스트</b><br/>
+
+1. 콘텐츠 리스트 조회, 활성화 상태 및 삭제 가능 <br/> 
+2. 업로더는 자신이 올린 영상만 조회가 가능하며 관리자는 모든영상에 권한을 가진다.
+</td>
+</tr>
+
+<tr>
+<td align="center">
+
+<img width="800" src="https://github.com/user-attachments/assets/69a99ca2-0270-4878-9075-3695eefa61f8" />
+
+</td>
+<td>
+
+<b>콘텐츠 업로드 및 수정</b><br/>
+
+1. 원본영상을 S3에 ``Pre-signed URL``를 이용하여 멀티파트로 나눠서 업로드합니다. <br/>
+2. 동영상 메타데이터 (콘텐츠 유형, 상태, 제목, 설명, 카테고리, 썸네일)를 입력하여 업로드합니다. <br/>
+3. 동영상 수정은 동일한 폼에서 진행하며 원본영상과 콘텐츠유형을 제외한 부분이 수정가능합니다. <br/>
+
+
+</td>
+</tr>
+
+<tr>
+<td align="center">
+
+<img width="800" src="https://github.com/user-attachments/assets/cfd2810d-b5ec-43fe-bba7-b27c709380f3" />
+
+</td>
+<td>
+
+<b>사용자 및 업로더 리스트</b><br/>
+
+1. 관리자만 확인할수있는 메뉴입니다. <br/>
+2. 사용자 및 업로더를 조회 및 검색할 수 있습니다. <br/>
+2. 사용자 및 업로더를 관리할수있습니다. (활성화/비활성화, 삭제)
+
+
+</td>
+</tr>
+
+</tbody>
+</table>
 
 ## 🛠 기술 스택
 

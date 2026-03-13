@@ -45,11 +45,31 @@ export const formatRelativeTime = (date: string | Date): string => {
 };
 
 export const formatVideoTime = (seconds: number): string => {
-  const m = Math.floor(seconds / 60)
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60)
     .toString()
     .padStart(2, '0');
   const s = Math.floor(seconds % 60)
     .toString()
     .padStart(2, '0');
+
+  if (h > 0) {
+    return `${h.toString().padStart(2, '0')}:${m}:${s}`;
+  }
+
   return `${m}:${s}`;
 };
+
+export function formatSecondsToTime(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  const parts: string[] = [];
+
+  if (hours > 0) parts.push(`${hours}시간`);
+  if (minutes > 0) parts.push(`${minutes}분`);
+  if (secs > 0 || parts.length === 0) parts.push(`${secs}초`);
+
+  return parts.join(' ');
+}

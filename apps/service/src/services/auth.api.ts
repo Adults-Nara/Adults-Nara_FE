@@ -19,3 +19,13 @@ export const loginWithKakao = async (code: string, state: string) => {
   );
   return response.data;
 };
+
+export const userLogout = async () => {
+  const response = await httpClient<ApiResponse<void>>(
+    API_ENDPOINTS.AUTH.LOGOUT,
+    {
+      method: 'POST',
+    },
+  );
+  return response.data;
+};

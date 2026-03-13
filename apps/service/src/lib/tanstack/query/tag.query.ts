@@ -1,3 +1,4 @@
+import { useIsLoggedIn } from './../../../store/useAuthStore';
 import { useQuery } from '@tanstack/react-query';
 import {
   getParentTagsWithChild,
@@ -7,7 +8,6 @@ import {
   getUserPreferences,
   getMyPreferences,
 } from '@/services/tag.api';
-import { UpdateUserTagRequest, OnboardingTagRequest } from '@/models/tag.model';
 
 export const TAG_KEYS = {
   parentWithChild: ['tags', 'parent-with-child'] as const,
@@ -34,43 +34,52 @@ export function useParentTagsWithChild() {
 
 // 내 관심 태그(자식) 목록 조회
 export function useMyChildTags() {
-  const { data, isLoading, isError } = useQuery({
+  const IsLoggin = useIsLoggedIn();
+  const { data, isPending, isError } = useQuery({
     queryKey: TAG_KEYS.myChildTags,
     queryFn: getMyChildTags,
+    enabled: IsLoggin,
   });
+
+  if (!IsLoggin)
+    return {
+      tags: [],
+      isPending: false,
+      isError: false,
+    };
 
   return {
     tags: data ?? [],
-    isLoading,
+    isPending,
     isError,
   };
 }
 
 // 태그별 영상 목록 조회
-export function useVideosByTag(tagId: number) {
-  const { data, isLoading, isError } = useQuery({
+export function useVideosByTag(tagId: number, options?: { enabled?: boolean }) {
+  const { data, isPending, isError } = useQuery({
     queryKey: TAG_KEYS.videosByTag(tagId),
     queryFn: () => getVideosByTag(tagId),
-    enabled: !!tagId,
+    enabled: (options?.enabled ?? true) && !!tagId,
   });
 
   return {
     videos: data ?? [],
-    isLoading,
+    isPending,
     isError,
   };
 }
 
 // 태그별 시청 통계 조회
 export function useTagWatchStats() {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isPending, isError } = useQuery({
     queryKey: TAG_KEYS.watchStats,
     queryFn: getTagWatchStats,
   });
 
   return {
     stats: data ?? [],
-    isLoading,
+    isPending,
     isError,
   };
 }

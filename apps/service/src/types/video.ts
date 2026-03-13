@@ -1,6 +1,6 @@
 export interface VideoData {
   videoId: string;
-  videoUrl: string;
+  videoUrl?: string;
   thumbnail: string;
   uploader: { name: string; profileImg: string | null };
   title: string;
@@ -22,6 +22,7 @@ export interface ShortFormVideoData extends VideoData {
   longformUrl: string;
 }
 export interface ThumbnailData {
+  id: string;
   thumbnailSrc: string;
   title: string;
   uploader: string;
@@ -29,5 +30,6 @@ export interface ThumbnailData {
   progress: number;
   views: number;
   date: string;
+  ProfileImageUrl?: string;
   type?: 'long' | 'short';
 }
