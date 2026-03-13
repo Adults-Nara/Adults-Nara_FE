@@ -1,8 +1,20 @@
 export const LoadingSpinner = ({ thumbnail }: { thumbnail: string }) => {
   return (
-    <div className="relative flex h-dvh w-full items-center justify-center bg-black">
-      <img src={thumbnail} alt="thumbnail" />
-      <svg className="h-10 w-10 animate-spin text-white" viewBox="0 0 24 24">
+    <div className="relative flex h-dvh w-full items-center justify-center overflow-hidden bg-black">
+      {/* 배경 썸네일 */}
+      {thumbnail && (
+        <img
+          src={thumbnail}
+          alt="thumbnail"
+          className="absolute inset-0 h-full w-full object-cover opacity-50"
+        />
+      )}
+
+      {/* 로딩 스피너 (z-10으로 맨 위로 올림) */}
+      <svg
+        className="relative z-10 h-10 w-10 animate-spin text-white"
+        viewBox="0 0 24 24"
+      >
         <circle
           className="opacity-25"
           cx="12"
