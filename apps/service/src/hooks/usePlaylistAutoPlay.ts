@@ -8,11 +8,11 @@ import { InfiniteData } from '@tanstack/react-query';
 // 영상을 찾을 때 까지 페이지를 순차적으로 호출하는 함수
 // 없으면 null 반환, 있으면 다음 영상 ID 반환. 다음 영상 ID는 query에 저장되어있으므로 빠르게 접근 가능.
 async function fetchUntilFound(
-  currentVideoId: string,
   fetchNextPage: () => Promise<{ data?: InfiniteData<BookmarkPageResponse> }>,
   hasNextPage: boolean,
+  currentVideoId?: string,
 ): Promise<string | null> {
-  if (!hasNextPage) return null;
+  if (!hasNextPage || !currentVideoId) return null;
 
   const result = await fetchNextPage();
   const pages = result.data?.pages;
@@ -32,13 +32,13 @@ async function fetchUntilFound(
   const nextHasMore = lastPage && lastPage.items.length >= 10;
 
   if (nextHasMore) {
-    return fetchUntilFound(currentVideoId, fetchNextPage, true);
+    return fetchUntilFound(fetchNextPage, true, currentVideoId);
   }
 
   return null;
 }
 
-export function usePlaylistAutoPlay(currentVideoId: string) {
+export function usePlaylistAutoPlay(currentVideoId?: string) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -50,14 +50,15 @@ export function usePlaylistAutoPlay(currentVideoId: string) {
     hasNextPage,
     fetchNextPage,
   } = useBookmarkListInfinite('LONG', 10, 30, 0, {
-    enabled: listType === 'bookmarkList',
+    enabled: listType === 'bookmarkList' && !!currentVideoId,
   });
 
   // 일반 영상일 때 관련 추천 영상을 가져옴
   const { data: relatedData } = useRelatedVideosInfinite(
     currentVideoId,
-    3,
+    10,
     'LONG',
+    !!currentVideoId,
   );
 
   const handleVideoEnd = useCallback(async () => {
@@ -78,11 +79,11 @@ export function usePlaylistAutoPlay(currentVideoId: string) {
 
         // 현재 영상을 아직 캐시에서 못 찾은 경우, 페이지를 순차 로드하며 탐색
         const nextVideoId = await fetchUntilFound(
-          currentVideoId,
           fetchNextPage as () => Promise<{
             data?: InfiniteData<BookmarkPageResponse>;
           }>,
           hasNextPage ?? false,
+          currentVideoId,
         );
 
         if (nextVideoId) {

@@ -23,17 +23,8 @@ export function VideoPlaybackManager({ thumbnail }: VideoPlaybackManagerProps) {
   const searchParams = useSearchParams();
 
   // URL에서 v 파라미터(shallow routing) 가져오기.
-  const videoId = searchParams.get('v') as string;
-  if (!videoId) {
-    return (
-      <div
-        className="flex w-full items-center justify-center bg-black text-white"
-        style={{ aspectRatio: '16/9' }}
-      >
-        유효하지 않은 영상입니다.
-      </div>
-    );
-  }
+  const videoId = searchParams.get('v');
+
   // 시청 기록 및 비디오 메타데이터를 가져오기.
   const { data: detailData } = useVideoDetail(Number(videoId));
 
@@ -49,7 +40,7 @@ export function VideoPlaybackManager({ thumbnail }: VideoPlaybackManagerProps) {
     data: s3Data,
     isPending: isS3Pending,
     isError: isS3Error,
-  } = useVideoS3Url(videoId);
+  } = useVideoS3Url(videoId || undefined);
 
   const s3Url = s3Data?.masterUrl;
 
@@ -80,7 +71,18 @@ export function VideoPlaybackManager({ thumbnail }: VideoPlaybackManagerProps) {
   );
 
   // 재생 목록(찜 목록 등) 자동 재생 훅
-  const handleVideoEnd = usePlaylistAutoPlay(videoId);
+  const handleVideoEnd = usePlaylistAutoPlay(videoId || undefined);
+
+  if (!videoId) {
+    return (
+      <div
+        className="flex w-full items-center justify-center bg-black text-white"
+        style={{ aspectRatio: '16/9' }}
+      >
+        유효하지 않은 영상입니다.
+      </div>
+    );
+  }
 
   // TODO: 추후 이곳에 광고 API 호출(useAdVideoUrl) 및 showAd 상태 관리 로직이 추가될 예정입니다.
 
