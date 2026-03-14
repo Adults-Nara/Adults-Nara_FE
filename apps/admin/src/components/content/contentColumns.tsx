@@ -60,7 +60,7 @@ export const CONTENT_COLUMNS = (
     align: 'center',
     render: (item) => (
       <Link
-        href={`https://www.asinna.store/long/${item.videoId}`}
+        href={`https://www.asinna.store/long?v=${item.videoId}`}
         className="cursor-pointer text-blue-500 underline"
       >
         링크

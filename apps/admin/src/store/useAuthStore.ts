@@ -7,12 +7,14 @@ interface AuthState {
     token: string | null,
     role?: 'UPLOADER' | 'ADMIN' | null,
   ) => void;
+  setRole: (role: 'UPLOADER' | 'ADMIN' | null) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   accessToken: null,
   role: null,
   setAccessToken: (token, role) => set({ accessToken: token, role }),
+  setRole: (role) => set({ role }),
 }));
 
 export const useIsLoggedIn = () => useAuthStore((state) => !!state.accessToken);

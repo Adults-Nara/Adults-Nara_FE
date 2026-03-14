@@ -27,16 +27,24 @@ export const USER_COLUMNS = (
     width: '70px',
     render: (item) => (
       // 프로필사진
-      <div className="bg-primary-400 relative h-12.5 w-12.5 shrink-0 overflow-hidden rounded-full">
+      <div className="relative h-12.5 w-12.5 shrink-0 overflow-hidden rounded-full">
         {item.profileImageUrl ? (
           <Image
-            fill
+            width={50}
+            height={50}
             className="object-cover"
             src={item.profileImageUrl}
             alt="프로필사진"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-        ) : null}
+        ) : (
+          <Image
+            width={50}
+            height={50}
+            className="object-cover"
+            src="/defaultProfile.png"
+            alt="프로필사진"
+          />
+        )}
       </div>
     ),
   },
