@@ -15,12 +15,13 @@ export function useUpdateUser() {
 
 export function useDeleteUser() {
   const queryClient = useQueryClient();
-  const { setAccessToken } = useAuthStore.getState();
+  const { setAccessToken, setPhoneNumber } = useAuthStore.getState();
   return useMutation({
     mutationFn: (reason: string) => deleteUser(reason),
     onSuccess: () => {
       queryClient.clear();
       setAccessToken(null);
+      setPhoneNumber('');
     },
   });
 }

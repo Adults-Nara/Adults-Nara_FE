@@ -41,6 +41,7 @@ const PointHistory = () => {
     isFetchingNextPage,
     isError,
     isPending,
+    refetch,
   } = useMyPointTransactionHistory({ startDate, endDate });
 
   const allTransactions = useMemo(() => {
@@ -103,7 +104,7 @@ const PointHistory = () => {
           내역을 불러오지 못했습니다.
         </span>
         <button
-          onClick={() => window.location.reload()}
+          onClick={() => refetch()}
           className="mt-2 text-sm underline opacity-60"
         >
           다시 시도하기
