@@ -25,10 +25,13 @@ export function useVideoS3Url(videoId?: string) {
   };
 }
 
-export function useVideoDetail(videoId: number) {
+export function useVideoDetail(videoId?: string) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['video-detail', videoId],
-    queryFn: () => getVideoDetail(videoId!),
+    queryFn: () => {
+      if (!videoId) throw new Error('videoId is required');
+      return getVideoDetail(videoId);
+    },
     enabled: !!videoId,
   });
 

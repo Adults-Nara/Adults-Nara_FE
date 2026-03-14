@@ -3,6 +3,22 @@ import ReactPlayer from 'react-player';
 import { useRef, useState, ReactNode, useEffect } from 'react';
 import { ShortFormVideoData } from '@/types/video';
 import { useIsLoggedIn } from '@/store/useAuthStore';
+
+/**
+ * 숏폼 플레이어 전용 스타일
+ * 라이브러리 내부의 CSS 변수 및 Shadow DOM 요소를 강제로 제어하여
+ * 16:9 영상을 세로 꽉 차게(cover) 만듭니다.
+ */
+const SHORT_FORM_PLAYER_STYLE = `
+  .shortform-player {
+    --media-object-fit: cover !important;
+  }
+  .shortform-player :where(video, [part="video"], media-video, canvas) {
+    object-fit: cover !important;
+    max-width: none !important;
+  }
+`;
+
 export interface VirtualSwipePlayerProps {
   currentVideo: ShortFormVideoData;
   upVideo: ShortFormVideoData | null;
@@ -16,9 +32,9 @@ export interface VirtualSwipePlayerProps {
   getThumbnailUrl: (video: ShortFormVideoData) => string;
   // Progress & events
   watchProgress?: number; // start position
-  onStartWatching?: (videoId: number) => void; // Called when video begins playing
+  onStartWatching?: (videoId: string) => void; // Called when video begins playing
   onWatchProgressUpdate?: (currentTime: number) => void; // every 10s callback
-  onStopWatching?: (videoId: number, watchTime: number) => void;
+  onStopWatching?: (videoId: string, watchTime: number) => void;
 
   onSwipe: (direction: 'up' | 'down' | 'left' | 'right') => void;
   renderController?: (video: ShortFormVideoData) => ReactNode;
@@ -42,7 +58,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     return () => {
       if (latestStopWatchingRef.current) {
         latestStopWatchingRef.current(
-          Number(props.currentVideo.videoId),
+          props.currentVideo.videoId,
           Math.floor(currentTimeRef.current),
         );
       }
@@ -184,6 +200,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
       onDragStart={(e) => e.preventDefault()}
       // 인라인 스타일로 오프셋 적용
     >
+      <style>{SHORT_FORM_PLAYER_STYLE}</style>
       <div
         className="relative h-full w-full"
         style={{
@@ -196,6 +213,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           {props.videoUrl && (
             <ReactPlayer
               key={`player-${props.currentVideo.videoId}`}
+              className="shortform-player"
               onReady={() => {
                 if (
                   initializedVideoIdRef.current !== props.currentVideo.videoId
@@ -219,7 +237,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                   props.onStartWatching &&
                   playerRef.current?.currentTime === 0
                 ) {
-                  props.onStartWatching(Number(props.currentVideo.videoId));
+                  props.onStartWatching(props.currentVideo.videoId);
                 }
               }}
               onTimeUpdate={() => {
