@@ -3,7 +3,7 @@ import { PlayButton } from './PlayButton';
 import { ProgressBar } from './ProgressBar';
 import { AdProgressBar } from './AdProgressBar';
 import { PageHeader } from './PageHeader';
-import { type RefObject } from 'react';
+import { useState, type RefObject } from 'react';
 
 interface VideoControllerOverlayProps {
   show: boolean;
@@ -12,6 +12,7 @@ interface VideoControllerOverlayProps {
   duration: number;
   playbackRate: number;
   isDragging: RefObject<boolean>;
+  isFullscreen: boolean;
   onTogglePlay: () => void;
   onShowControls: () => void;
   onSeek: (time: number) => void;
@@ -29,6 +30,7 @@ export function VideoControllerOverlay({
   duration,
   playbackRate,
   isDragging,
+  isFullscreen,
   onTogglePlay,
   onShowControls,
   onSeek,
@@ -53,7 +55,8 @@ export function VideoControllerOverlay({
       {!isAdMode && (
         <>
           {/* 뒤로가기 버튼 */}
-          <PageHeader />
+          {!isFullscreen && <PageHeader />}
+
           {/* 영상 중앙 플레이버튼 - 자동재생 실패 시나 일시정지 시 필요 */}
           <div className="absolute inset-0 flex items-center justify-center">
             <PlayButton isPlaying={isPlaying} onTogglePlay={onTogglePlay} />

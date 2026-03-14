@@ -39,6 +39,7 @@ export function VideoPlayer({
   const [isReady, setIsReady] = useState(false);
   const isPlayingRef = useRef(isPlaying);
   const isDragging = useRef(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // src(url)가 바뀔 때마다 상태 초기화
   useEffect(() => {
@@ -152,8 +153,10 @@ export function VideoPlayer({
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
       containerRef.current?.requestFullscreen().catch(console.error);
+      setIsFullscreen(true);
     } else {
       document.exitFullscreen().catch(console.error);
+      setIsFullscreen(false);
     }
   }, []);
   if (!src) {
@@ -232,6 +235,7 @@ export function VideoPlayer({
         duration={duration}
         playbackRate={playbackRate}
         isDragging={isDragging}
+        isFullscreen={isFullscreen}
         onTogglePlay={togglePlay}
         onShowControls={resetHideTimer}
         onSeek={handleSeek}
