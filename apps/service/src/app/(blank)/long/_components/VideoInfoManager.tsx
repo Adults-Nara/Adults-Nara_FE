@@ -11,15 +11,14 @@ import { VideoDescription } from './VideoDescription';
 export function VideoInfoManager() {
   const searchParams = useSearchParams();
   const videoIdStr = searchParams.get('v');
-  const videoId = videoIdStr ? Number(videoIdStr) : null;
 
   // 병렬로 API 3개 호출 (숫자형 videoId만 유효할 때)
   const { data: detailData, isLoading: isDetailLoading } = useVideoDetail(
-    videoId as number,
+    videoIdStr || undefined,
   );
 
   const { data: bookmarkData, isLoading: isBookmarkLoading } =
-    useBookmarkStatus(videoId as number);
+    useBookmarkStatus(videoIdStr || undefined);
 
   // useInteraction은 string 형태의 ID를 받도록 구현되어 있으므로 문자열 전달
   const { data: interactionData, isLoading: isInteractionLoading } =
@@ -42,10 +41,13 @@ export function VideoInfoManager() {
         ? false
         : null;
 
+  if (videoIdStr === null) {
+    return <VideoInfoSkeleton />;
+  }
   return (
     <div className="flex flex-col gap-4">
       <VideoInfo
-        videoId={videoId as number}
+        videoId={videoIdStr}
         title={detailData.title}
         // TODO: 백엔드 API 업데이트 후 실제 값 매핑 (현재 VideoDetailResponse에 없음)
         viewCount={0}

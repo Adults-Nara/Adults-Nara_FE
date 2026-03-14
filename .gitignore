@@ -39,3 +39,4 @@ pnpm-debug.log*
 *.pem
 
 .antigravity/
+CLAUDE_CONTEXT.md

@@ -33,11 +33,11 @@ export function useBookmarkListInfinite(
   });
 }
 
-export function useBookmarkStatus(videoId: number) {
+export function useBookmarkStatus(videoId?: string) {
   const isLogin = useIsLoggedIn();
   return useQuery({
     queryKey: ['bookmarkStatus', videoId],
-    queryFn: () => getBookmarkStatus(videoId),
+    queryFn: () => getBookmarkStatus(videoId as string),
     enabled: isLogin && !!videoId,
   });
 }
