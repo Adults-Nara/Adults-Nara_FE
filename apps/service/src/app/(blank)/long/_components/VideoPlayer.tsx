@@ -200,8 +200,8 @@ export function VideoPlayer({
         playbackRate={playbackRate}
         controls={false}
         onReady={() => {
-          // 광고 모드가 아닐 때만 초기 재생 위치 설정
-          if (!isAdMode && playerRef.current && progress > 0) {
+          // 광고 모드가 아니면, progress가 0보다 클 때에만 시점을 이동
+          if (playerRef.current && progress > 0) {
             playerRef.current.currentTime = progress;
           }
         }}
