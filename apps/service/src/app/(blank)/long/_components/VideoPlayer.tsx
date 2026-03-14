@@ -40,7 +40,7 @@ export function VideoPlayer({
   const isPlayingRef = useRef(isPlaying);
   const isDragging = useRef(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-
+  const [videoNode, setVideoNode] = useState<HTMLVideoElement | null>(null);
   // src(url)가 바뀔 때마다 상태 초기화
   useEffect(() => {
     setCurrentTime(0);
@@ -50,34 +50,33 @@ export function VideoPlayer({
     setShowControls(true);
     clearTimeout(hideTimer.current ?? undefined);
   }, [src]);
+  const handleRefCallback = useCallback((node: HTMLVideoElement | null) => {
+    playerRef.current = node;
+    setVideoNode(node);
+  }, []);
+  useEffect(() => {
+    const node = videoNode;
+    if (!node) return;
 
-  // 원본의 훌륭한 DOM 직접 제어 로직 유지
-  const handleRefCallback = useCallback(
-    (node: HTMLVideoElement | null) => {
-      if (!node) return;
-      playerRef.current = node;
-
-      if (node.readyState >= 1) {
+    if (node.readyState >= 1) {
+      setDuration(node.duration);
+      if (progress > 0) {
+        node.currentTime = progress;
+      }
+      setIsReady(true);
+    } else {
+      const handleLoadedMetadata = () => {
         setDuration(node.duration);
         if (progress > 0) {
           node.currentTime = progress;
         }
         setIsReady(true);
-      } else {
-        const handleLoadedMetadata = () => {
-          setDuration(node.duration);
-          if (progress > 0) {
-            node.currentTime = progress;
-          }
-          setIsReady(true);
-        };
-        node.addEventListener('loadedmetadata', handleLoadedMetadata);
-        return () =>
-          node.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      }
-    },
-    [progress],
-  );
+      };
+      node.addEventListener('loadedmetadata', handleLoadedMetadata);
+      return () =>
+        node.removeEventListener('loadedmetadata', handleLoadedMetadata);
+    }
+  }, [videoNode, progress]);
 
   useEffect(() => {
     if (!isPlaying) return;

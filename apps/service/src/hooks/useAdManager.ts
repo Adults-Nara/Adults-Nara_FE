@@ -34,7 +34,6 @@ export function useAdManager(videoId: number | null): UseAdManagerReturn {
   const { data: s3Data, isError: isS3Error } = useVideoS3Url(
     adId?.toString() || undefined,
   );
-  console.log(adData?.videoId);
 
   const rawS3Url = s3Data?.masterUrl;
   const adVideoUrl =

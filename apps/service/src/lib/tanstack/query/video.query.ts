@@ -4,7 +4,10 @@ import { getVideoS3Url, getVideoDetail } from '@/services/video.api';
 export const videoS3UrlQueryOptions = (videoId?: string) =>
   queryOptions({
     queryKey: ['s3-url', videoId],
-    queryFn: () => getVideoS3Url(videoId as string),
+    queryFn: () => {
+      if (!videoId) throw new Error('videoId is required');
+      return getVideoS3Url(videoId);
+    },
     staleTime: (query: any) => {
       const expiresAt = query.state.data?.expiresAtEpochSeconds;
       if (!expiresAt) return 0;
