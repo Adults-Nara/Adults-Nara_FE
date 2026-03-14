@@ -37,7 +37,7 @@ const ContentCategorySection = () => {
   };
 
   return (
-    <div className="flex w-full flex-col gap-4 px-2">
+    <div className="flex w-full flex-col gap-4 px-1">
       <span className="body2 text-gray-900">
         카테고리 선택
         <span className="body2 text-primary-500 ml-2">
@@ -68,7 +68,7 @@ const ContentCategorySection = () => {
           ))
         )}
       </div>
-      <div className="h-78">
+      <div className="h-69">
         <Controller
           name="tagIds"
           control={control}

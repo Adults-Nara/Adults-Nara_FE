@@ -5,6 +5,7 @@ import {
   useBackofficeLogout,
 } from '@/lib/tanstack/mutation/auth.mutation';
 import { useBackofficeMe } from '@/lib/tanstack/query/auth.query';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useDialogStore } from '@/store/useDialogStore';
 import {
   Button,
@@ -25,6 +26,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -32,6 +34,13 @@ const Sidebar = () => {
   const { data: userData, isError, isPending, refetch } = useBackofficeMe();
   const { mutate: logoutMutate } = useBackofficeLogout();
   const { mutate: accountMutate } = useBackofficeAccount();
+  const setRole = useAuthStore((state) => state.setRole);
+
+  useEffect(() => {
+    if (userData) {
+      setRole(userData.role ?? null);
+    }
+  }, [userData]);
 
   const handleLogout = () => {
     logoutMutate(undefined, {
@@ -82,6 +91,7 @@ const Sidebar = () => {
         <Button onClick={() => refetch()}>재시도</Button>
       </div>
     );
+
   return (
     <div className="bg-navy flex h-full min-w-75 flex-col justify-between gap-5 text-white">
       <div>
