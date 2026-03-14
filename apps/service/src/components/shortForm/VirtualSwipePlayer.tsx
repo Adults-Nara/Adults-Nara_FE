@@ -268,14 +268,19 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/20">
             <svg
               width="72"
-              height="72"
               viewBox="0 0 24 24"
               fill="rgba(255, 255, 255, 0.8)"
+              height="72"
               className="drop-shadow-lg"
             >
               <polygon points="5,3 19,12 5,21" />
             </svg>
           </div>
+        )}
+
+        {/* TODO : 광고일 경우, AD 프로그래스바 */}
+        {props.currentVideo.isAd && (
+          <div className="absolute bottom-4 left-1/2 h-1 w-3/4 -translate-x-1/2 transform bg-white/50"></div>
         )}
         {/* 상하좌우 썸네일 */}
         {props.upVideo && (

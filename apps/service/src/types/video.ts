@@ -20,6 +20,7 @@ export interface LongFormVideoData extends VideoData {
 }
 export interface ShortFormVideoData extends VideoData {
   longformUrl: string;
+  isAd?: boolean;
 }
 export interface ThumbnailData {
   id: string;
