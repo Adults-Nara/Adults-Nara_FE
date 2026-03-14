@@ -25,50 +25,40 @@ export interface VirtualSwipePlayerProps {
 }
 
 export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
+  /* --- 비디오 제어 및 시청 기록 로직 --- */
   const playerRef = useRef<HTMLVideoElement | null>(null);
   const currentTimeRef = useRef<number>(0);
   const isLogin = useIsLoggedIn();
-  // 현재 재생 중인 videoId 저장.
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
-
-  // 렌더링 시점에 즉시 평가 (새 영상으로 넘어가면 즉각 false가 됨)
   const isPlaying = playingVideoId === props.currentVideo.videoId;
-
-  // 어떤 비디오가 초기화(seekTo)를 마쳤는지 ID로 저장
   const initializedVideoIdRef = useRef<string | null>(null);
-
-  // 최신 onStopWatching 콜백 참조 유지
   const latestStopWatchingRef = useRef(props.onStopWatching);
   useEffect(() => {
     latestStopWatchingRef.current = props.onStopWatching;
   }, [props.onStopWatching]);
 
-  // 영상을 벗어날 때 (currentVideo 변경 또는 언마운트)
+  // 벗어날 때 기록 저장
   useEffect(() => {
     return () => {
-      // unmount 시 playerRef.current는 이미 null이 되므로 currentTimeRef를 사용
       if (latestStopWatchingRef.current) {
-        const currentTime = currentTimeRef.current;
         latestStopWatchingRef.current(
           Number(props.currentVideo.videoId),
-          Math.floor(currentTime),
+          Math.floor(currentTimeRef.current),
         );
       }
     };
   }, [props.currentVideo.videoId]);
 
-  // 영상 자동 재생
+  // 자동 재생 타이머
   useEffect(() => {
-    // 100ms 뒤에 재생 시작. 영상이 완전히 로드되기 전에 seekTo가 호출되는 것을 방지하기 위함.
-    const starterTimer = setTimeout(() => {
-      setPlayingVideoId(props.currentVideo.videoId);
-    }, 100);
-
-    // 빠르게 스와이프해서 넘어갈 경우 타이머 취소 (에러 방지)
+    const starterTimer = setTimeout(
+      () => setPlayingVideoId(props.currentVideo.videoId),
+      100,
+    );
     return () => clearTimeout(starterTimer);
   }, [props.currentVideo.videoId]);
 
-  // 10초마다 시청 위치 업데이트 (onWatchProgressUpdate 프롭이 제공됐을 때만 실행)
+  // 10초마다 주기적 업데이트
   useEffect(() => {
     if (
       !isPlaying ||
@@ -79,132 +69,47 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
       return;
 
     const interval = setInterval(() => {
-      // ReactPlayer 인스턴스를 통해 시청 위치 가져오기
       if (playerRef.current) {
         const currentTime = playerRef.current.currentTime;
-        if (currentTime !== undefined) {
-          currentTimeRef.current = currentTime; // unmount cleanup을 위해 캐싱
-          props.onWatchProgressUpdate?.(Math.floor(currentTime));
-        }
+        currentTimeRef.current = currentTime;
+        props.onWatchProgressUpdate?.(Math.floor(currentTime));
       }
     }, 10000);
-
     return () => clearInterval(interval);
   }, [
     isPlaying,
     props.videoLoading,
-    props.currentVideo,
+    props.currentVideo.videoId,
     props.onWatchProgressUpdate,
+    isLogin,
   ]);
 
+  /* 통합 포인터(터치/마우스) 스와이프 로직 */
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const touchStart = useRef({ x: 0, y: 0, time: 0 });
+  const dragStart = useRef({ x: 0, y: 0, time: 0 });
   const dragAxis = useRef<'x' | 'y' | null>(null);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (isAnimating) return;
-    touchStart.current = {
-      x: e.touches[0].clientX,
-      y: e.touches[0].clientY,
-      time: Date.now(),
-    };
-    dragAxis.current = null;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (isAnimating) return;
-    const dx = e.touches[0].clientX - touchStart.current.x;
-    const dy = e.touches[0].clientY - touchStart.current.y;
-
-    if (!dragAxis.current) {
-      if (Math.abs(dx) > Math.abs(dy)) dragAxis.current = 'x';
-      else dragAxis.current = 'y';
-    }
-
-    if (dragAxis.current === 'x') {
-      if ((dx > 0 && !props.leftVideo) || (dx < 0 && !props.rightVideo)) return;
-      setOffset({ x: dx, y: 0 });
-    } else {
-      if ((dy > 0 && !props.upVideo) || (dy < 0 && !props.downVideo)) return;
-      setOffset({ x: 0, y: dy });
-    }
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (isAnimating) return;
-
-    // 터치, 스와이프 구분
-    const endX = e.changedTouches[0].clientX;
-    const endY = e.changedTouches[0].clientY;
-    const dx = endX - touchStart.current.x;
-    const dy = endY - touchStart.current.y;
-
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const timeElapsed = Date.now() - touchStart.current.time;
-
-    if (distance < 10 && timeElapsed < 400) {
-      // 짧은 터치 로직
-      setPlayingVideoId((prev) =>
-        prev === props.currentVideo.videoId ? null : props.currentVideo.videoId,
-      );
-      return;
-    }
-
-    const thresholdX = window.innerWidth * 0.25;
-    const thresholdY = window.innerHeight * 0.25;
-
-    let swipedDirection: 'up' | 'down' | 'left' | 'right' | null = null;
-
-    // 손가락을 뗀 경우
-    setIsAnimating(true);
-
-    if (dragAxis.current === 'x') {
-      if (dx < -thresholdX && props.rightVideo) {
-        setOffset({ x: -window.innerWidth, y: 0 });
-        swipedDirection = 'right'; // 손가락은 왼쪽으로 밀었지만, 우측 영상이 나오는 것
-      } else if (dx > thresholdX && props.leftVideo) {
-        setOffset({ x: window.innerWidth, y: 0 });
-        swipedDirection = 'left';
-      } else {
-        setOffset({ x: 0, y: 0 }); // 제자리 복귀
-      }
-    } else if (dragAxis.current === 'y') {
-      if (dy < -thresholdY && props.downVideo) {
-        setOffset({ x: 0, y: -window.innerHeight });
-        swipedDirection = 'down';
-      } else if (dy > thresholdY && props.upVideo) {
-        setOffset({ x: 0, y: window.innerHeight });
-        swipedDirection = 'up';
-      } else {
-        setOffset({ x: 0, y: 0 });
-      }
-    }
-
-    if (swipedDirection) {
-      props.onSwipe(swipedDirection);
-    }
-    setIsAnimating(false);
-    setOffset({ x: 0, y: 0 });
-  };
   const isDragging = useRef(false);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const onPointerDown = (e: React.PointerEvent) => {
     if (isAnimating) return;
-    e.preventDefault();
+    // @ts-ignore - 브라우저 기본 터치 액션 방해 금지 (CSS touch-action: none 권장)
+    if (e.pointerType === 'touch') e.target.releasePointerCapture(e.pointerId);
+
     isDragging.current = true;
-    touchStart.current = { x: e.clientX, y: e.clientY, time: Date.now() };
+    dragStart.current = { x: e.clientX, y: e.clientY, time: Date.now() };
     dragAxis.current = null;
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const onPointerMove = (e: React.PointerEvent) => {
     if (!isDragging.current || isAnimating) return;
-    e.preventDefault();
-    const dx = e.clientX - touchStart.current.x;
-    const dy = e.clientY - touchStart.current.y;
+
+    const dx = e.clientX - dragStart.current.x;
+    const dy = e.clientY - dragStart.current.y;
 
     if (!dragAxis.current) {
+      if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return; // 미세 진동 무시
       dragAxis.current = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
     }
 
@@ -217,74 +122,67 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     }
   };
 
-  const handleMouseUp = (e: React.MouseEvent) => {
-    if (!isDragging.current) return;
+  const onPointerUp = (e: React.PointerEvent) => {
+    if (!isDragging.current || isAnimating) return;
     isDragging.current = false;
 
-    // TouchEnd와 완전히 동일한 로직 — 여기에 handleTouchEnd 내용 그대로 붙이면 됨
-    const dx = e.clientX - touchStart.current.x;
-    const dy = e.clientY - touchStart.current.y;
-
+    const dx = e.clientX - dragStart.current.x;
+    const dy = e.clientY - dragStart.current.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    const timeElapsed = Date.now() - touchStart.current.time;
+    const timeElapsed = Date.now() - dragStart.current.time;
 
-    if (distance < 10 && timeElapsed < 400) {
+    // 1. 단순 클릭/터치 판정
+    if (distance < 10 && timeElapsed < 300) {
       setPlayingVideoId((prev) =>
         prev === props.currentVideo.videoId ? null : props.currentVideo.videoId,
       );
+      setOffset({ x: 0, y: 0 });
       return;
     }
+
+    // 2. 스와이프 판정
     const thresholdX = window.innerWidth * 0.25;
     const thresholdY = window.innerHeight * 0.25;
-
     let swipedDirection: 'up' | 'down' | 'left' | 'right' | null = null;
 
-    // 손가락을 뗀 경우
     setIsAnimating(true);
 
     if (dragAxis.current === 'x') {
-      if (offset.x < -thresholdX && props.rightVideo) {
-        setOffset({ x: -window.innerWidth, y: 0 });
-        swipedDirection = 'right'; // 손가락은 왼쪽으로 밀었지만, 우측 영상이 나오는 것
-      } else if (offset.x > thresholdX && props.leftVideo) {
-        setOffset({ x: window.innerWidth, y: 0 });
-        swipedDirection = 'left';
-      } else {
-        setOffset({ x: 0, y: 0 }); // 제자리 복귀
-      }
+      if (dx < -thresholdX && props.rightVideo) swipedDirection = 'right';
+      else if (dx > thresholdX && props.leftVideo) swipedDirection = 'left';
     } else if (dragAxis.current === 'y') {
-      if (offset.y < -thresholdY && props.downVideo) {
-        setOffset({ x: 0, y: -window.innerHeight });
-        swipedDirection = 'down';
-      } else if (offset.y > thresholdY && props.upVideo) {
-        setOffset({ x: 0, y: window.innerHeight });
-        swipedDirection = 'up';
-      } else {
-        setOffset({ x: 0, y: 0 });
-      }
+      if (dy < -thresholdY && props.downVideo) swipedDirection = 'down';
+      else if (dy > thresholdY && props.upVideo) swipedDirection = 'up';
     }
 
     if (swipedDirection) {
       props.onSwipe(swipedDirection);
     }
-    setIsAnimating(false);
-    setOffset({ x: 0, y: 0 });
+
+    // 애니메이션 후 초기화
+    setTimeout(() => {
+      setOffset({ x: 0, y: 0 });
+      setIsAnimating(false);
+    }, 200); // CSS transition 시간과 맞춤
   };
 
   return (
     <div
-      className="relative h-dvh w-full touch-none overflow-hidden bg-black"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={() => {
-        isDragging.current = false;
-        setOffset({ x: 0, y: 0 });
+      className="relative h-dvh w-full touch-none overflow-hidden bg-black select-none"
+      // 포인터 이벤트로 통합
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      // 컨테이너 밖으로 나갔을 때의 안전장치
+      onPointerLeave={(e) => {
+        if (isDragging.current) {
+          isDragging.current = false;
+          setOffset({ x: 0, y: 0 });
+        }
       }}
+      // 드래그 시 이미지/텍스트 선택 방지
       onDragStart={(e) => e.preventDefault()}
+      // 인라인 스타일로 오프셋 적용
     >
       <div
         className="relative h-full w-full"
