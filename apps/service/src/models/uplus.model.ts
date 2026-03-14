@@ -27,3 +27,9 @@ export interface DiscountHistoryResponse {
   planDisplayName: string;
   discountAmount: number;
 }
+
+export interface VerifyResponse {
+  verified: boolean;
+  message: string;
+  subscription: SubscriptionResponse;
+}

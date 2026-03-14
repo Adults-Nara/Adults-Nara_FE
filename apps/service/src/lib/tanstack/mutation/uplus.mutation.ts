@@ -3,8 +3,10 @@ import {
   registerSubscription,
   deactivateSubscription,
   syncPlan,
+  myUplusVerify,
 } from '@/services/uplus.api';
 import { RegisterRequest } from '@/models/uplus.model';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function useRegisterSubscription() {
   const queryClient = useQueryClient();
@@ -32,6 +34,20 @@ export function useSyncPlan() {
     mutationFn: () => syncPlan(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['uplus', 'subscription'] });
+    },
+  });
+}
+
+export function useMyuplusVerifyMutation() {
+  const queryClient = useQueryClient();
+  const { setPhoneNumber } = useAuthStore.getState();
+  return useMutation({
+    mutationFn: (data: { phoneNumber: string }) => myUplusVerify(data),
+    onSuccess: (data, variables) => {
+      if (data.verified) {
+        setPhoneNumber(variables.phoneNumber);
+        queryClient.invalidateQueries({ queryKey: ['uplus', 'verify'] });
+      }
     },
   });
 }

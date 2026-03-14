@@ -4,11 +4,7 @@ import {
   getMyPointBalance,
   getMyPointTransactionHistory,
 } from '@/services/point.api';
-import {
-  PointPolicyUpdateRequest,
-  ProductPurchaseRequest,
-  PointTransactionHistoryRequest,
-} from '@/models/point.model';
+import { PointTransactionHistoryRequest } from '@/models/point.model';
 
 // User Queries
 export function useMyPointBalance() {

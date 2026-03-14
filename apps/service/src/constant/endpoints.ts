@@ -78,6 +78,7 @@ export const API_ENDPOINTS = {
   },
   UPLUS: {
     SUBSCRIPTION: '/uplus/subscription',
+    VERIFY: '/uplus/verify',
     SYNC_PLAN: '/uplus/subscription/plan',
     PLANS: '/uplus/plans',
     DISCOUNT_HISTORY: '/uplus/discount/history',

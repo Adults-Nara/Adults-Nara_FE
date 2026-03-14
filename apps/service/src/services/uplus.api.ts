@@ -7,7 +7,19 @@ import {
   RegisterResponse,
   PlanInfo,
   DiscountHistoryResponse,
+  VerifyResponse,
 } from '@/models/uplus.model';
+
+export const myUplusVerify = async (data: { phoneNumber: string }) => {
+  const response = await httpClient<ApiResponse<VerifyResponse>>(
+    API_ENDPOINTS.UPLUS.VERIFY,
+    {
+      method: 'POST',
+      body: JSON.stringify(data),
+    },
+  );
+  return response.data;
+};
 
 export const getMySubscription = async () => {
   const response = await httpClient<ApiResponse<SubscriptionResponse>>(

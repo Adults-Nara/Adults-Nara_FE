@@ -3,8 +3,16 @@ import {
   getMySubscription,
   getPlans,
   getDiscountHistory,
+  myUplusVerify,
 } from '@/services/uplus.api';
-import { RegisterRequest } from '@/models/uplus.model';
+
+export function useMyuplusVerify(data: { phoneNumber: string }) {
+  return useQuery({
+    queryKey: ['uplus', 'verify', data.phoneNumber],
+    queryFn: () => myUplusVerify(data),
+    enabled: !!data.phoneNumber,
+  });
+}
 
 export function useMySubscription() {
   return useQuery({

@@ -5,7 +5,9 @@ import {
   useDeleteUser,
   useUpdateUser,
 } from '@/lib/tanstack/mutation/user.mutation';
+import { useMyuplusVerify } from '@/lib/tanstack/query/uplus.query';
 import { useUserMe } from '@/lib/tanstack/query/user.query';
+import { useAuthStore } from '@/store/useAuthStore';
 import {
   Pen,
   DropdownMenu,
@@ -27,7 +29,11 @@ import { useState } from 'react';
 const UserProfile = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [nickname, setNickname] = useState('');
+  const phoneNumber = useAuthStore((state) => state.phoneNumber);
   const { data, isPending, isError } = useUserMe();
+  const { data: myVerify } = useMyuplusVerify({
+    phoneNumber: phoneNumber || '0',
+  });
   const { mutate: logout } = useLogout();
   const { mutate: editMutate } = useUpdateUser();
   const { mutate: deleteMutate } = useDeleteUser();
@@ -104,10 +110,11 @@ const UserProfile = () => {
           <div className="flex h-10 w-full justify-between">
             <div className="flex items-center gap-2">
               <span className="title2">{data.nickname}</span>
-              {/* TODO: 추후 뱃지 위치 변경이나 로직 추가 */}
-              {/* <span className="body4 bg-uplus rounded-2xl px-2 py-0.75 text-white">
-              LG U+ 회원
-            </span> */}
+              {myVerify?.verified && (
+                <span className="body4 bg-uplus rounded-2xl px-2 py-0.75 text-white">
+                  LG U+ 회원
+                </span>
+              )}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
