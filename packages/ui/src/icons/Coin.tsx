@@ -5,19 +5,12 @@ const SvgCoin = (props: SVGProps<SVGSVGElement>) => (
     height="200px"
     width="200px"
     version="1.1"
-    id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 508 508"
     fill="#000000"
     {...props} // 부모로부터 받은 props(className, onClick 등)를 적용할 수 있게 추가
   >
-    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-    <g
-      id="SVGRepo_tracerCarrier"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    ></g>
-    <g id="SVGRepo_iconCarrier">
+    <g>
       <circle style={{ fill: '#FFD15C' }} cx="254" cy="254" r="254"></circle>
       <circle style={{ fill: '#F8B64C' }} cx="254" cy="254" r="193.2"></circle>
       <path

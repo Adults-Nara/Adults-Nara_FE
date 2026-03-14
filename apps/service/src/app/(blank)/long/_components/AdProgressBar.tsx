@@ -32,7 +32,7 @@ export const AdProgressBar = React.memo(function AdProgressBar({
 
   return (
     // pointer-events-none: 클릭/드래그를 통한 시킹 완전 차단
-    <div className="flex flex-col justify-start">
+    <div className="flex flex-col justify-start" aria-label="광고 재생 진행률">
       <div className="body3 flex items-center justify-between px-4 pt-1">
         {/* 재생 시간 표시 */}
         <div className="w-fit text-white">

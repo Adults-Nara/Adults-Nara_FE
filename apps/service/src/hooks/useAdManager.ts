@@ -7,6 +7,7 @@ import { useVideoS3Url } from '@/lib/tanstack/query/video.query';
 import { useStopWatching } from '@/lib/tanstack/mutation/watch-history.mutation';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 
+// TODO : 광고 노출 확률 수정
 const AD_PROBABILITY = 1;
 const AD_FETCH_TIMEOUT_MS = 5000;
 
@@ -44,7 +45,17 @@ export function useAdManager(videoId: number | null): UseAdManagerReturn {
   const { mutate: stopWatching } = useStopWatching();
 
   useEffect(() => {
-    if (Math.random() < AD_PROBABILITY) {
+    // 1. 초기화: 새로운 영상이 오면 무조건 이전 상태를 리셋
+    setAdState('IDLE');
+    setShouldFetchAd(false);
+
+    // 기존 타이머가 있다면 확실히 제거
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+    }
+
+    // 2. 새로운 광고 판단 로직 실행
+    if (videoId && Math.random() < AD_PROBABILITY) {
       setAdState('FETCHING');
       setShouldFetchAd(true);
 
@@ -52,15 +63,18 @@ export function useAdManager(videoId: number | null): UseAdManagerReturn {
         setAdState('COMPLETED_OR_SKIPPED');
       }, AD_FETCH_TIMEOUT_MS);
     } else {
+      // 광고 대상이 아니면 즉시 통과
       setAdState('COMPLETED_OR_SKIPPED');
     }
 
-    return () => clearTimeout(fetchTimeoutRef.current ?? undefined);
-  }, []);
+    return () => {
+      if (fetchTimeoutRef.current) clearTimeout(fetchTimeoutRef.current);
+    };
+  }, [videoId]);
 
   // 3. 최종적으로 'URL'이 완성되었을 때 PLAYING으로 전환
   useEffect(() => {
-    if (adVideoUrl) {
+    if (adState === 'FETCHING' && adVideoUrl) {
       clearTimeout(fetchTimeoutRef.current ?? undefined);
       setAdState('PLAYING');
     }

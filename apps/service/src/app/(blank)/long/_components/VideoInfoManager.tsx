@@ -42,7 +42,7 @@ export function VideoInfoManager() {
         : null;
 
   if (videoIdStr === null) {
-    return <></>;
+    return <VideoInfoSkeleton />;
   }
   return (
     <div className="flex flex-col gap-4">

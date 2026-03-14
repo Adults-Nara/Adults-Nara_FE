@@ -47,6 +47,8 @@ export function VideoPlayer({
     setDuration(0);
     setIsReady(false);
     setIsPlaying(true);
+    setShowControls(true);
+    clearTimeout(hideTimer.current ?? undefined);
   }, [src]);
 
   // 원본의 훌륭한 DOM 직접 제어 로직 유지
@@ -122,7 +124,7 @@ export function VideoPlayer({
   const togglePlay = useCallback(() => {
     if (isPlayingRef.current) {
       stopHideTimer();
-      // 💡 광고 모드가 아닐 때만 시청 기록 저장
+      // 광고 모드가 아닐 때만 시청 기록 저장
       if (!isAdMode && playerRef.current) {
         onStopWatching?.(playerRef.current.currentTime);
       }
@@ -150,13 +152,21 @@ export function VideoPlayer({
     }
   }, []);
 
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(document.fullscreenElement === containerRef.current);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () =>
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   const toggleFullscreen = useCallback(() => {
-    if (!document.fullscreenElement) {
+    if (document.fullscreenElement !== containerRef.current) {
       containerRef.current?.requestFullscreen().catch(console.error);
-      setIsFullscreen(true);
     } else {
       document.exitFullscreen().catch(console.error);
-      setIsFullscreen(false);
     }
   }, []);
   if (!src) {
