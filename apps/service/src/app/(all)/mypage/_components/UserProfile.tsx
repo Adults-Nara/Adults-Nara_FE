@@ -62,6 +62,12 @@ const UserProfile = () => {
   };
 
   const handleDelete = () => {
+    //TODO: 추후 모달창 수정
+    const confirmed = window.confirm(
+      '정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+    );
+    if (!confirmed) return;
+
     deleteMutate('직접 탈퇴', {
       onSuccess: () => {
         //TODO: 추후 토스트로 변경

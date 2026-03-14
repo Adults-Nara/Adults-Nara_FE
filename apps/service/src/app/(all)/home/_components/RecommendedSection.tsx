@@ -1,6 +1,5 @@
 'use client';
 import VideoLargeCard from '@/components/thumbnail/VideoLargeCard';
-import { MOCK_VIDEO_DATA } from '@/constant/mockData';
 import { ROUTES } from '@/constant/routes';
 import useObserver from '@/hooks/useObserver';
 import { useHomeFeedVideoInfinite } from '@/lib/tanstack/query/recommendation.query';
@@ -15,6 +14,7 @@ export function mapHomeFeedToThumbnail(
   return {
     id: item.videoId,
     thumbnailSrc: item.thumbnailSrc,
+    ProfileImageUrl: item.uploaderProfileImageUrl ?? undefined,
     title: item.title,
     uploader: item.uploader,
     duration: formatVideoTime(item.duration),

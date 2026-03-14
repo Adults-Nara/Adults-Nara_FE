@@ -196,10 +196,10 @@ const PointHistory = () => {
                 </div>
               );
             })}
-            <div ref={observerRef} className="h-1" />
           </div>
         </div>
       ))}
+      <div ref={observerRef} className="h-1" />
     </div>
   );
 };

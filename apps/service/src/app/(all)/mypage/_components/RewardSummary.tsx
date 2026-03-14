@@ -67,7 +67,6 @@ const RewardSummary = ({ showDetailLink = true }: RewardSummaryProps) => {
               <CreditCard size={20} />
               <span className="body2 w-14 text-gray-400">요금제</span>
               <span className="body2">{`${myVerify.subscription.planDisplayName} · ${myVerify.subscription.monthlyFee}`}</span>
-              <span className="body2"></span>
             </div>
           </>
         ) : (

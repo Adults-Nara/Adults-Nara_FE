@@ -49,7 +49,11 @@ export function useHomeFeedVideoInfinite(size?: number) {
     queryKey: ['recommendation-homefeed', size],
     queryFn: ({ pageParam = 0 }) => getRecommendationHomeFeed(pageParam, size),
     initialPageParam: 0,
-    getNextPageParam: (lastPage, pages) =>
-      lastPage.hasNext ? pages.length : undefined,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage || !lastPage.hasNext) {
+        return undefined;
+      }
+      return lastPage.currentPage + 1;
+    },
   });
 }

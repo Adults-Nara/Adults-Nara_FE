@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteUser, updateUser, deactivateUser } from '@/services/user.api';
 import { UpdateUserRequest } from '@/models/user.model';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function useUpdateUser() {
   const queryClient = useQueryClient();
@@ -14,10 +15,12 @@ export function useUpdateUser() {
 
 export function useDeleteUser() {
   const queryClient = useQueryClient();
+  const { setAccessToken } = useAuthStore.getState();
   return useMutation({
     mutationFn: (reason: string) => deleteUser(reason),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+      queryClient.clear();
+      setAccessToken(null);
     },
   });
 }

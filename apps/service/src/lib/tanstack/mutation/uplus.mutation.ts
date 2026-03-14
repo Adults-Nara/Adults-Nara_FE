@@ -40,7 +40,7 @@ export function useSyncPlan() {
 
 export function useMyuplusVerifyMutation() {
   const queryClient = useQueryClient();
-  const { setPhoneNumber } = useAuthStore.getState();
+  const setPhoneNumber = useAuthStore((state) => state.setPhoneNumber);
   return useMutation({
     mutationFn: (data: { phoneNumber: string }) => myUplusVerify(data),
     onSuccess: (data, variables) => {
