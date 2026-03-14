@@ -46,16 +46,20 @@ export function VideoControllerOverlay({
     >
       {/* 광고 모드일 때는 항상 배경 딤을 약간 주거나, 상황에 따라 조절 */}
       <div
-        className={`absolute inset-0 bg-black/30 ${isAdMode ? 'pointer-events-none' : ''}`}
+        className={`absolute inset-0 ${isAdMode ? 'pointer-events-none' : 'bg-black/30'}`}
       />
 
-      {/* 뒤로가기 버튼 - 광고 중에는 숨김 (선택 사항) */}
-      {!isAdMode && <PageHeader />}
-
-      {/* 영상 중앙 플레이버튼 - 자동재생 실패 시나 일시정지 시 필요 */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <PlayButton isPlaying={isPlaying} onTogglePlay={onTogglePlay} />
-      </div>
+      {/* 광고 중에는 숨김 */}
+      {!isAdMode && (
+        <>
+          {/* 뒤로가기 버튼 */}
+          <PageHeader />
+          {/* 영상 중앙 플레이버튼 - 자동재생 실패 시나 일시정지 시 필요 */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <PlayButton isPlaying={isPlaying} onTogglePlay={onTogglePlay} />
+          </div>
+        </>
+      )}
 
       {/* 광고 전용 UI: 스킵 버튼 */}
       {isAdMode && onSkip && (

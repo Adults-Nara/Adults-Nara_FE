@@ -1,5 +1,6 @@
 'use client';
 
+import { formatVideoTime } from '@/utils/format';
 import { Coin } from '@repo/ui';
 import React, { useRef, useEffect } from 'react';
 
@@ -31,29 +32,37 @@ export const AdProgressBar = React.memo(function AdProgressBar({
 
   return (
     // pointer-events-none: 클릭/드래그를 통한 시킹 완전 차단
-    <div className="pointer-events-none w-full flex-1 px-3 py-3 select-none">
-      <div className="relative h-2.5 rounded-full bg-white/30">
-        {/* 진행 채움 바 */}
-        <div
-          ref={trackFillRef}
-          className="absolute top-0 left-0 h-full rounded-full bg-yellow-400"
-        />
-
-        {/* 달리는 사람 아이콘 */}
-        <div
-          ref={thumbRef}
-          className="absolute top-1/2 -translate-y-1/2 text-base leading-none"
-          aria-hidden="true"
-        >
-          🏃
+    <div className="flex flex-col justify-start">
+      <div className="body3 flex items-center justify-between px-4 pt-1">
+        {/* 재생 시간 표시 */}
+        <div className="w-fit text-white">
+          {formatVideoTime(currentTime)} / {formatVideoTime(duration)}
         </div>
+      </div>
+      <div className="pointer-events-none w-full flex-1 px-3 py-3 select-none">
+        <div className="relative h-2.5 rounded-full bg-white/30">
+          {/* 진행 채움 바 */}
+          <div
+            ref={trackFillRef}
+            className="absolute top-0 left-0 h-full bg-yellow-400"
+          />
 
-        {/* 코인 아이콘 (트랙 맨 끝) */}
-        <div
-          className="absolute top-1/2 right-0 translate-x-1 -translate-y-1/2 text-base leading-none"
-          aria-hidden="true"
-        >
-          <Coin className="h-7 w-7" />
+          {/* 달리는 사람 아이콘 */}
+          <div
+            ref={thumbRef}
+            className="absolute top-1/2 -translate-y-1/2 text-base leading-none"
+            aria-hidden="true"
+          >
+            🏃
+          </div>
+
+          {/* 코인 아이콘 (트랙 맨 끝) */}
+          <div
+            className="absolute top-1/2 right-0 translate-x-1 -translate-y-1/2 text-base leading-none"
+            aria-hidden="true"
+          >
+            <Coin className="h-7 w-7" />
+          </div>
         </div>
       </div>
     </div>
