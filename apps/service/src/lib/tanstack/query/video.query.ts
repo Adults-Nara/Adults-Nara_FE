@@ -4,7 +4,7 @@ import { getVideoS3Url, getVideoDetail } from '@/services/video.api';
 export const videoS3UrlQueryOptions = (videoId?: string) =>
   queryOptions({
     queryKey: ['s3-url', videoId],
-    queryFn: () => getVideoS3Url(videoId!),
+    queryFn: () => getVideoS3Url(videoId as string),
     staleTime: (query: any) => {
       const expiresAt = query.state.data?.expiresAtEpochSeconds;
       if (!expiresAt) return 0;
@@ -14,7 +14,7 @@ export const videoS3UrlQueryOptions = (videoId?: string) =>
 
 export function useVideoS3Url(videoId?: string) {
   const { data, isPending, isError } = useQuery({
-    ...videoS3UrlQueryOptions(videoId),
+    ...videoS3UrlQueryOptions(videoId as string),
     enabled: !!videoId,
   });
 
@@ -25,10 +25,10 @@ export function useVideoS3Url(videoId?: string) {
   };
 }
 
-export function useVideoDetail(videoId: number) {
+export function useVideoDetail(videoId?: string) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['video-detail', videoId],
-    queryFn: () => getVideoDetail(videoId!),
+    queryFn: () => getVideoDetail(Number(videoId!)),
     enabled: !!videoId,
   });
 

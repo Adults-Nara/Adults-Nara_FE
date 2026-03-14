@@ -35,7 +35,7 @@ export default function ShortsTab({ params }: ShortsTabProps) {
 
   // 1. 단건 영상 조회 (타겟 영상이 있을 경우)
   const { data: detailData, isLoading: detailLoading } = useVideoDetail(
-    Number(targetVideoId),
+    targetVideoId || undefined,
   );
 
   // 2. 피드 또는 북마크 리스트 영상 무한 조회 (타겟 영상 이후 이어붙일 데이터)
@@ -52,7 +52,7 @@ export default function ShortsTab({ params }: ShortsTabProps) {
 
   // 3. 북마크 리스트 조회 시, 현재 타겟 영상이 북마크에 포함되어 있는지 검증하는 단건 상태 조회
   const { data: bookmarkStatusData, isSuccess: bookmarkStatusSuccess } =
-    useBookmarkStatus(isBookmark && targetVideoId ? Number(targetVideoId) : 0);
+    useBookmarkStatus(isBookmark && targetVideoId ? targetVideoId : undefined);
 
   // 북마크 검증 로직: 스와이프 도중 연관 영상 시 북마크 탭이 풀리는 현상 방지를 위해 최초 진입 시에만 검증
   useEffect(() => {

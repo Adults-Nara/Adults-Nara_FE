@@ -1,46 +1,62 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
 import {
   useVideoS3Url,
   useVideoDetail,
 } from '@/lib/tanstack/query/video.query';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { VideoPlayer } from './VideoPlayer';
-import { usePlaylistAutoPlay } from '@/hooks/usePlaylistAutoPlay';
-import { useIsLoggedIn } from '@/store/useAuthStore';
 import {
   useUpdateWatchPosition,
   useStopWatching,
 } from '@/lib/tanstack/mutation/watch-history.mutation';
-import { useCallback } from 'react';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { VideoPlayer } from './VideoPlayer';
+import { AdRewardToast } from './AdRewardToast';
+import { usePlaylistAutoPlay } from '@/hooks/usePlaylistAutoPlay';
+import { useAdManager } from '@/hooks/useAdManager';
+import { useIsLoggedIn } from '@/store/useAuthStore';
 
 export function VideoPlaybackManager() {
   const searchParams = useSearchParams();
-
-  // URL에서 v 파라미터(shallow routing) 가져오기.
   const videoId = searchParams.get('v');
 
-  // 시청 기록 및 비디오 메타데이터를 가져오기.
-  const { data: detailData } = useVideoDetail(Number(videoId));
+  // 1. 시청 기록 및 비디오 메타데이터 가져오기
+  const { data: detailData } = useVideoDetail(videoId || undefined);
 
-  // 영상 끝까지 다 본 경우 (종료 5초 전 포함) 0초부터 시작
   const watchHistory = detailData?.watchHistory;
   const isVideoCompleted = watchHistory
     ? watchHistory.lastPosition >= watchHistory.duration - 5
     : false;
   const progress = isVideoCompleted ? 0 : (watchHistory?.lastPosition ?? 0);
 
-  // S3 원본 주소 API 호출 (캐싱된 프리패치 데이터가 있다면 즉시 반환)
+  // 2. 광고 상태 머신 (40% 확률 Pre-roll)
+  const {
+    adState,
+    adVideoUrl,
+    showRewardToast,
+    onAdEnded,
+    onAdSkipped,
+    onDismissToast,
+  } = useAdManager(videoId ? Number(videoId) : null);
+
+  // 💡 핵심: 광고가 완전히 끝났거나 애초에 당첨되지 않아 스킵된 상태인지 확인
+  const isAdFinishedOrSkipped = adState === 'COMPLETED_OR_SKIPPED';
+
+  // 3. 메인 영상 S3 호출 (광고가 완전히 끝났을 때만 API 실행)
   const {
     data: s3Data,
     isPending: isS3Pending,
     isError: isS3Error,
-  } = useVideoS3Url(videoId || undefined);
+  } = useVideoS3Url(isAdFinishedOrSkipped ? videoId || undefined : undefined);
 
-  const s3Url = s3Data?.masterUrl;
+  const rawS3Url = s3Data?.masterUrl;
+  const s3Url =
+    process.env.NODE_ENV === 'development'
+      ? rawS3Url?.replace(process.env.NEXT_PUBLIC_STREAM_DOMAIN!, '/stream')
+      : rawS3Url;
 
-  // 로그인 & 시청 기록 로직
+  // 4. 로그인 & 시청 기록 로직
   const isLoggedIn = useIsLoggedIn();
   const { mutate: updatePosition } = useUpdateWatchPosition(Number(videoId));
   const { mutate: stopWatching } = useStopWatching();
@@ -80,20 +96,12 @@ export function VideoPlaybackManager() {
     );
   }
 
-  // TODO: 추후 이곳에 광고 API 호출(useAdVideoUrl) 및 showAd 상태 관리 로직이 추가될 예정입니다.
-
-  if (isS3Error) {
-    return (
-      <div
-        className="flex w-full items-center justify-center bg-black text-white"
-        style={{ aspectRatio: '16/9' }}
-      >
-        영상을 불러오지 못했습니다.
-      </div>
-    );
-  }
-
-  if (isS3Pending || !s3Url) {
+  // 광고 상태가 준비 중이거나, 광고 재생 턴인데 URL이 아직 안 왔다면 로딩
+  if (
+    adState === 'IDLE' ||
+    adState === 'FETCHING' ||
+    (adState === 'PLAYING' && !adVideoUrl)
+  ) {
     return (
       <div
         className="relative w-full overflow-hidden bg-black"
@@ -104,15 +112,52 @@ export function VideoPlaybackManager() {
     );
   }
 
-  // 본 영상 재생 (순수 VideoPlayer 컴포넌트 재사용)
+  const isAdPlaying = adState === 'PLAYING' && !!adVideoUrl;
+
+  // 광고 턴이 끝났는데, 메인 영상 S3 주소가 아직 안 왔다면 로딩
+  if (!isAdPlaying && (isS3Pending || !s3Url)) {
+    return (
+      <div
+        className="relative w-full overflow-hidden bg-black"
+        style={{ aspectRatio: '16/9' }}
+      >
+        <LoadingSpinner thumbnail={detailData?.thumbnailUrl ?? ''} />
+      </div>
+    );
+  }
+
+  // 메인 영상 에러 처리
+  if (!isAdPlaying && isS3Error) {
+    return (
+      <div
+        className="flex w-full items-center justify-center bg-black text-white"
+        style={{ aspectRatio: '16/9' }}
+      >
+        영상을 불러오지 못했습니다.
+      </div>
+    );
+  }
+
+  // 5. URL 확정 및 렌더링
+  const currentUrl = isAdPlaying ? adVideoUrl : s3Url;
+
   return (
-    <VideoPlayer
-      src={s3Url}
-      progress={progress}
-      thumbnail={detailData?.thumbnailUrl ?? ''}
-      onEnded={handleVideoEnd}
-      onWatchProgressUpdate={handleWatchProgressUpdate}
-      onStopWatching={handleStopWatching}
-    />
+    <div className="relative w-full bg-black" style={{ aspectRatio: '16/9' }}>
+      <VideoPlayer
+        key={videoId} // 안정적인 재조정을 위해 비디오 ID를 키로 사용
+        src={currentUrl || null}
+        progress={isAdPlaying ? 0 : progress}
+        thumbnail={detailData?.thumbnailUrl ?? ''}
+        isAdMode={isAdPlaying}
+        onAdEnded={onAdEnded}
+        onAdSkip={onAdSkipped}
+        onEnded={handleVideoEnd}
+        onWatchProgressUpdate={handleWatchProgressUpdate}
+        onStopWatching={handleStopWatching}
+      />
+      {showRewardToast && (
+        <AdRewardToast key="reward-toast" onDismiss={onDismissToast} />
+      )}
+    </div>
   );
 }

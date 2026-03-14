@@ -10,6 +10,7 @@ export interface RecommendationVideoItem {
   date: string;
   userId: number;
   videoType: 'SHORT' | 'LONG';
+  isAd?: boolean;
 }
 
 export interface RecommendationVideoResponse {

@@ -19,7 +19,7 @@ import {
 } from '@/lib/tanstack/mutation/interaction.mutation';
 
 interface VideoInfoProps {
-  videoId: number;
+  videoId: string;
   title: string;
   viewCount: number;
   uploadDate: string;
