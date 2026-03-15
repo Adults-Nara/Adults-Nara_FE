@@ -1,14 +1,74 @@
 'use client';
 import { ROUTES } from '@/constant/routes';
+import {
+  useBackofficeAccount,
+  useBackofficeLogout,
+} from '@/lib/tanstack/mutation/auth.mutation';
 import { useBackofficeMe } from '@/lib/tanstack/query/auth.query';
-import { Button, cn, FilmIcon, Logo, Upload, Users } from '@repo/ui';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useDialogStore } from '@/store/useDialogStore';
+import {
+  Button,
+  cn,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  FilmIcon,
+  Logo,
+  Logout,
+  Settings,
+  Upload,
+  Users,
+  UserX,
+} from '@repo/ui';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const { openDialog } = useDialogStore();
   const { data: userData, isError, isPending, refetch } = useBackofficeMe();
+  const { mutate: logoutMutate } = useBackofficeLogout();
+  const { mutate: accountMutate } = useBackofficeAccount();
+  const setRole = useAuthStore((state) => state.setRole);
+
+  useEffect(() => {
+    if (userData) {
+      setRole(userData.role ?? null);
+    }
+  }, [userData]);
+
+  const handleLogout = () => {
+    logoutMutate(undefined, {
+      onSuccess: () => {
+        //TODO:토스트로 추후변경
+        console.log('로그아웃 성공');
+      },
+      onError: (error) => {
+        console.error('로그아웃 요청 실패:', error);
+        alert('로그아웃에 실패했습니다. 다시 시도해 주세요');
+      },
+    });
+  };
+  const handleAccount = () => {
+    openDialog('UPLOADER', 'delete', {
+      onConfirm: () =>
+        accountMutate(undefined, {
+          onSuccess: () => {
+            //TODO:토스트로 추후변경
+            console.log('회원탈퇴 성공');
+          },
+          onError: (error) => {
+            console.error('회원탈퇴 요청 실패:', error);
+            alert('탈퇴에 실패했습니다. 다시 시도해 주세요');
+          },
+        }),
+    });
+  };
 
   const getLinkStyle = (href: string) =>
     cn(
@@ -31,6 +91,7 @@ const Sidebar = () => {
         <Button onClick={() => refetch()}>재시도</Button>
       </div>
     );
+
   return (
     <div className="bg-navy flex h-full min-w-75 flex-col justify-between gap-5 text-white">
       <div>
@@ -74,14 +135,42 @@ const Sidebar = () => {
               className="h-full w-full rounded-full object-cover"
               src={userData.profileImageUrl}
               alt="유저 프로필"
-              fill
+              width={50}
+              height={50}
             />
-          ) : null}
+          ) : (
+            <Image
+              className="h-full w-full rounded-full object-cover"
+              src="/defaultProfile.png"
+              alt="유저 프로필"
+              width={50}
+              height={50}
+            />
+          )}
         </div>
         <div className="flex w-full flex-col">
           <span className="title3">{userData.nickname}</span>
           <span className="body3 text-gray-700">{userData.email}</span>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button>
+              <Settings className="h-5 w-5 cursor-pointer" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={handleLogout} variant="destructive">
+                <Logout />
+                로그아웃
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleAccount} variant="destructive">
+                <UserX />
+                회원탈퇴
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import z from 'zod';
 export const CONTENT_TYPE_OPTIONS = [
   { label: '숏폼', value: 'SHORT' },
   { label: '롱폼', value: 'LONG' },
-  { label: '광고', value: 'AD' },
+  // { label: '광고', value: 'AD' },
 ] as const;
 
 export const contentSchema = z.object({

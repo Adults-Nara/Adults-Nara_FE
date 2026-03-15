@@ -80,4 +80,7 @@ export const API_ENDPOINTS = {
     PLANS: '/uplus/plans',
     DISCOUNT_HISTORY: '/uplus/discount/history',
   },
+  AD: {
+    BASE: '/ads',
+  },
 } as const;

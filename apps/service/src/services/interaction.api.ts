@@ -13,27 +13,27 @@ export const getMyInteractionStatus = async (videoId: number) => {
 };
 
 // 좋아요
-export const likeVideo = async (videoId: number) => {
+export const likeVideo = async (videoId: string) => {
   const response = await httpClient<ApiResponse<void>>(
-    API_ENDPOINTS.INTERACTIONS.LIKE(videoId),
+    API_ENDPOINTS.INTERACTIONS.LIKE(Number(videoId)),
     { method: 'POST' },
   );
   return response.data;
 };
 
 // 싫어요
-export const dislikeVideo = async (videoId: number) => {
+export const dislikeVideo = async (videoId: string) => {
   const response = await httpClient<ApiResponse<void>>(
-    API_ENDPOINTS.INTERACTIONS.DISLIKE(videoId),
+    API_ENDPOINTS.INTERACTIONS.DISLIKE(Number(videoId)),
     { method: 'POST' },
   );
   return response.data;
 };
 
 // 슈퍼라이크
-export const superLikeVideo = async (videoId: number) => {
+export const superLikeVideo = async (videoId: string) => {
   const response = await httpClient<ApiResponse<void>>(
-    API_ENDPOINTS.INTERACTIONS.SUPERLIKE(videoId),
+    API_ENDPOINTS.INTERACTIONS.SUPERLIKE(Number(videoId)),
     { method: 'POST' },
   );
   return response.data;

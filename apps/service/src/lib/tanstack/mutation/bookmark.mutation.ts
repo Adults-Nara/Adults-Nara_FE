@@ -6,8 +6,8 @@ import { BookmarkStatusResponseDto } from '@/models/bookmark.model';
 export function useToggleBookmark() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (videoId: number) => toggleBookmark(videoId),
-    onMutate: async (videoId: number) => {
+    mutationFn: (videoId: string) => toggleBookmark(videoId),
+    onMutate: async (videoId: string) => {
       // 1. 발송 예정인 쿼리 취소하여 낙관적 업데이트 덮어쓰기 방지
       await queryClient.cancelQueries({
         queryKey: ['bookmarkStatus', videoId],

@@ -9,8 +9,8 @@ import {
 export function useLikeVideo() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (videoId: number) => likeVideo(videoId),
-    onMutate: async (videoId: number) => {
+    mutationFn: (videoId: string) => likeVideo(videoId),
+    onMutate: async (videoId: string) => {
       const queryKey = ['interaction', String(videoId)];
       await queryClient.cancelQueries({ queryKey });
 
@@ -47,8 +47,8 @@ export function useLikeVideo() {
 export function useDislikeVideo() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (videoId: number) => dislikeVideo(videoId),
-    onMutate: async (videoId: number) => {
+    mutationFn: (videoId: string) => dislikeVideo(videoId),
+    onMutate: async (videoId: string) => {
       const queryKey = ['interaction', String(videoId)];
       await queryClient.cancelQueries({ queryKey });
 
