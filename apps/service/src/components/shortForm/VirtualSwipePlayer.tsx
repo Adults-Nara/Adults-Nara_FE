@@ -4,6 +4,7 @@ import { useRef, useState, ReactNode, useEffect, useCallback } from 'react';
 import { ShortFormVideoData } from '@/types/video';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 import { useStopWatching } from '@/lib/tanstack/mutation/watch-history.mutation';
+import { AdProgressBar } from '@/app/(blank)/long/_components/AdProgressBar';
 
 /**
  * 숏폼 플레이어 전용 스타일
@@ -236,6 +237,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           {props.videoUrl && (
             <ReactPlayer
               className="shortform-player"
+              key={props.currentVideo.videoId}
               onReady={() => {
                 if (
                   initializedVideoIdRef.current !== props.currentVideo.videoId
@@ -282,6 +284,14 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           )}
 
           {props.renderController && props.renderController(props.currentVideo)}
+          {props.currentVideo.isAd && (
+            <div className="pointer-events-none absolute bottom-0 left-0 z-50 w-full p-1">
+              <AdProgressBar
+                duration={props.currentVideo.duration}
+                playerRef={playerRef}
+              />
+            </div>
+          )}
         </div>
 
         {/* 로딩 스피너 오버레이 (영상이 안 왔을 때) */}

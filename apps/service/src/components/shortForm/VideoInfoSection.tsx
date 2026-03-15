@@ -1,3 +1,4 @@
+import { findLabelByValue } from '@/utils/findLabelByValue';
 import { Button } from '@repo/ui';
 
 interface VideoInfoSectionProps {
@@ -19,7 +20,9 @@ export function VideoInfoSection({
   isAd,
 }: VideoInfoSectionProps) {
   return (
-    <div className="absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/50 to-transparent p-4">
+    <div
+      className={`absolute right-0 left-0 bg-linear-to-t from-black/50 to-transparent p-4 ${isAd ? 'bottom-10' : 'bottom-0'}`}
+    >
       {/* 업로더 정보 */}
       <div className="mb-2 flex items-center gap-2.5">
         <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full">
@@ -50,7 +53,7 @@ export function VideoInfoSection({
               key={tag}
               className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs text-white"
             >
-              #{tag}
+              # {findLabelByValue(tag)}
             </span>
           ))}
         </div>
