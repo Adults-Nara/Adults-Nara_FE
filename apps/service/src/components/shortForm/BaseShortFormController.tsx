@@ -14,7 +14,9 @@ export function BaseShortFormController({
   isReady,
   actionSlot,
 }: ControllerProps) {
-  const stopPropagation = (e: React.MouseEvent | React.TouchEvent) => {
+  const stopPropagation = (
+    e: React.MouseEvent | React.TouchEvent | React.PointerEvent,
+  ) => {
     e.stopPropagation();
   };
 
@@ -27,6 +29,8 @@ export function BaseShortFormController({
         {/* 1. 우측 액션 버튼 */}
         <div
           className="pointer-events-auto absolute right-3 bottom-[20%]"
+          onPointerDown={stopPropagation}
+          onPointerUp={stopPropagation}
           onTouchStart={stopPropagation}
           onTouchMove={stopPropagation}
           onTouchEnd={stopPropagation}
@@ -44,6 +48,7 @@ export function BaseShortFormController({
           }}
           longformUrl={data.longformUrl}
           tags={data.tags}
+          isAd={data.isAd}
         />
       </div>
     </div>

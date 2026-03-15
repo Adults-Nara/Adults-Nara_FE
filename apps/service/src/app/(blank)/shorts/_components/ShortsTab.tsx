@@ -34,9 +34,7 @@ export default function ShortsTab({ params }: ShortsTabProps) {
   const targetVideoId = params.v || null;
 
   // 1. 단건 영상 조회 (타겟 영상이 있을 경우)
-  const { data: detailData, isLoading: detailLoading } = useVideoDetail(
-    targetVideoId || undefined,
-  );
+  const { data: detailData } = useVideoDetail(targetVideoId || undefined);
 
   // 2. 피드 또는 북마크 리스트 영상 무한 조회 (타겟 영상 이후 이어붙일 데이터)
   const feedQuery = useFeedVideoInfinite(FETCH_SIZE, !isBookmark);
@@ -47,8 +45,7 @@ export default function ShortsTab({ params }: ShortsTabProps) {
     0, // index 파라미터는 더 이상 무의미하므로 0부터 시작
   );
 
-  const { fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    isBookmark ? bookmarkQuery : feedQuery;
+  const { fetchNextPage, hasNextPage } = isBookmark ? bookmarkQuery : feedQuery;
 
   // 3. 북마크 리스트 조회 시, 현재 타겟 영상이 북마크에 포함되어 있는지 검증하는 단건 상태 조회
   const { data: bookmarkStatusData, isSuccess: bookmarkStatusSuccess } =
@@ -99,12 +96,13 @@ export default function ShortsTab({ params }: ShortsTabProps) {
       );
 
       if (existingIndex === -1) {
-        // 리스트에 없다면 (외부 링크 진입 등) 어쩔 수 없이 맨 앞에 꽂습니다.
+        // 리스트에 없다면 맨 앞에 삽입 (이 경우는 0번이 되는 게 맞음)
         formattedVideos = [formattedDetail, ...formattedVideos];
       } else {
-        // 리스트에 이미 존재한다면 (북마크 리스트에서 클릭해 들어온 경우)
-        // 순서는 그대로 냅두고, 데이터만 상세 데이터로 덮어씌워 줍니다!
-        formattedVideos[existingIndex] = formattedDetail;
+        // 리스트에 이미 존재한다면, 순서는 그대로 유지하고 데이터만 상세 정보로 교체
+        const result = [...formattedVideos];
+        result[existingIndex] = formattedDetail;
+        formattedVideos = result;
       }
     }
 
@@ -121,7 +119,7 @@ export default function ShortsTab({ params }: ShortsTabProps) {
 
   if (isDetailLoading) {
     // 공통 로딩 스피너 컴포넌트나 스켈레톤 UI를 반환
-    return <LoadingSpinner thumbnail={''} />;
+    return <LoadingSpinner />;
   }
 
   // 데이터가 완벽하게 준비된 이후에만 BaseShortsTab 렌더링

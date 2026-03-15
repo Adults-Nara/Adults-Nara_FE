@@ -11,6 +11,7 @@ export interface VideoData {
   isLiked?: boolean | null;
   tags?: string[];
   watchProgress?: number;
+  duration: number;
 }
 
 export interface LongFormVideoData extends VideoData {

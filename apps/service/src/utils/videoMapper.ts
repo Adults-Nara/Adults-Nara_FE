@@ -1,4 +1,4 @@
-import { ShortFormVideoData } from '@/types/video';
+import { LongFormVideoData, ShortFormVideoData } from '@/types/video';
 import { RecommendationVideoItem } from '@/models/recommendations.model';
 import { BookmarkListResponse } from '@/models/bookmark.model';
 import { VideoDetailResponse } from '@/models/video.model';
@@ -22,6 +22,8 @@ export const mapRecommendationToShortsData = (
     longformUrl: '', // No longer provided in vertical feed
     watchProgress: item.progress ?? 0,
     tags: [], // No longer provided in vertical feed
+    isAd: item.isAd,
+    duration: item.duration,
   };
 };
 
@@ -43,6 +45,7 @@ export const mapBookmarkToShortsData = (
     isBookmarked: true, // It's from bookmark API
     longformUrl: '',
     watchProgress: item.watchProgressPercent ?? 0,
+    duration: item.duration,
   };
 };
 
@@ -62,12 +65,38 @@ export const mapVideoDetailToShortsData = (
     title: detail.title ?? '',
     watchProgress,
     longformUrl: detail.otherVideoUrl ?? '',
-
     likes: 0,
-    // TODO : detail 에서 comments 개수와 dislikes 개수 제공 요청.
     dislikes: 0,
-    comments: 0,
+    comments: detail.commentCount,
     isBookmarked: false,
     tags: [...(detail.tagIds ?? []), ...(detail.aiTagIds ?? [])],
+    duration: detail.watchHistory?.duration ?? 0,
+  };
+};
+
+export const mapVideoDetailLongData = (
+  detail: VideoDetailResponse,
+): LongFormVideoData => {
+  const watchProgress = detail.watchHistory?.lastPosition ?? 0;
+
+  return {
+    videoId: detail.videoId,
+    videoUrl: '',
+    thumbnail: detail.thumbnailUrl ?? '',
+    uploader: {
+      name: detail.userNickname ?? '알 수 없음',
+      profileImg: detail.userProfile ?? null,
+    },
+    title: detail.title ?? '',
+    watchProgress,
+    viewCount: detail.viewCount,
+    likes: 0,
+    dislikes: 0,
+    comments: detail.commentCount,
+    isBookmarked: false,
+    tags: [...(detail.tagIds ?? []), ...(detail.aiTagIds ?? [])],
+    description: '',
+    uploadDate: detail.createdAt,
+    duration: detail.watchHistory?.duration ?? 0,
   };
 };

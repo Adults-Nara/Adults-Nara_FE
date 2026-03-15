@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, startTransition } from 'react';
+import { useState, useEffect, useRef, startTransition, useCallback } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { BaseShortFormController } from '@/components/shortForm/BaseShortFormController';
@@ -253,21 +253,28 @@ export default function BaseShortsTab({
     currentVideo ? currentVideo.videoId : '0',
   );
 
-  const handleStartWatching = (videoId: string) => {
-    updatePosition({ lastPosition: 0 });
+  const handleStartWatching = (_videoId: string, watchSeconds: number) => {
+    updatePosition({ lastPosition: 0, watchSeconds: watchSeconds });
   };
 
-  const handleWatchProgressUpdate = (currentTime: number) => {
-    updatePosition({ lastPosition: currentTime });
-  };
+  const handleWatchProgressUpdate = useCallback(
+    (currentTime: number, watchSeconds: number) => {
+      updatePosition({ lastPosition: currentTime, watchSeconds: watchSeconds });
+    },
+    [updatePosition],
+  );
 
   const { mutate: stopWatching } = useStopWatching();
 
-  const handleStopWatching = (videoId: string, watchTime: number) => {
+  const handleStopWatching = (
+    videoId: string,
+    lastTime: number,
+    watchSeconds: number,
+  ) => {
     if (isLogin) {
       stopWatching({
         videoId,
-        body: { lastPosition: watchTime },
+        body: { lastPosition: lastTime, watchSeconds: watchSeconds },
       });
     }
   };
@@ -283,6 +290,7 @@ export default function BaseShortsTab({
       downVideo,
       leftVideo,
       rightVideo,
+      hasNextPage: !!onRequireMoreVertical,
       videoUrl: s3Url,
       videoLoading: isS3Pending || isS3Error,
       getThumbnailUrl: (v) => v.thumbnail,

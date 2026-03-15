@@ -23,4 +23,6 @@ export interface VideoDetailResponse {
   aiTagIds: string[];
   summary: string;
   watchHistory: VideoDetailWatchHistory | null;
+  viewCount: number;
+  commentCount: number;
 }
