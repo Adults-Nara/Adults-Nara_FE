@@ -7,8 +7,8 @@ export const API_ENDPOINTS = {
       const params = new URLSearchParams({ email: query.trim() });
       return `/backoffice/auth/check-email?${params.toString()}`;
     },
-    LOGOUT: '/auth/token/logout',
-    REFRESH: '/auth/token/refresh',
+    LOGOUT: '/backoffice/auth/logout',
+    REFRESH: '/backoffice/auth/token/refresh',
     ME: '/auth/me',
   },
   CONTENTS: {

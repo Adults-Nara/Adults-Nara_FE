@@ -6,7 +6,7 @@ export function useInteraction(videoId: string) {
   const isLogin = useIsLoggedIn();
   const { data, isLoading, isError } = useQuery({
     queryKey: ['interaction', videoId],
-    queryFn: () => getMyInteractionStatus(Number(videoId)),
+    queryFn: () => getMyInteractionStatus(videoId),
     enabled: isLogin && !!videoId,
   });
 

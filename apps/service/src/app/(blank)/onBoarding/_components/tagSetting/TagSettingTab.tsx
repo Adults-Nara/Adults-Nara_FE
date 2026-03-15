@@ -1,4 +1,5 @@
 import CategoryAccordion from '@/components/CategoryAccordion';
+import { findLabelByValue } from '@/utils/findLabelByValue';
 import { Button, Chip } from '@repo/ui';
 
 export const TagSettingOnboardingTab = ({
@@ -33,7 +34,7 @@ export const TagSettingOnboardingTab = ({
                   selected
                   className="hover:bg-primary-500"
                 >
-                  {cat}
+                  {findLabelByValue(cat)}
                 </Chip>
               );
             })

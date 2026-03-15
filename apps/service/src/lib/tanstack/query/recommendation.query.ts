@@ -5,11 +5,16 @@ import {
   getRecommendationRelated,
 } from '@/services/recommendation.api';
 
-export function useRelatedVideosInfinite(videoId: string, size: number = 3) {
+export function useRelatedVideosInfinite(
+  videoId?: string,
+  size: number = 10,
+  videoType: 'SHORT' | 'LONG' = 'SHORT',
+  enabeld: boolean = false,
+) {
   return useInfiniteQuery({
-    queryKey: ['recommendation-related', videoId],
+    queryKey: ['recommendation-related', videoId, videoType, size],
     queryFn: ({ pageParam = 0 }) =>
-      getRecommendationRelated(videoId, pageParam, size),
+      getRecommendationRelated(videoId!, pageParam, size, videoType),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
       if (!lastPage || !lastPage.hasNext) {
@@ -23,7 +28,7 @@ export function useRelatedVideosInfinite(videoId: string, size: number = 3) {
 
 export const feedVideoQueryOptions = (size: number = 10) =>
   infiniteQueryOptions({
-    queryKey: ['recommendation-feed'],
+    queryKey: ['recommendation-feed', size],
     queryFn: ({ pageParam = 0 }) => getRecommendationFeed(pageParam, size),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {

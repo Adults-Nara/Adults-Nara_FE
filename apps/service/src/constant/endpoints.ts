@@ -20,7 +20,7 @@ export const API_ENDPOINTS = {
   },
 
   VIDEO: {
-    DETAIL: (videoId: number) => `/videos/${videoId}`,
+    DETAIL: (videoId: string) => `/videos/${videoId}`,
     S3_URL: (videoId: string) => `/videos/${videoId}/play`,
   },
   TAGS: {
@@ -32,16 +32,16 @@ export const API_ENDPOINTS = {
     ONBOARDING: '/user-tag/onboarding',
   },
   WATCH: {
-    POSITION: (videoId: number) => `/watch/${videoId}`,
-    UPDATE_POSITION: (videoId: number) => `/watch/${videoId}/position`,
-    STOP: (videoId: number) => `/watch/${videoId}/stop`,
+    POSITION: (videoId: string) => `/watch/${videoId}`,
+    UPDATE_POSITION: (videoId: string) => `/watch/${videoId}/position`,
+    STOP: (videoId: string) => `/watch/${videoId}/stop`,
     RECENT: '/watch/history/recent',
   },
   INTERACTIONS: {
-    MY_STATUS: (videoId: number) => `/interactions/${videoId}/my-status`,
-    LIKE: (videoId: number) => `/interactions/${videoId}/like`,
-    DISLIKE: (videoId: number) => `/interactions/${videoId}/dislike`,
-    SUPERLIKE: (videoId: number) => `/interactions/${videoId}/superlike`,
+    MY_STATUS: (videoId: string) => `/interactions/${videoId}/my-status`,
+    LIKE: (videoId: string) => `/interactions/${videoId}/like`,
+    DISLIKE: (videoId: string) => `/interactions/${videoId}/dislike`,
+    SUPERLIKE: (videoId: string) => `/interactions/${videoId}/superlike`,
   },
   USERS: {
     DETAIL: (userId: number) => `/users/${userId}`,
@@ -50,9 +50,9 @@ export const API_ENDPOINTS = {
     DELETE: '/users/me',
   },
   COMMENTS: {
-    BASE: (videoId: number) => `/comment/videos/${videoId}`,
+    BASE: (videoId: string) => `/comment/videos/${videoId}`,
     DETAIL: (commentId: number) => `/comment/${commentId}`,
-    MY: (videoId: number) => `/comment/videos/${videoId}/me`,
+    MY: (videoId: string) => `/comment/videos/${videoId}/me`,
   },
   ADMIN: {
     POINT_POLICIES: '/admin/point/policies',
@@ -71,9 +71,9 @@ export const API_ENDPOINTS = {
   },
   BOOKMARKS: {
     BASE: '/bookmarks',
-    TOGGLE: (videoId: number) => `/bookmarks/${videoId}`,
+    TOGGLE: (videoId: string) => `/bookmarks/${videoId}`,
     WARMUP: '/bookmarks/admin/warmup',
-    STATUS: (videoId: number) => `/bookmarks/${videoId}/status`,
+    STATUS: (videoId: string) => `/bookmarks/${videoId}/status`,
     SUMMARY: '/bookmarks/summary',
   },
   UPLUS: {
@@ -82,5 +82,8 @@ export const API_ENDPOINTS = {
     SYNC_PLAN: '/uplus/subscription/plan',
     PLANS: '/uplus/plans',
     DISCOUNT_HISTORY: '/uplus/discount/history',
+  },
+  AD: {
+    BASE: '/ads',
   },
 } as const;

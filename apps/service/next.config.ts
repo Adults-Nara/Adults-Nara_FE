@@ -10,6 +10,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        // /stream/** 요청을 stream.asinna.store로 프록시 (CORS 우회)
+        source: '/stream/:path*',
+        destination: 'https://stream.asinna.store/:path*',
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

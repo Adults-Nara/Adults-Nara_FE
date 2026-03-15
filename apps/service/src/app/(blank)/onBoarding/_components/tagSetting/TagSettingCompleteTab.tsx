@@ -1,3 +1,4 @@
+import { findLabelByValue } from '@/utils/findLabelByValue';
 import { Button, Chip } from '@repo/ui';
 
 export const TagSettingCompleteTab = ({
@@ -20,7 +21,7 @@ export const TagSettingCompleteTab = ({
           {selectedCategories.map((cat, index) => {
             return (
               <Chip key={index} selected className="hover:bg-primary-500">
-                {cat}
+                {findLabelByValue(cat)}
               </Chip>
             );
           })}

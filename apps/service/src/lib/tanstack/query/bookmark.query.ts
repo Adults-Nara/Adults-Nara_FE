@@ -11,6 +11,7 @@ export function useBookmarkListInfinite(
   size: number = 10,
   windowSize: number = 30,
   index: number = 0,
+  options?: { enabled?: boolean },
 ) {
   const isLogin = useIsLoggedIn();
   const maxPages = windowSize / size;
@@ -28,15 +29,15 @@ export function useBookmarkListInfinite(
       return lastPageParam + 1;
     },
     maxPages,
-    enabled: isLogin,
+    enabled: isLogin && (options?.enabled ?? true),
   });
 }
 
-export function useBookmarkStatus(videoId: number) {
+export function useBookmarkStatus(videoId?: string) {
   const isLogin = useIsLoggedIn();
   return useQuery({
     queryKey: ['bookmarkStatus', videoId],
-    queryFn: () => getBookmarkStatus(videoId),
+    queryFn: () => getBookmarkStatus(videoId as string),
     enabled: isLogin && !!videoId,
   });
 }

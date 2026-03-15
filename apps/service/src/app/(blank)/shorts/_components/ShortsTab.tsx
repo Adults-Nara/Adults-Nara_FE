@@ -17,6 +17,7 @@ import {
   mapVideoDetailToShortsData,
   mapRecommendationToShortsData,
 } from '@/utils/videoMapper';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 export interface ShortsTabProps {
   params: { v?: string; listType?: string };
@@ -34,7 +35,7 @@ export default function ShortsTab({ params }: ShortsTabProps) {
 
   // 1. 단건 영상 조회 (타겟 영상이 있을 경우)
   const { data: detailData, isLoading: detailLoading } = useVideoDetail(
-    Number(targetVideoId),
+    targetVideoId || undefined,
   );
 
   // 2. 피드 또는 북마크 리스트 영상 무한 조회 (타겟 영상 이후 이어붙일 데이터)
@@ -51,7 +52,7 @@ export default function ShortsTab({ params }: ShortsTabProps) {
 
   // 3. 북마크 리스트 조회 시, 현재 타겟 영상이 북마크에 포함되어 있는지 검증하는 단건 상태 조회
   const { data: bookmarkStatusData, isSuccess: bookmarkStatusSuccess } =
-    useBookmarkStatus(isBookmark && targetVideoId ? Number(targetVideoId) : 0);
+    useBookmarkStatus(isBookmark && targetVideoId ? targetVideoId : undefined);
 
   // 북마크 검증 로직: 스와이프 도중 연관 영상 시 북마크 탭이 풀리는 현상 방지를 위해 최초 진입 시에만 검증
   useEffect(() => {
@@ -89,14 +90,22 @@ export default function ShortsTab({ params }: ShortsTabProps) {
           mapRecommendationToShortsData,
         );
 
-    // 단건 데이터가 존재하면 배열 맨 앞에 꽂고, 무한스크롤 데이터 중 중복 항목 제거
     if (targetVideoId && detailData) {
       const formattedDetail = mapVideoDetailToShortsData(detailData);
 
-      formattedVideos = [
-        formattedDetail,
-        ...formattedVideos.filter((v) => v.videoId !== String(targetVideoId)),
-      ];
+      // 타겟 영상이 이미 리스트에 존재하는지 확인 (예: 북마크 리스트에서 클릭해 들어온 경우)
+      const existingIndex = formattedVideos.findIndex(
+        (v) => String(v.videoId) === String(targetVideoId),
+      );
+
+      if (existingIndex === -1) {
+        // 리스트에 없다면 (외부 링크 진입 등) 어쩔 수 없이 맨 앞에 꽂습니다.
+        formattedVideos = [formattedDetail, ...formattedVideos];
+      } else {
+        // 리스트에 이미 존재한다면 (북마크 리스트에서 클릭해 들어온 경우)
+        // 순서는 그대로 냅두고, 데이터만 상세 데이터로 덮어씌워 줍니다!
+        formattedVideos[existingIndex] = formattedDetail;
+      }
     }
 
     return formattedVideos;
@@ -108,15 +117,18 @@ export default function ShortsTab({ params }: ShortsTabProps) {
     detailData,
   ]);
 
+  const isDetailLoading = targetVideoId && !detailData;
+
+  if (isDetailLoading) {
+    // 공통 로딩 스피너 컴포넌트나 스켈레톤 UI를 반환
+    return <LoadingSpinner thumbnail={''} />;
+  }
+
+  // 데이터가 완벽하게 준비된 이후에만 BaseShortsTab 렌더링
   return (
-    <>
-      {(isLoading || detailLoading) && <div>로딩중...</div>}
-      <BaseShortsTab
-        algorithmList={videos}
-        onRequireMoreVertical={() => {
-          if (hasNextPage && !isFetchingNextPage) fetchNextPage();
-        }}
-      />
-    </>
+    <BaseShortsTab
+      algorithmList={videos}
+      onRequireMoreVertical={hasNextPage ? fetchNextPage : undefined}
+    />
   );
 }

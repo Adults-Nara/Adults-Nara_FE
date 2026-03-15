@@ -13,7 +13,7 @@ export const getVideoS3Url = async (videoId: string) => {
   return response.data;
 };
 
-export const getVideoDetail = async (videoId: number) => {
+export const getVideoDetail = async (videoId: string) => {
   const response = await httpClient<ApiResponse<VideoDetailResponse>>(
     API_ENDPOINTS.VIDEO.DETAIL(videoId),
     {

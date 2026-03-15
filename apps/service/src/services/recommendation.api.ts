@@ -18,9 +18,10 @@ export const getRecommendationRelated = async (
   videoId: string,
   page: number = 0,
   size: number = 3,
+  videoType: 'SHORT' | 'LONG' = 'SHORT',
 ) => {
   const response = await httpClient<ApiResponse<RecommendationVideoResponse>>(
-    `${API_ENDPOINTS.RECOMMENDATION.RELATED(videoId)}?videoType=SHORT&page=${page}&size=${size}`,
+    `${API_ENDPOINTS.RECOMMENDATION.RELATED(videoId)}?videoType=${videoType}&page=${page}&size=${size}`,
     { method: 'GET' },
   );
   return response.data;

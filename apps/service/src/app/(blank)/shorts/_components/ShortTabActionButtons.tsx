@@ -24,9 +24,8 @@ interface ShortTabActionButtonsProps {
 export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
   const { data: interaction, isLoading: interactionLoading } =
     useInteraction(videoId);
-  const { data: bookmark, isLoading: bookmarkLoading } = useBookmarkStatus(
-    Number(videoId),
-  );
+  const { data: bookmark, isLoading: bookmarkLoading } =
+    useBookmarkStatus(videoId);
 
   const { mutate: mutateLike } = useLikeVideo();
   const { mutate: mutateDislike } = useDislikeVideo();
@@ -69,9 +68,9 @@ export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
     }
     // API 호출
     if (changeTo === true) {
-      mutateLike(Number(videoId));
+      mutateLike(videoId);
     } else {
-      mutateDislike(Number(videoId));
+      mutateDislike(videoId);
     }
   };
 
@@ -85,7 +84,7 @@ export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
     setBookmarked(!bookmarked);
 
     // API 호출
-    mutateBookmark(Number(videoId));
+    mutateBookmark(videoId);
   };
 
   // 댓글 창 열기 로직
