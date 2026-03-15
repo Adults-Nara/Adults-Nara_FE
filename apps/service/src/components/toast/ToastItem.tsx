@@ -38,7 +38,7 @@ export default function ToastItem({ message, type }: ToastItemProps) {
       <motion.div
         initial={{ width: '100%' }}
         animate={{ width: '0%' }}
-        transition={{ duration: 2, ease: 'linear' }}
+        transition={{ duration: 3, ease: 'linear' }}
         className="absolute bottom-0 left-0 h-0.5 bg-white/40"
       />
     </motion.div>

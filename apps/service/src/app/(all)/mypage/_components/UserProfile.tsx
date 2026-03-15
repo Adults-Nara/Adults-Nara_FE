@@ -1,7 +1,5 @@
 'use client';
 import { ROUTES } from '@/constant/routes';
-import { useConfirm } from '@/hooks/useConfirm';
-import { useToast } from '@/hooks/useToast';
 import { useLogout } from '@/lib/tanstack/mutation/auth.mutation';
 import {
   useDeleteUser,
