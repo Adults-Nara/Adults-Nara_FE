@@ -34,7 +34,7 @@ export const createComment = async (
   return response.data;
 };
 
-export const deleteComment = async (commentId: number) => {
+export const deleteComment = async (commentId: string) => {
   const response = await httpClient<ApiResponse<void>>(
     API_ENDPOINTS.COMMENTS.DETAIL(commentId),
     { method: 'DELETE' },
@@ -43,7 +43,7 @@ export const deleteComment = async (commentId: number) => {
 };
 
 export const editComment = async (
-  commentId: number,
+  commentId: string,
   data: CommentEditRequest,
 ) => {
   const response = await httpClient<ApiResponse<MyCommentResponse>>(

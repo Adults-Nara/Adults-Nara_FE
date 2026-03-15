@@ -17,6 +17,8 @@ import {
   useLikeVideo,
   useDislikeVideo,
 } from '@/lib/tanstack/mutation/interaction.mutation';
+import { useSheetStore } from '@/store/useSheetStore';
+import CommentList from '@/components/comment/CommentList';
 
 interface VideoInfoProps {
   videoId: string;
@@ -40,6 +42,7 @@ export function VideoInfo({
   isBookmarked,
 }: VideoInfoProps) {
   const isLogin = useIsLoggedIn();
+  const sheetOpen = useSheetStore((state) => state.open);
   const { mutate: toggleBookmarkMutate, isPending: isToggleBookmarkPending } =
     useToggleBookmark();
   const { mutate: likeVideoMutate, isPending: isLikeVideoPending } =
@@ -117,7 +120,11 @@ export function VideoInfo({
           {isBookmarked ? <BookmarkFill /> : <Bookmark />}
           찜하기
         </Button>
-        <Button variant="noneline" size="lg">
+        <Button
+          variant="noneline"
+          size="lg"
+          onClick={() => sheetOpen('댓글', <CommentList />, false)}
+        >
           <Comment />
           댓글 확인 · {comments}
         </Button>

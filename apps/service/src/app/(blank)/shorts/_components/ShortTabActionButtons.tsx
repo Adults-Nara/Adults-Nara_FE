@@ -16,6 +16,8 @@ import {
 import { useBookmarkStatus } from '@/lib/tanstack/query/bookmark.query';
 import { useToggleBookmark } from '@/lib/tanstack/mutation/bookmark.mutation';
 import { useIsLoggedIn } from '@/store/useAuthStore';
+import { useSheetStore } from '@/store/useSheetStore';
+import CommentList from '@/components/comment/CommentList';
 
 interface ShortTabActionButtonsProps {
   videoId: string;
@@ -35,6 +37,7 @@ export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
   const [liked, setLiked] = useState<boolean | null>();
   const [bookmarked, setBookmarked] = useState<boolean | null>();
   const isLogin = useIsLoggedIn();
+  const sheetOpen = useSheetStore((state) => state.open);
 
   useEffect(() => {
     if (!interaction) return;
@@ -89,7 +92,7 @@ export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
 
   // 댓글 창 열기 로직
   const handleComment = () => {
-    // TODO: 실제 서비스의 댓글 바텀시트(Bottom Sheet)나 모달을 여는 로직 추가
+    sheetOpen('댓글', <CommentList />, false);
   };
   if (interactionLoading || bookmarkLoading) return null;
 

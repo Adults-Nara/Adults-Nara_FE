@@ -3,6 +3,7 @@ import useObserver from '@/hooks/useObserver';
 import { useMyPointTransactionHistory } from '@/lib/tanstack/query/point.query';
 import { PointTransaction } from '@/models/point.model';
 import { cn, LeftArrow2, RightArrow } from '@repo/ui';
+import { MessageSquareX } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const TIME_ZONE = 'Asia/Seoul';
@@ -133,7 +134,9 @@ const PointHistory = () => {
         </div>
 
         <div className="flex flex-col items-center justify-center py-32 opacity-40">
-          <div className="mb-4 text-5xl">💬</div>
+          <div className="mb-2">
+            <MessageSquareX size={35} />
+          </div>
           <span className="title2">포인트 내역이 없어요</span>
           <span className="body3 mt-1">영상을 시청하고 혜택을 받아보세요!</span>
         </div>

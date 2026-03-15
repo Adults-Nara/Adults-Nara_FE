@@ -115,8 +115,8 @@ const SearchLayer = ({ onClose, initial = '' }: SearchLayerProps) => {
               onClick={() => route.push(ROUTES.SEARCH(item))}
               className="flex items-center gap-3"
             >
-              <SearchIcon className="h-5 w-5 text-gray-700" />
-              <span className="body2">
+              <SearchIcon className="h-5 w-5 shrink-0 text-gray-700" />
+              <span className="body2 text-left">
                 {highlightKeyword(item, debouncedKeyword)}
               </span>
             </button>
