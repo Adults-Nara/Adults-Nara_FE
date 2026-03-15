@@ -9,7 +9,7 @@ import {
 
 export const toggleBookmark = async (videoId: string) => {
   const response = await httpClient<ApiResponse<void>>(
-    API_ENDPOINTS.BOOKMARKS.TOGGLE(Number(videoId)),
+    API_ENDPOINTS.BOOKMARKS.TOGGLE(videoId),
     { method: 'POST' },
   );
   return response.data;
@@ -37,7 +37,7 @@ export const getBookmarkList = async (
 
 export const getBookmarkStatus = async (videoId: string) => {
   const response = await httpClient<ApiResponse<BookmarkStatusResponseDto>>(
-    API_ENDPOINTS.BOOKMARKS?.STATUS(Number(videoId)),
+    API_ENDPOINTS.BOOKMARKS?.STATUS(videoId),
     { method: 'GET' },
   );
   return response.data;

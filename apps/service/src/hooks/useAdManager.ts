@@ -20,7 +20,7 @@ interface UseAdManagerReturn {
   onDismissToast: () => void;
 }
 
-export function useAdManager(videoId: number | null): UseAdManagerReturn {
+export function useAdManager(videoId: string | null): UseAdManagerReturn {
   const [adState, setAdState] = useState<AdState>('IDLE');
   const [shouldFetchAd, setShouldFetchAd] = useState(false);
   const [showRewardToast, setShowRewardToast] = useState(false);
