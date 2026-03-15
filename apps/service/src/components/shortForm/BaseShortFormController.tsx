@@ -43,6 +43,7 @@ export function BaseShortFormController({
             profileImg: data.uploader.profileImg || '',
           }}
           longformUrl={data.longformUrl}
+          tags={data.tags}
         />
       </div>
     </div>

@@ -19,9 +19,7 @@ export function useVideoS3Url(videoId?: string) {
   const parsedVideoId = Number(videoId);
   const hasValidVideoId = !isNaN(parsedVideoId) && parsedVideoId > 0;
   const { data, isPending, isError } = useQuery({
-    ...videoS3UrlQueryOptions(
-      parsedVideoId ? String(parsedVideoId) : undefined,
-    ),
+    ...videoS3UrlQueryOptions(videoId),
     enabled: hasValidVideoId,
   });
 
