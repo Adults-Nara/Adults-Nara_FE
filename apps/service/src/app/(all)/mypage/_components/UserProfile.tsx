@@ -1,5 +1,7 @@
 'use client';
 import { ROUTES } from '@/constant/routes';
+import { useConfirm } from '@/hooks/useConfirm';
+import { useToast } from '@/hooks/useToast';
 import { useLogout } from '@/lib/tanstack/mutation/auth.mutation';
 import {
   useDeleteUser,
@@ -160,6 +162,38 @@ const UserProfile = () => {
             </DropdownMenu>
           </div>
         )}
+        <button
+          onClick={() =>
+            useToast.success(
+              '성공테스트 성공테스트 성공테스트 성공테스트 성공테스트 성공테스트',
+            )
+          }
+        >
+          성공
+        </button>
+        <button
+          onClick={() =>
+            useToast.error('에러테스트 에러테스트 에러테스트 에러테스트')
+          }
+        >
+          에러
+        </button>
+        <button
+          onClick={() => useToast.info('인포테스트 인포테스트 인포테스트 ')}
+        >
+          인포
+        </button>
+        <button
+          onClick={async () => {
+            const ok = await useConfirm('정말 탈퇴하시겠습니까?', '탈퇴');
+
+            if (!ok) return;
+            useToast.info('컨펌테스트');
+          }}
+        >
+          모달테스트
+        </button>
+
         <span className="body3 truncate text-gray-700">{data.email}</span>
       </div>
     </div>

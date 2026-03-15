@@ -4,6 +4,8 @@ import './globals.css';
 import BottomSheet from '@/components/BottomSheet';
 import QueryProvider from '@/lib/tanstack/QueryProvider';
 import { AuthProvider } from '@/components/auth';
+import ToastContainer from '@/components/toast/ToastContainer';
+import ConfirmModal from '@/components/confirm/ConfirmModal';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,6 +40,8 @@ export default function RootLayout({
             <AuthProvider>
               {children}
               <BottomSheet />
+              <ToastContainer />
+              <ConfirmModal />
             </AuthProvider>
           </QueryProvider>
         </div>
