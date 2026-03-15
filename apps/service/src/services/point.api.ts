@@ -52,18 +52,24 @@ export const getMyPointTransactionHistory = async (
   params: PointTransactionHistoryRequest,
 ) => {
   const queryParams = new URLSearchParams();
+
   if (params.startDate) queryParams.append('startDate', params.startDate);
   if (params.endDate) queryParams.append('endDate', params.endDate);
+
+  queryParams.append('page', params.page?.toString() ?? '0');
+  if (params.size) {
+    queryParams.append('size', params.size.toString());
+  } else {
+    queryParams.append('size', '10');
+  }
 
   const queryString = queryParams.toString()
     ? `?${queryParams.toString()}`
     : '';
 
   const response = await httpClient<
-    ApiResponse<PointTransactionHistoryResponse[]>
-  >(
-    `${API_ENDPOINTS.POINT?.HISTORY || '/api/v1/point/history'}${queryString}`,
-    { method: 'GET' },
-  );
+    ApiResponse<PointTransactionHistoryResponse>
+  >(`${API_ENDPOINTS.POINT.HISTORY}${queryString}`, { method: 'GET' });
+
   return response.data;
 };

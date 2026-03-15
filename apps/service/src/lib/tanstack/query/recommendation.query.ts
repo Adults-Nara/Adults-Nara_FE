@@ -1,6 +1,7 @@
 import { useInfiniteQuery, infiniteQueryOptions } from '@tanstack/react-query';
 import {
   getRecommendationFeed,
+  getRecommendationHomeFeed,
   getRecommendationRelated,
 } from '@/services/recommendation.api';
 
@@ -45,5 +46,19 @@ export function useFeedVideoInfinite(
   return useInfiniteQuery({
     ...feedVideoQueryOptions(size),
     enabled,
+  });
+}
+
+export function useHomeFeedVideoInfinite(size?: number) {
+  return useInfiniteQuery({
+    queryKey: ['recommendation-homefeed', size],
+    queryFn: ({ pageParam = 0 }) => getRecommendationHomeFeed(pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage || !lastPage.hasNext) {
+        return undefined;
+      }
+      return lastPage.currentPage + 1;
+    },
   });
 }

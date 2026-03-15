@@ -46,6 +46,8 @@ export const API_ENDPOINTS = {
   USERS: {
     DETAIL: (userId: number) => `/users/${userId}`,
     DEACTIVATE: (userId: number) => `/users/${userId}/deactivate`,
+    UPDATE: '/users/me',
+    DELETE: '/users/me',
   },
   COMMENTS: {
     BASE: (videoId: string) => `/comment/videos/${videoId}`,
@@ -76,6 +78,7 @@ export const API_ENDPOINTS = {
   },
   UPLUS: {
     SUBSCRIPTION: '/uplus/subscription',
+    VERIFY: '/uplus/verify',
     SYNC_PLAN: '/uplus/subscription/plan',
     PLANS: '/uplus/plans',
     DISCOUNT_HISTORY: '/uplus/discount/history',
