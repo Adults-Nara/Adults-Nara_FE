@@ -4,7 +4,6 @@ import useObserver from '@/hooks/useObserver';
 import { useComments } from '@/lib/tanstack/query/comment.query';
 import { Button, Input, LeftArrow, Send } from '@repo/ui';
 import CommentItem from './CommentItem';
-import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import {
   useCreateComment,
@@ -14,9 +13,11 @@ import {
 import { useIsLoggedIn } from '@/store/useAuthStore';
 import { MessageSquareX } from 'lucide-react';
 
-const CommentList = () => {
-  const searchParams = useSearchParams();
-  const videoId = searchParams.get('v');
+interface CommentListProps {
+  videoId: string;
+}
+
+const CommentList = ({ videoId }: CommentListProps) => {
   const isLoggin = useIsLoggedIn();
   const [write, setWrite] = useState('');
   const [editMode, setEditMode] = useState(false);
@@ -52,6 +53,7 @@ const CommentList = () => {
       return;
     }
     if (!videoId) return;
+    if (!write.trim()) return;
     createMutate(
       { videoId, data: { text: write } },
       {
@@ -79,7 +81,7 @@ const CommentList = () => {
 
   const handleEditSave = () => {
     if (!videoId || !myComment) return;
-
+    if (!editText.trim()) return;
     editMutate(
       { commentId: myComment.commentId, data: { text: editText } },
       {
@@ -116,7 +118,7 @@ const CommentList = () => {
   if (isError) return <div>에러</div>;
 
   return (
-    <div className="it flex h-full flex-col">
+    <div className="flex h-full flex-col">
       <div className="flex flex-1 flex-col gap-2 overflow-y-auto px-4">
         {isEmpty ? (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-gray-500">

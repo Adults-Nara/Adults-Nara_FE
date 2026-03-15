@@ -123,7 +123,9 @@ export function VideoInfo({
         <Button
           variant="noneline"
           size="lg"
-          onClick={() => sheetOpen('댓글', <CommentList />, false)}
+          onClick={() =>
+            sheetOpen('댓글', <CommentList videoId={videoId} />, false)
+          }
         >
           <Comment />
           댓글 확인 · {comments}

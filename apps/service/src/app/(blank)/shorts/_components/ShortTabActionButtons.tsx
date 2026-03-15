@@ -92,7 +92,7 @@ export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
 
   // 댓글 창 열기 로직
   const handleComment = () => {
-    sheetOpen('댓글', <CommentList />, false);
+    sheetOpen('댓글', <CommentList videoId={videoId} />, false);
   };
   if (interactionLoading || bookmarkLoading) return null;
 
