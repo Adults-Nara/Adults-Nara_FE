@@ -16,12 +16,9 @@ export const videoS3UrlQueryOptions = (videoId?: string) =>
   });
 
 export function useVideoS3Url(videoId?: string) {
-  const parsedVideoId = Number(videoId);
-  const hasValidVideoId = !isNaN(parsedVideoId) && parsedVideoId > 0;
+  const hasValidVideoId = !!videoId;
   const { data, isPending, isError } = useQuery({
-    ...videoS3UrlQueryOptions(
-      parsedVideoId ? String(parsedVideoId) : undefined,
-    ),
+    ...videoS3UrlQueryOptions(videoId),
     enabled: hasValidVideoId,
   });
 
@@ -33,11 +30,10 @@ export function useVideoS3Url(videoId?: string) {
 }
 
 export function useVideoDetail(videoId?: string) {
-  const parsedVideoId = Number(videoId);
-  const hasValidVideoId = !isNaN(parsedVideoId) && parsedVideoId > 0;
+  const hasValidVideoId = !!videoId;
   const { data, isLoading, isError } = useQuery({
     queryKey: ['video-detail', videoId],
-    queryFn: () => getVideoDetail(parsedVideoId),
+    queryFn: () => getVideoDetail(videoId as string),
     enabled: hasValidVideoId,
   });
 

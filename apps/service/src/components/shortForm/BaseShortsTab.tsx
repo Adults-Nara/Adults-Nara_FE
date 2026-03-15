@@ -250,10 +250,10 @@ export default function BaseShortsTab({
       : rawS3Url;
 
   const { mutate: updatePosition } = useUpdateWatchPosition(
-    currentVideo ? Number(currentVideo.videoId) : 0,
+    currentVideo ? currentVideo.videoId : '0',
   );
 
-  const handleStartWatching = (videoId: number) => {
+  const handleStartWatching = (videoId: string) => {
     updatePosition({ lastPosition: 0 });
   };
 
@@ -263,7 +263,7 @@ export default function BaseShortsTab({
 
   const { mutate: stopWatching } = useStopWatching();
 
-  const handleStopWatching = (videoId: number, watchTime: number) => {
+  const handleStopWatching = (videoId: string, watchTime: number) => {
     if (isLogin) {
       stopWatching({
         videoId,

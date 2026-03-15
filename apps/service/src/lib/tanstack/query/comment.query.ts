@@ -6,7 +6,7 @@ import {
 } from '@/models/comment.model';
 
 export function useComments(
-  videoId: number,
+  videoId: string,
   page: number = 0,
   size: number = 20,
 ) {
@@ -16,7 +16,7 @@ export function useComments(
   });
 }
 
-export function useMyComment(videoId: number) {
+export function useMyComment(videoId: string) {
   return useQuery({
     queryKey: ['myComment', videoId],
     queryFn: () => getMyComment(videoId),

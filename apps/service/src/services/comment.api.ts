@@ -9,7 +9,7 @@ import {
 } from '@/models/comment.model';
 
 export const getComments = async (
-  videoId: number,
+  videoId: string,
   page: number = 0,
   size: number = 20,
 ) => {
@@ -21,7 +21,7 @@ export const getComments = async (
 };
 
 export const createComment = async (
-  videoId: number,
+  videoId: string,
   data: CommentCreateRequest,
 ) => {
   const response = await httpClient<ApiResponse<MyCommentResponse>>(
@@ -56,7 +56,7 @@ export const editComment = async (
   return response.data;
 };
 
-export const getMyComment = async (videoId: number) => {
+export const getMyComment = async (videoId: string) => {
   const response = await httpClient<ApiResponse<MyCommentResponse>>(
     API_ENDPOINTS.COMMENTS.MY(videoId),
     { method: 'GET' },

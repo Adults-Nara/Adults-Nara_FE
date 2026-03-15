@@ -8,7 +8,7 @@ import {
 } from '@/models/watch-history.model';
 
 // 시청 위치 조회
-export const getWatchHistory = async (videoId: number) => {
+export const getWatchHistory = async (videoId: string) => {
   const response = await httpClient<ApiResponse<WatchHistoryResponse>>(
     API_ENDPOINTS.WATCH.POSITION(videoId),
     { method: 'GET' },
@@ -18,7 +18,7 @@ export const getWatchHistory = async (videoId: number) => {
 
 // 시청 위치 업데이트 (10초마다 호출)
 export const updateWatchPosition = async (
-  videoId: number,
+  videoId: string,
   body: WatchPositionRequest,
 ) => {
   const response = await httpClient<ApiResponse<void>>(
@@ -33,7 +33,7 @@ export const updateWatchPosition = async (
 
 // 시청 종료
 export const stopWatching = async (
-  videoId: number,
+  videoId: string,
   body: WatchPositionRequest,
 ) => {
   const response = await httpClient<ApiResponse<void>>(

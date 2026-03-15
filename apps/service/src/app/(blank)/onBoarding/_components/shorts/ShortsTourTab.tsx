@@ -119,8 +119,6 @@ export const ShortsTourTab = React.memo(
       (video: ShortFormVideoData) => {
         const isInteractive = tutorialStep >= 4;
 
-        // BaseShortFormController expects RecommendationVideoItem-like structures for the title/uploader.
-        // In the next step we will generalize BaseShortFormController too, but for now we map it.
         const mappedVideo: ShortFormVideoData = {
           videoId: String(video.videoId),
           uploader: {

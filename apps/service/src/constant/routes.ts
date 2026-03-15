@@ -11,4 +11,5 @@ export const ROUTES = {
     return `/search?${params.toString()}`;
   },
   LOGIN: '/login',
+  ONBOARDING: '/onboarding',
 } as const;

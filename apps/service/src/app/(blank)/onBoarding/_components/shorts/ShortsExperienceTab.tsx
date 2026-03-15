@@ -8,194 +8,36 @@ import {
   ShortsOnBoardingActionButtons,
   ActionType,
 } from './ShortsOnBoardingActionButtons';
+import {
+  useVideoDetail,
+  useVideoS3Url,
+} from '@/lib/tanstack/query/video.query';
+import { mapVideoDetailToShortsData } from '@/utils/videoMapper';
 
 export interface ShortsExperienceTabProps {
   onCompleteExperience: (collectedData: string[]) => void;
   setVideoStep: (videoStep: number) => void;
 }
 
-// 임시 목업 데이터 (6개 층)
-const EXPERIENCE_DATA: ShortFormVideoData[][] = [
-  [
-    {
-      videoId: 'exp-1',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 1',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['음식', '여행'],
-    },
-    {
-      videoId: 'exp-2',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 1-1',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['음식', '여행'],
-    },
-  ],
-  [
-    {
-      videoId: 'exp-3',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 2',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['반려동물', '운동'],
-    },
-    {
-      videoId: 'exp-4',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 2-1',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['반려동물', '운동'],
-    },
-  ],
-  [
-    {
-      videoId: 'exp-5',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 3',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['음악', '건강'],
-    },
-    {
-      videoId: 'exp-6',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 3-1',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['음악', '건강'],
-    },
-  ],
-  [
-    {
-      videoId: 'exp-5',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 4',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['음악', '건강'],
-    },
-    {
-      videoId: 'exp-6',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 4-1',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['음악', '건강'],
-    },
-  ],
-  [
-    {
-      videoId: 'exp-5',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 5',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['음악', '건강'],
-    },
-    {
-      videoId: 'exp-6',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 5-1',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['음악', '건강'],
-    },
-  ],
-  [
-    {
-      videoId: 'exp-7',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 6',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['음악', '건강'],
-    },
-    {
-      videoId: 'exp-8',
-      videoUrl:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-      thumbnail: '',
-      uploader: { name: '어른나라', profileImg: null },
-      title: '관심사 파악 영상 6-1',
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      isBookmarked: false,
-      longformUrl: '',
-      tags: ['음악', '건강'],
-    },
-  ],
+// TODO: Replace with real video IDs before production
+const EXPERIENCE_VIDEO_IDS: string[][] = [
+  // 1. 음식 (기존 데이터 완벽)
+  ['820709315068849250', '820708335296210663', '820706994075231204'],
+
+  // 2. 드라마 및 역사 (역사 비중 강화)
+  ['820709134264983627', '820708693355554934', '820709134264983627'],
+
+  // 3. 건강
+  ['820707208936841370', '820707107807979365', '820707360565125821'],
+
+  // 4. 브이로그 (자연과 섞어 3개 구성)
+  ['820708894648592724', '820708989502778104', '820707458141416052'],
+
+  // 5. 자연 및 풍경 (자연 영상 중복 배치)
+  ['820707360565125821', '820707107807979365', '820707208936841370'],
+
+  // 6. 생활 및 투자 (투자 비중 강화)
+  ['820707628123974758', '820707824035717468', '820707628123974758'],
 ];
 
 interface UserAction {
@@ -204,18 +46,88 @@ interface UserAction {
   isSeen: boolean;
 }
 
+const makePlaceholderVideo = (videoId: string): ShortFormVideoData => ({
+  videoId,
+  videoUrl: '',
+  thumbnail: '',
+  uploader: { name: '', profileImg: null },
+  title: '',
+  likes: 0,
+  dislikes: 0,
+  comments: 0,
+  isBookmarked: false,
+  longformUrl: '',
+  tags: [],
+});
+
 export const ShortsExperienceTab = React.memo(
   ({ onCompleteExperience, setVideoStep }: ShortsExperienceTabProps) => {
     const [rowIndex, setRowIndex] = useState<number>(0);
     const [colIndex, setColIndex] = useState<number>(0);
     const [isComplete, setIsComplete] = useState<boolean>(false);
 
+    // 관심사 분석용 태그 캐시 (videoId → tags)
+    const [videoTagsCache, setVideoTagsCache] = useState<
+      Record<string, string[]>
+    >({});
+
     // 관심사 분석을 위한 사용자의 반응(좋아요, 싫어요, 북마크) 수집 상태
     const [userActions, setUserActions] = useState<UserAction[][]>(() =>
-      EXPERIENCE_DATA.map((row) =>
+      EXPERIENCE_VIDEO_IDS.map((row) =>
         row.map(() => ({ isLiked: null, isBookmarked: false, isSeen: false })),
       ),
     );
+
+    const currentVideoId = EXPERIENCE_VIDEO_IDS[rowIndex][colIndex];
+
+    const { data: detailData, isLoading: detailLoading } =
+      useVideoDetail(currentVideoId);
+    const { data: s3Data, isPending: s3Pending } =
+      useVideoS3Url(currentVideoId);
+
+    // 영상이 로드되면 태그를 캐시에 저장 (calcCategoryRecommend에서 사용)
+    useEffect(() => {
+      if (detailData && currentVideoId) {
+        const tags = [
+          ...(detailData.tagIds ?? []),
+          ...(detailData.aiTagIds ?? []),
+        ];
+        setVideoTagsCache((prev) => ({ ...prev, [currentVideoId]: tags }));
+      }
+    }, [detailData, currentVideoId]);
+
+    const videoLoading = detailLoading || s3Pending;
+
+    // 지금 시청중인 영상 (API 데이터 + UserActions 합쳐서 반환)
+    const currentVideo = useMemo<ShortFormVideoData>(() => {
+      if (!detailData) return makePlaceholderVideo(currentVideoId);
+      const mapped = mapVideoDetailToShortsData(detailData);
+      const action = userActions[rowIndex][colIndex];
+      return {
+        ...mapped,
+        videoUrl: s3Data?.masterUrl ?? '',
+        isLiked: action.isLiked,
+        isBookmarked: action.isBookmarked,
+      };
+    }, [detailData, s3Data, rowIndex, colIndex, userActions, currentVideoId]);
+
+    // 썸네일 프리로드 해둘 인접 영상 (placeholder)
+    const upVideo =
+      rowIndex > 0
+        ? makePlaceholderVideo(EXPERIENCE_VIDEO_IDS[rowIndex - 1][0])
+        : null;
+    const downVideo =
+      rowIndex < EXPERIENCE_VIDEO_IDS.length - 1
+        ? makePlaceholderVideo(EXPERIENCE_VIDEO_IDS[rowIndex + 1][0])
+        : null;
+    const leftVideo =
+      colIndex > 0
+        ? makePlaceholderVideo(EXPERIENCE_VIDEO_IDS[rowIndex][colIndex - 1])
+        : null;
+    const rightVideo =
+      colIndex < EXPERIENCE_VIDEO_IDS[rowIndex].length - 1
+        ? makePlaceholderVideo(EXPERIENCE_VIDEO_IDS[rowIndex][colIndex + 1])
+        : null;
 
     // 스와이프 시, 현재 index 갱신 로직
     const handleSwipe = useCallback(
@@ -224,7 +136,10 @@ export const ShortsExperienceTab = React.memo(
         let nextRow = rowIndex;
         let nextCol = colIndex;
 
-        if (direction === 'down' && rowIndex < EXPERIENCE_DATA.length - 1) {
+        if (
+          direction === 'down' &&
+          rowIndex < EXPERIENCE_VIDEO_IDS.length - 1
+        ) {
           nextRow = rowIndex + 1;
           nextCol = 0;
         } else if (direction === 'up' && rowIndex > 0) {
@@ -234,7 +149,7 @@ export const ShortsExperienceTab = React.memo(
           nextCol = colIndex - 1;
         } else if (
           direction === 'right' &&
-          colIndex < EXPERIENCE_DATA[rowIndex].length - 1
+          colIndex < EXPERIENCE_VIDEO_IDS[rowIndex].length - 1
         ) {
           nextCol = colIndex + 1;
         }
@@ -253,14 +168,14 @@ export const ShortsExperienceTab = React.memo(
           // 층(Row)이 아래로 내려갔을 때만 Step 증가
           if (nextRow > rowIndex) {
             setVideoStep(nextRow);
-            if (nextRow === EXPERIENCE_DATA.length - 1) {
+            if (nextRow === EXPERIENCE_VIDEO_IDS.length - 1) {
               setIsComplete(true);
             }
           }
 
           setUserActions((prev) => {
             const newActions = [...prev];
-            newActions[nextRow] = [...newActions[nextRow]]; // 행 복사 (불변성)
+            newActions[nextRow] = [...newActions[nextRow]];
             newActions[nextRow][nextCol] = {
               ...newActions[nextRow][nextCol],
               isSeen: true,
@@ -277,14 +192,12 @@ export const ShortsExperienceTab = React.memo(
       (action: ActionType) => {
         setUserActions((prev) => {
           const newActions = [...prev];
-          const targetAction = prev[rowIndex][colIndex];
           const current = prev[rowIndex][colIndex];
           let isLiked = current.isLiked;
           let isBookmarked = current.isBookmarked;
 
           if (action === 'like' || action === 'dislike') {
             const changeLike = action === 'like';
-
             if (isLiked === null) {
               isLiked = changeLike;
             } else if (isLiked != changeLike) {
@@ -301,8 +214,8 @@ export const ShortsExperienceTab = React.memo(
           newActions[rowIndex] = [...prev[rowIndex]];
           newActions[rowIndex][colIndex] = {
             ...current,
-            isLiked: isLiked,
-            isBookmarked: isBookmarked,
+            isLiked,
+            isBookmarked,
             isSeen: true,
           };
           return newActions;
@@ -311,66 +224,60 @@ export const ShortsExperienceTab = React.memo(
       [rowIndex, colIndex],
     );
 
+    // 통계 결과 (캐시된 태그 기반으로 카테고리 점수 계산)
+    const calcCategoryRecommend = useCallback(() => {
+      const categoryScores = new Map<string, number>();
+
+      for (let row = 0; row < userActions.length; row++) {
+        for (let col = 0; col < userActions[row].length; col++) {
+          const action = userActions[row][col];
+          const videoId = EXPERIENCE_VIDEO_IDS[row][col];
+          const tags = videoTagsCache[videoId] ?? [];
+
+          if (action.isLiked === true) {
+            tags.forEach((tag) => {
+              categoryScores.set(tag, (categoryScores.get(tag) || 0) + 2);
+            });
+          } else if (action.isLiked === false) {
+            tags.forEach((tag) => {
+              categoryScores.set(tag, (categoryScores.get(tag) || 0) - 2);
+            });
+          }
+
+          if (action.isBookmarked) {
+            tags.forEach((tag) => {
+              categoryScores.set(tag, (categoryScores.get(tag) || 0) + 2);
+            });
+          }
+
+          if (col > 0 && action.isSeen) {
+            const prevTags =
+              videoTagsCache[EXPERIENCE_VIDEO_IDS[row][col - 1]] ?? [];
+            prevTags.forEach((tag) => {
+              categoryScores.set(tag, (categoryScores.get(tag) || 0) + 1);
+            });
+          }
+        }
+      }
+
+      const sortedCategories = Array.from(categoryScores.entries()).sort(
+        (a, b) => b[1] - a[1],
+      );
+      // TODO : 이후 카테고리 정해지면, 음수 점수는 제외하고 보내기
+      return sortedCategories.slice(0, 5).map((category) => category[0]);
+    }, [userActions, videoTagsCache]);
+
     const handleComplete = useCallback(() => {
       const recommendedTags = calcCategoryRecommend();
       onCompleteExperience(recommendedTags);
-    }, [onCompleteExperience, userActions]);
-
-    // 지금 시청중인 영상 (UserActions와 합쳐서 반환)
-    const currentVideo = useMemo(() => {
-      const baseVideo = EXPERIENCE_DATA[rowIndex][colIndex];
-      const action = userActions[rowIndex][colIndex];
-
-      return {
-        ...baseVideo,
-        isLiked: action.isLiked,
-        isBookmarked: action.isBookmarked,
-      };
-    }, [rowIndex, colIndex, userActions]);
-
-    // 썸네일 프리로드 해둘 영상
-    const upVideo =
-      rowIndex > 0 ? EXPERIENCE_DATA[rowIndex - 1][colIndex] : null;
-    const downVideo =
-      rowIndex < EXPERIENCE_DATA.length - 1
-        ? EXPERIENCE_DATA[rowIndex + 1][colIndex]
-        : null;
-    const leftVideo =
-      colIndex > 0 ? EXPERIENCE_DATA[rowIndex][colIndex - 1] : null;
-    const rightVideo =
-      colIndex < EXPERIENCE_DATA[rowIndex].length - 1
-        ? EXPERIENCE_DATA[rowIndex][colIndex + 1]
-        : null;
+    }, [onCompleteExperience, calcCategoryRecommend]);
 
     const renderController = useCallback(
       (video: ShortFormVideoData) => {
-        const mappedVideo: ShortFormVideoData = {
-          videoId: String(video.videoId),
-          uploader: {
-            name: video.uploader.name,
-            profileImg: video.uploader.profileImg,
-          },
-          title: video.title,
-
-          thumbnail: video.thumbnail,
-
-          tags: [],
-
-          likes: video.likes,
-          dislikes: video.dislikes,
-          comments: video.comments,
-          isBookmarked: video.isBookmarked,
-          isLiked: video.isLiked,
-
-          watchProgress: 0,
-          longformUrl: '',
-          videoUrl: '',
-        };
-
         return (
           <BaseShortFormController
-            data={mappedVideo}
-            isReady={true}
+            data={video}
+            isReady={!videoLoading}
             actionSlot={
               <div className="flex flex-col gap-5 pb-6">
                 <ShortsOnBoardingActionButtons
@@ -384,58 +291,14 @@ export const ShortsExperienceTab = React.memo(
           />
         );
       },
-      [handleAction],
+      [handleAction, videoLoading],
     );
-
-    // 통계 결과
-    const calcCategoryRecommend = () => {
-      const categoryScores = new Map();
-
-      for (let row = 0; row < userActions.length; row++) {
-        for (let col = 0; col < userActions[row].length; col++) {
-          const action = userActions[row][col];
-          const video = EXPERIENCE_DATA[row][col];
-
-          // 좋아요/싫어요를 누른 영상
-          if (action.isLiked === true) {
-            video.tags?.forEach((tag) => {
-              categoryScores.set(tag, (categoryScores.get(tag) || 0) + 2);
-            });
-          } else if (action.isLiked === false) {
-            video.tags?.forEach((tag) => {
-              categoryScores.set(tag, (categoryScores.get(tag) || 0) - 2);
-            });
-          }
-
-          //북마크를 한 영상
-          if (action.isBookmarked) {
-            video.tags?.forEach((tag) => {
-              categoryScores.set(tag, (categoryScores.get(tag) || 0) + 2);
-            });
-          }
-
-          if (col > 0 && action.isSeen) {
-            EXPERIENCE_DATA[row][col - 1].tags?.forEach((tag) => {
-              categoryScores.set(tag, (categoryScores.get(tag) || 0) + 1);
-            });
-          }
-        }
-      }
-
-      const sortedCategories = Array.from(categoryScores.entries()).sort(
-        (a, b) => b[1] - a[1],
-      );
-      // TODO : 이후 카테고리 정해지면, 음수 점수는 제외하고 보내기
-      return sortedCategories.slice(0, 5).map((category) => category[0]);
-    };
 
     return (
       <div className="relative h-dvh w-full bg-black">
         <div className="absolute top-20 right-4 z-50">
           <button
-            onClick={() => {
-              handleComplete();
-            }}
+            onClick={handleComplete}
             className={`rounded px-4 py-2 text-white ${isComplete ? 'bg-primary-500' : 'bg-white/20'}`}
           >
             완료
@@ -448,11 +311,11 @@ export const ShortsExperienceTab = React.memo(
           downVideo={downVideo}
           leftVideo={leftVideo}
           rightVideo={rightVideo}
-          videoUrl={currentVideo.videoUrl}
-          videoLoading={false}
+          videoUrl={currentVideo.videoUrl ?? ''}
+          videoLoading={videoLoading}
           getThumbnailUrl={(v) => v.thumbnail}
           onSwipe={handleSwipe}
-          renderController={(video) => renderController(video)}
+          renderController={renderController}
         />
       </div>
     );

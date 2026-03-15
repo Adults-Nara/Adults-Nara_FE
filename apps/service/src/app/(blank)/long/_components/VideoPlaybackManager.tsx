@@ -38,7 +38,7 @@ export function VideoPlaybackManager() {
     onAdEnded,
     onAdSkipped,
     onDismissToast,
-  } = useAdManager(videoId ? Number(videoId) : null);
+  } = useAdManager(videoId ? videoId : null);
 
   // 💡 핵심: 광고가 완전히 끝났거나 애초에 당첨되지 않아 스킵된 상태인지 확인
   const isAdFinishedOrSkipped = adState === 'COMPLETED_OR_SKIPPED';
@@ -58,7 +58,8 @@ export function VideoPlaybackManager() {
 
   // 4. 로그인 & 시청 기록 로직
   const isLoggedIn = useIsLoggedIn();
-  const { mutate: updatePosition } = useUpdateWatchPosition(Number(videoId));
+  // TODO : video Id 없는 경우 처리
+  const { mutate: updatePosition } = useUpdateWatchPosition(videoId || '0');
   const { mutate: stopWatching } = useStopWatching();
 
   const handleWatchProgressUpdate = useCallback(
@@ -74,7 +75,8 @@ export function VideoPlaybackManager() {
     (currentTime: number) => {
       if (isLoggedIn && currentTime > 0) {
         stopWatching({
-          videoId: Number(videoId),
+          // TODO : videoId 없는 경우 처리
+          videoId: videoId || '0',
           body: { lastPosition: currentTime },
         });
       }

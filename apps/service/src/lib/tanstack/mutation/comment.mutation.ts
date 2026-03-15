@@ -5,11 +5,20 @@ import { CommentCreateRequest, CommentEditRequest } from '@/models/comment.model
 export function useCreateComment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ videoId, data }: { videoId: number; data: CommentCreateRequest }) =>
-      createComment(videoId, data),
+    mutationFn: ({
+      videoId,
+      data,
+    }: {
+      videoId: string;
+      data: CommentCreateRequest;
+    }) => createComment(videoId, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', variables.videoId] });
-      queryClient.invalidateQueries({ queryKey: ['myComment', variables.videoId] });
+      queryClient.invalidateQueries({
+        queryKey: ['comments', variables.videoId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['myComment', variables.videoId],
+      });
     },
   });
 }

@@ -5,7 +5,7 @@ import {
 } from '@/services/watch-history.api';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 
-export function useWatchHistory(videoId: number) {
+export function useWatchHistory(videoId: string) {
   const isLogin = useIsLoggedIn();
   return useQuery({
     queryKey: ['watchHistory', videoId],

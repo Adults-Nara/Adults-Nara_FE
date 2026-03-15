@@ -5,7 +5,7 @@ import {
 } from '@/services/watch-history.api';
 import { WatchPositionRequest } from '@/models/watch-history.model';
 
-export function useUpdateWatchPosition(videoId: number) {
+export function useUpdateWatchPosition(videoId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: WatchPositionRequest) =>
@@ -24,7 +24,7 @@ export function useStopWatching() {
       videoId,
       body,
     }: {
-      videoId: number;
+      videoId: string;
       body: WatchPositionRequest;
     }) => stopWatching(videoId, body),
     onSuccess: (_, variables) => {

@@ -7,12 +7,14 @@ interface VideoInfoSectionProps {
     profileImg?: string;
   };
   longformUrl: string; // 영상의 긴 형식 URL (예: 유튜브 링크)
+  tags?: string[];
 }
 
 export function VideoInfoSection({
   title,
   uploader,
   longformUrl,
+  tags,
 }: VideoInfoSectionProps) {
   return (
     <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/50 to-transparent p-4">
@@ -34,6 +36,18 @@ export function VideoInfoSection({
 
       {/* 영상 제목 및 시청 버튼 */}
       <p className="title3 mb-3">{title}</p>
+      {tags && tags.length > 0 && (
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs text-white"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
       {longformUrl !== '' && (
         <Button
           size={null}

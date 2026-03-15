@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getAd } from '@/services/ad.api';
 
-export function useAd(videoId: number | null, enabled: boolean) {
+export function useAd(videoId: string | null, enabled: boolean) {
   return useQuery({
     queryKey: ['ad', videoId],
     queryFn: () => getAd(videoId!),
