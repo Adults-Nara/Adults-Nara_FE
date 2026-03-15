@@ -30,6 +30,9 @@ const RecommendedRelatedSection = () => {
   const searchParams = useSearchParams();
   const videoId = searchParams.get('v');
 
+  if (!videoId) {
+    return <div>연관 영상을 불러올 수 없습니다.</div>;
+  }
   const {
     data,
     fetchNextPage,
@@ -37,7 +40,7 @@ const RecommendedRelatedSection = () => {
     isFetchingNextPage,
     isError,
     isPending,
-  } = useRelatedVideosInfinite(videoId ?? '', 10, 'LONG');
+  } = useRelatedVideosInfinite(videoId, 10, 'LONG');
 
   const observerRef = useObserver({
     hasNextPage,
