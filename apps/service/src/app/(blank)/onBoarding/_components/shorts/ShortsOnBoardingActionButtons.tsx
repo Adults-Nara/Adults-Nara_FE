@@ -46,7 +46,7 @@ export function ShortsOnBoardingActionButtons({
       case 'DISLIKE':
         return '취향이 아니라면\n싫어요를 누를 수 있어요.';
       case 'BOOKMARK':
-        return '나중에 다시 보려면\n북마크에 저장하세요!';
+        return '나중에 다시 보려면\n찜하기로 저장해보세요!';
       case 'COMMENT':
         return '댓글을 남겨\n소통해보세요!';
       default:

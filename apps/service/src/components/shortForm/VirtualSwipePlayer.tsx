@@ -332,28 +332,28 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           <div className="absolute bottom-4 left-1/2 h-1 w-3/4 -translate-x-1/2 transform bg-white/50"></div>
         )}
         {/* 상하좌우 썸네일 */}
-        {props.upVideo && (
+        {props.upVideo?.thumbnail && (
           <img
             src={props.getThumbnailUrl(props.upVideo)}
             alt=""
             className="absolute inset-0 h-full w-full -translate-y-full object-cover"
           />
         )}
-        {props.downVideo && (
+        {props.downVideo?.thumbnail && (
           <img
             src={props.getThumbnailUrl(props.downVideo)}
             alt=""
             className="absolute inset-0 h-full w-full translate-y-full object-cover"
           />
         )}
-        {props.leftVideo && (
+        {props.leftVideo?.thumbnail && (
           <img
             src={props.getThumbnailUrl(props.leftVideo)}
             alt=""
             className="absolute inset-0 h-full w-full -translate-x-full object-cover"
           />
         )}
-        {props.rightVideo && (
+        {props.rightVideo?.thumbnail && (
           <img
             src={props.getThumbnailUrl(props.rightVideo)}
             alt=""

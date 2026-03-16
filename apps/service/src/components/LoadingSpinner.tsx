@@ -1,7 +1,7 @@
 export const LoadingSpinner = ({ thumbnail }: { thumbnail?: string }) => {
   return (
     <div
-      className="relative flex h-dvh w-full items-center justify-center overflow-hidden bg-black"
+      className="relative flex h-full w-full items-center justify-center overflow-hidden bg-black"
       role="status"
       aria-live="polite"
       aria-label="콘텐츠 로딩 중"

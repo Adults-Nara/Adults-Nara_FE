@@ -38,7 +38,7 @@ async function fetchUntilFound(
   return null;
 }
 
-export function usePlaylistAutoPlay(currentVideoId?: string) {
+export function usePlaylistAutoPlay(currentVideoId?: string, onBeforeNavigate?: () => void) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -70,6 +70,7 @@ export function usePlaylistAutoPlay(currentVideoId?: string) {
 
         if (currentIndex !== -1 && currentIndex + 1 < allItems.length) {
           const nextVideoId = allItems[currentIndex + 1].videoId;
+          onBeforeNavigate?.();
           router.push(`/long?v=${nextVideoId}&listType=bookmarkList`, {
             scroll: false,
           });
@@ -86,6 +87,7 @@ export function usePlaylistAutoPlay(currentVideoId?: string) {
         );
 
         if (nextVideoId) {
+          onBeforeNavigate?.();
           router.push(`/long?v=${nextVideoId}&listType=bookmarkList`, {
             scroll: false,
           });
@@ -98,6 +100,7 @@ export function usePlaylistAutoPlay(currentVideoId?: string) {
       if (relatedData?.pages && relatedData.pages.length > 0) {
         const firstRelatedVideo = relatedData.pages[0].content?.[0];
         if (firstRelatedVideo) {
+          onBeforeNavigate?.();
           router.push(`/long?v=${firstRelatedVideo.videoId}`, {
             scroll: false,
           });
@@ -112,6 +115,7 @@ export function usePlaylistAutoPlay(currentVideoId?: string) {
     fetchNextPage,
     relatedData,
     router,
+    onBeforeNavigate,
   ]);
 
   return handleVideoEnd;
