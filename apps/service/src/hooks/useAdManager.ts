@@ -93,7 +93,7 @@ export function useAdManager(videoId: string | null): UseAdManagerReturn {
         if (adData?.videoId) {
           stopWatching({
             videoId: adData.videoId,
-            body: { lastPosition: duration },
+            body: { lastPosition: duration, watchSeconds: duration },
           });
         }
         // TODO: 광고 시청 완료 토스트 노출 (보상 안내)

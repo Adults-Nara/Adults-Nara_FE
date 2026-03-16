@@ -19,9 +19,13 @@ import { useIsLoggedIn } from '@/store/useAuthStore';
 
 interface ShortTabActionButtonsProps {
   videoId: string;
+  isAd: boolean;
 }
 
-export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
+export function ShortTabActionButtons({
+  videoId,
+  isAd,
+}: ShortTabActionButtonsProps) {
   const { data: interaction, isLoading: interactionLoading } =
     useInteraction(videoId);
   const { data: bookmark, isLoading: bookmarkLoading } =
@@ -76,6 +80,11 @@ export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
 
   // 북마크 로직
   const handleBookmark = () => {
+    if (isAd) {
+      // TODO : 광고는 찜하기 안된다는 모달 띄우기
+      console.log('광고는 찜하기 할 수 없습니다.');
+      return;
+    }
     if (!isLogin) {
       // TODO : 로그인 모달 띄우기
       console.log('로그인이 필요합니다.');

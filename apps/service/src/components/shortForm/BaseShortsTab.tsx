@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef, startTransition, useCallback } from 'react';
+import {
+  useState,
+  useEffect,
+  useRef,
+  startTransition,
+  useCallback,
+} from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { BaseShortFormController } from '@/components/shortForm/BaseShortFormController';
@@ -305,8 +311,8 @@ export default function BaseShortsTab({
           isReady={true}
           actionSlot={
             <ShortTabActionButtons
-              key={`btn-${currentVideo.videoId}`}
               videoId={currentVideo.videoId}
+              isAd={currentVideo.isAd ?? false}
             />
           }
         />

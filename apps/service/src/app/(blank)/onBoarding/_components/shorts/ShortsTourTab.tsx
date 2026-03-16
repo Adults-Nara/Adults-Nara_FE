@@ -27,6 +27,7 @@ const ONBOARDING_DATA: ShortFormVideoData[] = [
     comments: 0,
     isBookmarked: false,
     longformUrl: '',
+    duration: 15,
   },
   {
     videoId: 'ob-2',
@@ -40,6 +41,7 @@ const ONBOARDING_DATA: ShortFormVideoData[] = [
     comments: 0,
     isBookmarked: false,
     longformUrl: '',
+    duration: 15,
   },
   {
     videoId: 'ob-3',
@@ -53,6 +55,7 @@ const ONBOARDING_DATA: ShortFormVideoData[] = [
     comments: 0,
     isBookmarked: false,
     longformUrl: '',
+    duration: 15,
   },
 ];
 
@@ -126,6 +129,7 @@ export const ShortsTourTab = React.memo(
             profileImg: video.uploader.profileImg,
           },
           title: video.title,
+          duration: video.duration,
 
           thumbnail: video.thumbnail,
 

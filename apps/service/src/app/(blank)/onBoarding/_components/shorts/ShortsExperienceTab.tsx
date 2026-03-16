@@ -58,6 +58,7 @@ const makePlaceholderVideo = (videoId: string): ShortFormVideoData => ({
   isBookmarked: false,
   longformUrl: '',
   tags: [],
+  duration: 0,
 });
 
 export const ShortsExperienceTab = React.memo(
