@@ -41,7 +41,7 @@ const PreferenceEdit = ({
             })
           )}
         </div>
-        <div className="h-100 overflow-auto">
+        <div className="h-55 overflow-auto">
           <CategoryAccordion
             selectedCategories={selectedCategories}
             onToggle={onToggle}

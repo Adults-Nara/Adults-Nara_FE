@@ -5,7 +5,7 @@ import { Close } from '@repo/ui';
 import { useEffect } from 'react';
 
 const BottomSheet = () => {
-  const { isOpen, title, content, close } = useSheetStore();
+  const { isOpen, title, content, bgBlack, close } = useSheetStore();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -29,10 +29,13 @@ const BottomSheet = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       {/* 어두운 배경 */}
-      <div className="absolute inset-0 bg-black/40" />
+      <div
+        className={`absolute inset-0 ${bgBlack ? 'bg-black/40' : ''}`}
+        onClick={() => close()}
+      />
 
       {/* 바텀시트 본체 */}
-      <div className="z-10 flex w-full max-w-112.5 flex-col rounded-t-2xl bg-white pb-8">
+      <div className="z-10 flex w-full max-w-112.5 flex-col rounded-t-2xl bg-white">
         <div className="flex w-full flex-col gap-1 rounded-t-2xl border-b border-gray-300 bg-gray-100 px-5 py-3">
           <div className="mx-auto h-1 w-12 rounded-full bg-gray-400" />
           <div className="flex w-full justify-between">
@@ -43,7 +46,7 @@ const BottomSheet = () => {
           </div>
         </div>
 
-        <div className="custom-scrollbar h-[60vh] overflow-y-auto">
+        <div className="custom-scrollbar h-[65vh] overflow-y-auto">
           {content}
         </div>
       </div>

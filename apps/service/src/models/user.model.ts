@@ -34,8 +34,5 @@ export interface UserResponse {
 }
 
 export interface UpdateUserRequest {
-  nickname?: string;
-  password?: string;
-  profileImageUrl?: string;
-  preferredTagIds?: number[];
+  nickname: string;
 }

@@ -1,6 +1,13 @@
 'use client';
+import { ROUTES } from '@/constant/routes';
 import { useLogout } from '@/lib/tanstack/mutation/auth.mutation';
+import {
+  useDeleteUser,
+  useUpdateUser,
+} from '@/lib/tanstack/mutation/user.mutation';
+import { useMyuplusVerify } from '@/lib/tanstack/query/uplus.query';
 import { useUserMe } from '@/lib/tanstack/query/user.query';
+import { useAuthStore } from '@/store/useAuthStore';
 import {
   Pen,
   DropdownMenu,
@@ -16,16 +23,62 @@ import {
   Button,
 } from '@repo/ui';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const UserProfile = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [nickname, setNickname] = useState('');
+  const phoneNumber = useAuthStore((state) => state.phoneNumber);
   const { data, isPending, isError } = useUserMe();
+  const { data: myVerify } = useMyuplusVerify({
+    phoneNumber: phoneNumber || '0',
+  });
   const { mutate: logout } = useLogout();
+  const { mutate: editMutate } = useUpdateUser();
+  const { mutate: deleteMutate } = useDeleteUser();
+  const router = useRouter();
 
   const handleSave = () => {
-    setIsEdit(false);
+    if (nickname.trim().length === 0) {
+      //TODO: 추후 토스트 변경
+      return console.log('값을 입력해주세요');
+    }
+
+    editMutate(
+      { nickname: nickname.trim() },
+      {
+        onSuccess: () => {
+          //TODO: 추후 토스트로 변경
+          console.log('수정성공');
+          setIsEdit(false);
+        },
+        onError: () => {
+          //TODO: 추후 토스트로 변경
+          console.log('수정실패');
+        },
+      },
+    );
+  };
+
+  const handleDelete = () => {
+    //TODO: 추후 모달창 수정
+    const confirmed = window.confirm(
+      '정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+    );
+    if (!confirmed) return;
+
+    deleteMutate('직접 탈퇴', {
+      onSuccess: () => {
+        //TODO: 추후 토스트로 변경
+        console.log('탈퇴 성공');
+        router.replace(ROUTES.HOME);
+      },
+      onError: () => {
+        //TODO: 추후 토스트로 변경
+        console.log('탈퇴 실패');
+      },
+    });
   };
 
   //TODO: 추후 로딩 에러 화면 구현
@@ -63,10 +116,11 @@ const UserProfile = () => {
           <div className="flex h-10 w-full justify-between">
             <div className="flex items-center gap-2">
               <span className="title2">{data.nickname}</span>
-              {/* TODO: 추후 뱃지 위치 변경이나 로직 추가 */}
-              {/* <span className="body4 bg-uplus rounded-2xl px-2 py-0.75 text-white">
-              LG U+ 회원
-            </span> */}
+              {myVerify?.verified && (
+                <span className="body4 bg-uplus rounded-2xl px-2 py-0.75 text-white">
+                  LG U+ 회원
+                </span>
+              )}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -79,7 +133,6 @@ const UserProfile = () => {
                 <DropdownMenuGroup>
                   <DropdownMenuItem
                     onClick={() => {
-                      //TODO: 추후 수정API 연동
                       setIsEdit(true);
                       setNickname(data.nickname);
                     }}
@@ -95,7 +148,10 @@ const UserProfile = () => {
                     <Logout />
                     로그아웃
                   </DropdownMenuItem>
-                  <DropdownMenuItem variant="destructive">
+                  <DropdownMenuItem
+                    onClick={handleDelete}
+                    variant="destructive"
+                  >
                     <UserX />
                     회원탈퇴
                   </DropdownMenuItem>

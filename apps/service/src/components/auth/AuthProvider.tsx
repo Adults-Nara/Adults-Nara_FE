@@ -44,7 +44,6 @@ export default function AuthProvider({
           console.error('엑세스토큰 없음');
         }
       } catch (e) {
-        console.error('인증 초기화 실패');
       } finally {
         setIsInitialized(true);
       }
@@ -65,7 +64,6 @@ export default function AuthProvider({
     }
   }, [isInitialized, isPending, isLoggedIn, tags, pathname, router]);
 
-  console.log('레이아웃 엑세스토큰 검증', accessToken);
   // 초기 로딩 시 깜빡임 방지 (화이트아웃 방지를 위해 스켈레톤이나 null 리턴)
   if (!isInitialized) return null;
 

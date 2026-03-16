@@ -27,3 +27,14 @@ export const getRecommendationRelated = async (
   );
   return response.data;
 };
+
+export const getRecommendationHomeFeed = async (
+  page: number = 0,
+  size: number = 10,
+) => {
+  const response = await httpClient<ApiResponse<RecommendationVideoResponse>>(
+    `${API_ENDPOINTS.RECOMMENDATION.FEED}?videoType=LONG&page=${page}&size=${size}`,
+    { method: 'GET' },
+  );
+  return response.data;
+};

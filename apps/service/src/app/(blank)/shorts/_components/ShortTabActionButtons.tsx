@@ -17,6 +17,8 @@ import { useBookmarkStatus } from '@/lib/tanstack/query/bookmark.query';
 import { useToggleBookmark } from '@/lib/tanstack/mutation/bookmark.mutation';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 import { InteractionType } from '@/types/interaction';
+import { useSheetStore } from '@/store/useSheetStore';
+import CommentList from '@/components/comment/CommentList';
 
 interface ShortTabActionButtonsProps {
   videoId: string;
@@ -43,12 +45,16 @@ export function ShortTabActionButtons({
     useToggleBookmark();
 
   const isLoggedIn = useIsLoggedIn();
-  const interacted = (interaction?.interactionType as InteractionType) ?? null;
+  const interacted = interaction?.interactionType ?? null;
   const bookmarked = bookmark?.isBookmarked ?? false;
+  const sheetOpen = useSheetStore((state) => state.open);
 
   // isLoading or isPending이면 버튼 비활성화 → debounce 효과
   const isInteractionBusy =
-    interactionLoading || isLikePending || isDislikePending;
+    interactionLoading ||
+    isLikePending ||
+    isDislikePending ||
+    isSuperlikePending;
   const isBookmarkBusy = bookmarkLoading || isBookmarkPending;
 
   const handleInteracted = (type: InteractionType) => {
@@ -72,10 +78,15 @@ export function ShortTabActionButtons({
     mutateBookmark(videoId);
   };
 
+  // 댓글 창 열기 로직
+  const handleComment = () => {
+    sheetOpen('댓글', <CommentList videoId={videoId} />, false);
+  };
+
   return (
     <div className="flex flex-col items-center gap-6 text-[28px] drop-shadow-sm">
       <button
-        onClick={() => handleInteracted(interacted)}
+        onClick={() => handleInteracted('LIKE')}
         disabled={isInteractionBusy}
         className="transition-transform active:scale-90 disabled:opacity-50"
       >
@@ -83,7 +94,7 @@ export function ShortTabActionButtons({
       </button>
 
       <button
-        onClick={() => handleInteracted(interacted)}
+        onClick={() => handleInteracted('DISLIKE')}
         disabled={isInteractionBusy}
         className="transition-transform active:scale-90 disabled:opacity-50"
       >
@@ -100,7 +111,7 @@ export function ShortTabActionButtons({
 
       <button
         className="flex flex-col items-center gap-1 border-none transition-transform active:scale-90"
-        onClick={() => {}}
+        onClick={handleComment}
       >
         <Comment />
         <span className="body4">{commentNum}</span>

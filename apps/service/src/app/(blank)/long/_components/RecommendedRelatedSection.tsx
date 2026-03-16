@@ -2,13 +2,14 @@
 import VideoLargeCard from '@/components/thumbnail/VideoLargeCard';
 import { ROUTES } from '@/constant/routes';
 import useObserver from '@/hooks/useObserver';
-import { useHomeFeedVideoInfinite } from '@/lib/tanstack/query/recommendation.query';
+import { useRelatedVideosInfinite } from '@/lib/tanstack/query/recommendation.query';
 import { RecommendationVideoItem } from '@/models/recommendations.model';
 import { ThumbnailData } from '@/types/video';
 import { formatVideoTime } from '@/utils/format';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
-export function mapHomeFeedToThumbnail(
+export function mapRelatedToThumbnail(
   item: RecommendationVideoItem,
 ): ThumbnailData {
   return {
@@ -25,7 +26,13 @@ export function mapHomeFeedToThumbnail(
   };
 }
 
-const RecommendedSection = () => {
+const RecommendedRelatedSection = () => {
+  const searchParams = useSearchParams();
+  const videoId = searchParams.get('v');
+
+  if (!videoId) {
+    return <div>연관 영상을 불러올 수 없습니다.</div>;
+  }
   const {
     data,
     fetchNextPage,
@@ -33,7 +40,7 @@ const RecommendedSection = () => {
     isFetchingNextPage,
     isError,
     isPending,
-  } = useHomeFeedVideoInfinite();
+  } = useRelatedVideosInfinite(videoId, 10, 'LONG');
 
   const observerRef = useObserver({
     hasNextPage,
@@ -46,7 +53,7 @@ const RecommendedSection = () => {
   if (isError) return <div>에러</div>;
 
   const items = data?.pages.flatMap((page) => page.content) ?? [];
-  const videos = items.map(mapHomeFeedToThumbnail);
+  const videos = items.map(mapRelatedToThumbnail);
 
   return (
     <div className="flex flex-col gap-4">
@@ -73,4 +80,4 @@ const RecommendedSection = () => {
   );
 };
 
-export default RecommendedSection;
+export default RecommendedRelatedSection;

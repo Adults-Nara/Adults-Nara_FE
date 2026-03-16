@@ -1,6 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createComment, deleteComment, editComment } from '@/services/comment.api';
-import { CommentCreateRequest, CommentEditRequest } from '@/models/comment.model';
+import {
+  createComment,
+  deleteComment,
+  editComment,
+} from '@/services/comment.api';
+import {
+  CommentCreateRequest,
+  CommentEditRequest,
+} from '@/models/comment.model';
 
 export function useCreateComment() {
   const queryClient = useQueryClient();
@@ -26,7 +33,7 @@ export function useCreateComment() {
 export function useDeleteComment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (commentId: number) => deleteComment(commentId),
+    mutationFn: (commentId: string) => deleteComment(commentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments'] });
       queryClient.invalidateQueries({ queryKey: ['myComment'] });
@@ -37,8 +44,13 @@ export function useDeleteComment() {
 export function useEditComment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ commentId, data }: { commentId: number; data: CommentEditRequest }) =>
-      editComment(commentId, data),
+    mutationFn: ({
+      commentId,
+      data,
+    }: {
+      commentId: string;
+      data: CommentEditRequest;
+    }) => editComment(commentId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments'] });
       queryClient.invalidateQueries({ queryKey: ['myComment'] });
