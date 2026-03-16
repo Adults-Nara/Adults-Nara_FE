@@ -1,4 +1,4 @@
-export type InteractionType = 'LIKE' | 'DISLIKE' | 'SUPERLIKE' | null;
+import { InteractionType } from '@/types/interaction';
 
 export interface InteractionStatusResponse {
   interactionType: InteractionType;

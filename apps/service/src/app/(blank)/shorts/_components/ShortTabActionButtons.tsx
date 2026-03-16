@@ -7,15 +7,16 @@ import {
   Bookmark,
   Comment,
 } from '@repo/ui';
-import { useEffect, useState } from 'react';
 import { useInteraction } from '@/lib/tanstack/query/interaction.query';
 import {
   useDislikeVideo,
   useLikeVideo,
+  useSuperLikeVideo,
 } from '@/lib/tanstack/mutation/interaction.mutation';
 import { useBookmarkStatus } from '@/lib/tanstack/query/bookmark.query';
 import { useToggleBookmark } from '@/lib/tanstack/mutation/bookmark.mutation';
 import { useIsLoggedIn } from '@/store/useAuthStore';
+import { InteractionType } from '@/types/interaction';
 
 interface ShortTabActionButtonsProps {
   videoId: string;
@@ -36,17 +37,13 @@ export function ShortTabActionButtons({
   const { mutate: mutateLike, isPending: isLikePending } = useLikeVideo();
   const { mutate: mutateDislike, isPending: isDislikePending } =
     useDislikeVideo();
+  const { mutate: mutateSuperlike, isPending: isSuperlikePending } =
+    useSuperLikeVideo();
   const { mutate: mutateBookmark, isPending: isBookmarkPending } =
     useToggleBookmark();
 
   const isLoggedIn = useIsLoggedIn();
-
-  const liked =
-    interaction?.interactionType === 'LIKE'
-      ? true
-      : interaction?.interactionType === 'DISLIKE'
-        ? false
-        : null;
+  const interacted = (interaction?.interactionType as InteractionType) ?? null;
   const bookmarked = bookmark?.isBookmarked ?? false;
 
   // isLoading or isPending이면 버튼 비활성화 → debounce 효과
@@ -54,13 +51,19 @@ export function ShortTabActionButtons({
     interactionLoading || isLikePending || isDislikePending;
   const isBookmarkBusy = bookmarkLoading || isBookmarkPending;
 
-  const handleLike = (changeTo: boolean) => {
+  const handleInteracted = (type: InteractionType) => {
     if (!isLoggedIn || isInteractionBusy) return;
 
-    if (changeTo === true) {
-      mutateLike(videoId);
-    } else {
-      mutateDislike(videoId);
+    switch (type) {
+      case 'LIKE':
+        mutateLike(videoId);
+        break;
+      case 'DISLIKE':
+        mutateDislike(videoId);
+        break;
+      case 'SUPERLIKE':
+        mutateSuperlike(videoId);
+        break;
     }
   };
 
@@ -72,19 +75,19 @@ export function ShortTabActionButtons({
   return (
     <div className="flex flex-col items-center gap-6 text-[28px] drop-shadow-sm">
       <button
-        onClick={() => handleLike(true)}
+        onClick={() => handleInteracted(interacted)}
         disabled={isInteractionBusy}
         className="transition-transform active:scale-90 disabled:opacity-50"
       >
-        {liked === true ? <LikeFill /> : <Like />}
+        {interacted === 'LIKE' ? <LikeFill /> : <Like />}
       </button>
 
       <button
-        onClick={() => handleLike(false)}
+        onClick={() => handleInteracted(interacted)}
         disabled={isInteractionBusy}
         className="transition-transform active:scale-90 disabled:opacity-50"
       >
-        {liked === false ? <DislikeFill /> : <Dislike />}
+        {interacted === 'DISLIKE' ? <DislikeFill /> : <Dislike />}
       </button>
 
       <button
