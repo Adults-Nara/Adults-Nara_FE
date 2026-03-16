@@ -98,7 +98,7 @@ export function useSuperLikeVideo() {
         (old: InteractionStatusResponse | undefined) => {
           const currentType = old?.interactionType;
           const newType: InteractionType =
-            currentType === 'SUPERLIKE' ? null : 'DISLIKE';
+            currentType === 'SUPERLIKE' ? null : 'SUPERLIKE';
           return { interactionType: newType };
         },
       );

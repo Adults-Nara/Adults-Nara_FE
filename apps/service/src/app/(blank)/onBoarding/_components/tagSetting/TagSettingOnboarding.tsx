@@ -3,11 +3,6 @@ import { OnboardingHeader } from '../common/OnboardingHeader';
 import { TagSettingOnboardingTab } from './TagSettingTab';
 import { TagSettingCompleteTab } from './TagSettingCompleteTab';
 import { useRouter } from 'next/navigation';
-import {
-  getMyChildTags,
-  saveOnboardingTags,
-  updateUserTags,
-} from '@/services/tag.api';
 import { useUpdateUserTags } from '@/lib/tanstack/mutation/tag.mutation';
 
 interface TagSettingOnboardingProps {

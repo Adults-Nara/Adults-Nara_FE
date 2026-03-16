@@ -34,7 +34,11 @@ export default function ShortsTab({ params }: ShortsTabProps) {
   const targetVideoId = params.v || null;
 
   // 1. 단건 영상 조회 (타겟 영상이 있을 경우)
-  const { data: detailData } = useVideoDetail(targetVideoId || undefined);
+  const {
+    data: detailData,
+    isLoading: isDetailLoading,
+    isError: isDetailError,
+  } = useVideoDetail(targetVideoId || undefined);
 
   // 2. 피드 또는 북마크 리스트 영상 무한 조회 (타겟 영상 이후 이어붙일 데이터)
   const feedQuery = useFeedVideoInfinite(FETCH_SIZE, !isBookmark);
@@ -115,11 +119,14 @@ export default function ShortsTab({ params }: ShortsTabProps) {
     detailData,
   ]);
 
-  const isDetailLoading = targetVideoId && !detailData;
-
-  if (isDetailLoading) {
+  if (isDetailLoading && !!targetVideoId) {
     // 공통 로딩 스피너 컴포넌트나 스켈레톤 UI를 반환
     return <LoadingSpinner />;
+  }
+
+  if (targetVideoId && isDetailError) {
+    // TODO : 에러 UI 컴포넌트로 교체
+    return null;
   }
 
   // 데이터가 완벽하게 준비된 이후에만 BaseShortsTab 렌더링

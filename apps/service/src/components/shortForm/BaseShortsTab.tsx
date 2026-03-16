@@ -308,9 +308,11 @@ export default function BaseShortsTab({
 
   const handleWatchProgressUpdate = useCallback(
     (currentTime: number, watchSeconds: number) => {
+      if (isLogin) return;
+
       updatePosition({ lastPosition: currentTime, watchSeconds: watchSeconds });
     },
-    [updatePosition],
+    [updatePosition, isLogin],
   );
 
   const { mutate: stopWatching } = useStopWatching();

@@ -3,7 +3,6 @@ import ReactPlayer from 'react-player';
 import { useRef, useState, ReactNode, useEffect, useCallback } from 'react';
 import { ShortFormVideoData } from '@/types/video';
 import { useIsLoggedIn } from '@/store/useAuthStore';
-import { useStopWatching } from '@/lib/tanstack/mutation/watch-history.mutation';
 import { AdProgressBar } from '@/app/(blank)/long/_components/AdProgressBar';
 
 /**
@@ -50,7 +49,7 @@ export interface VirtualSwipePlayerProps {
 
 export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   /* --- 비디오 제어 및 시청 기록 로직 --- */
-  const playerRef = useRef<HTMLVideoElement | null>(null);
+  const playerRef = useRef<any>(null); // ReactPlayer ref
   const currentTimeRef = useRef<number>(0);
   const isLogin = useIsLoggedIn();
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
@@ -73,10 +72,12 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   // 벗어날 때 기록 저장
   useEffect(() => {
     return () => {
-      if (latestStopWatchingRef.current) {
+      if (latestStopWatchingRef.current && playerRef.current) {
+        const finalTime =
+          playerRef.current.getCurrentTime?.() ?? currentTimeRef.current;
         latestStopWatchingRef.current(
           props.currentVideo.videoId,
-          Math.floor(currentTimeRef.current),
+          Math.floor(finalTime),
           getStayingTimeDelta(),
         );
       }
@@ -105,7 +106,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
 
     const interval = setInterval(() => {
       if (playerRef.current) {
-        const currentTime = playerRef.current.currentTime;
+        const currentTime = playerRef.current.getCurrentTime?.() || 0;
         currentTimeRef.current = currentTime;
         props.onWatchProgressUpdate?.(
           Math.floor(currentTime),
@@ -257,10 +258,8 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
               style={{ objectFit: 'cover' }}
               onPlay={() => {
                 if (!isLogin) return;
-                if (
-                  props.onStartWatching &&
-                  playerRef.current?.currentTime === 0
-                ) {
+                const currentTime = playerRef.current?.getCurrentTime?.() || 0;
+                if (props.onStartWatching && currentTime < 1) {
                   props.onStartWatching(
                     props.currentVideo.videoId,
                     getStayingTimeDelta(),
@@ -287,8 +286,8 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           {props.currentVideo.isAd && (
             <div className="pointer-events-none absolute bottom-0 left-0 z-50 w-full p-1">
               <AdProgressBar
-                duration={props.currentVideo.duration}
                 playerRef={playerRef}
+                duration={props.currentVideo.duration}
               />
             </div>
           )}
