@@ -4,24 +4,33 @@ import {
   Comment,
   Dislike,
   DislikeFill,
+  Great,
+  GreatFill,
   Like,
   LikeFill,
 } from '@repo/ui';
 import { ShortsTourFocusWrapper } from './ShortsTourFocusWrapper';
+import { InteractionType } from '@/types/interaction';
 
-export type ActionType = 'like' | 'dislike' | 'bookmark' | 'comment' | null;
+export type ActionType =
+  | 'SUPERLIKE'
+  | 'LIKE'
+  | 'DISLIKE'
+  | 'BOOKMARK'
+  | 'COMMENT'
+  | null;
 
 interface OnboardingActionButtonsProps {
   focusedAction: ActionType;
   onMockAction: (action: ActionType) => void;
-  isLiked?: boolean | null;
+  interaction?: InteractionType;
   isBookmarked?: boolean;
 }
 
 export function ShortsOnBoardingActionButtons({
   focusedAction,
   onMockAction,
-  isLiked,
+  interaction,
   isBookmarked,
 }: OnboardingActionButtonsProps) {
   const handleAction = (type: ActionType) => {
@@ -30,13 +39,15 @@ export function ShortsOnBoardingActionButtons({
 
   const getTooltipText = (type: ActionType) => {
     switch (type) {
-      case 'like':
+      case 'SUPERLIKE':
+        return '마음에 드는 영상엔\n최고예요를 눌러보세요!';
+      case 'LIKE':
         return '마음에 드는 영상엔\n좋아요를 눌러보세요!';
-      case 'dislike':
+      case 'DISLIKE':
         return '취향이 아니라면\n싫어요를 누를 수 있어요.';
-      case 'bookmark':
+      case 'BOOKMARK':
         return '나중에 다시 보려면\n북마크에 저장하세요!';
-      case 'comment':
+      case 'COMMENT':
         return '댓글을 남겨\n소통해보세요!';
       default:
         return '';
@@ -67,36 +78,58 @@ export function ShortsOnBoardingActionButtons({
   );
 
   return (
-    <div className="flex flex-col items-center gap-6 text-[28px] drop-shadow-sm">
-      <ActionItem type="like">
-        <button aria-label="like" onClick={() => handleAction('like')}>
-          {isLiked ? <LikeFill /> : <Like />}
+    <div className="flex flex-col items-center gap-7 text-[32px] drop-shadow-sm">
+      <ActionItem type="SUPERLIKE">
+        <button
+          className="flex flex-col items-center gap-1 text-[36px] transition-transform active:scale-90"
+          aria-label="superlike"
+          onClick={() => handleAction('SUPERLIKE')}
+        >
+          {interaction === 'SUPERLIKE' ? <GreatFill /> : <Great />}
+          <span className="body4">최고예요</span>
+        </button>
+      </ActionItem>
+      <ActionItem type="LIKE">
+        <button
+          className="flex flex-col items-center gap-1 text-[32px] transition-transform active:scale-90"
+          aria-label="like"
+          onClick={() => handleAction('LIKE')}
+        >
+          {interaction === 'LIKE' ? <LikeFill /> : <Like />}
+          <span className="body4">좋아요</span>
         </button>
       </ActionItem>
 
-      <ActionItem type="dislike">
-        <button aria-label="dislike" onClick={() => handleAction('dislike')}>
-          {isLiked !== null && isLiked === false ? (
-            <DislikeFill />
-          ) : (
-            <Dislike />
-          )}
+      <ActionItem type="DISLIKE">
+        <button
+          className="flex flex-col items-center gap-1 text-[32px] transition-transform active:scale-90"
+          aria-label="dislike"
+          onClick={() => handleAction('DISLIKE')}
+        >
+          {interaction === 'DISLIKE' ? <DislikeFill /> : <Dislike />}
+          <span className="body4">싫어요</span>
         </button>
       </ActionItem>
 
-      <ActionItem type="bookmark">
-        <button aria-label="bookmark" onClick={() => handleAction('bookmark')}>
+      <ActionItem type="BOOKMARK">
+        <button
+          className="flex flex-col items-center gap-1 text-[32px] transition-transform active:scale-90"
+          aria-label="bookmark"
+          onClick={() => handleAction('BOOKMARK')}
+        >
           {isBookmarked ? <BookmarkFill /> : <Bookmark />}
+          <span className="body4">찜하기</span>
         </button>
       </ActionItem>
 
-      <ActionItem type="comment">
+      <ActionItem type="COMMENT">
         <button
           aria-label="comment"
-          className="flex flex-col items-center gap-1 border-none"
-          onClick={() => handleAction('comment')}
+          className="flex flex-col items-center gap-1 border-none text-gray-700"
+          onClick={() => handleAction('COMMENT')}
         >
-          <Comment className="text-gray-700" />
+          <Comment className="" />
+          <span className="body4">댓글</span>
         </button>
       </ActionItem>
     </div>

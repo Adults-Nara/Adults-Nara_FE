@@ -21,7 +21,7 @@ export function VideoInfoSection({
 }: VideoInfoSectionProps) {
   return (
     <div
-      className={`absolute right-0 left-0 bg-linear-to-t from-black/50 to-transparent p-4 ${isAd ? 'bottom-10' : 'bottom-0'}`}
+      className={`absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/50 to-transparent p-4 ${isAd && 'pb-14'}`}
     >
       {/* 업로더 정보 */}
       <div className="mb-2 flex items-center gap-2.5">

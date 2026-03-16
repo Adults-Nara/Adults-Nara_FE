@@ -6,6 +6,8 @@ import {
   BookmarkFill,
   Bookmark,
   Comment,
+  GreatFill,
+  Great,
 } from '@repo/ui';
 import { useInteraction } from '@/lib/tanstack/query/interaction.query';
 import {
@@ -84,29 +86,40 @@ export function ShortTabActionButtons({
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 text-[28px] drop-shadow-sm">
+    <div className="flex flex-col items-center gap-7 text-[32px] drop-shadow-sm">
+      <button
+        onClick={() => handleInteracted('SUPERLIKE')}
+        disabled={isInteractionBusy}
+        className="flex flex-col items-center gap-1 text-[36px] transition-transform active:scale-90 disabled:opacity-50"
+      >
+        {interacted === 'SUPERLIKE' ? <GreatFill /> : <Great />}
+        <span className="body4">최고예요</span>
+      </button>
       <button
         onClick={() => handleInteracted('LIKE')}
         disabled={isInteractionBusy}
-        className="transition-transform active:scale-90 disabled:opacity-50"
+        className="flex flex-col items-center gap-1 transition-transform active:scale-90 disabled:opacity-50"
       >
         {interacted === 'LIKE' ? <LikeFill /> : <Like />}
+        <span className="body4">좋아요</span>
       </button>
 
       <button
         onClick={() => handleInteracted('DISLIKE')}
         disabled={isInteractionBusy}
-        className="transition-transform active:scale-90 disabled:opacity-50"
+        className="flex flex-col items-center gap-1 transition-transform active:scale-90 disabled:opacity-50"
       >
         {interacted === 'DISLIKE' ? <DislikeFill /> : <Dislike />}
+        <span className="body4">싫어요</span>
       </button>
 
       <button
         onClick={handleBookmark}
         disabled={isBookmarkBusy}
-        className="transition-transform active:scale-90 disabled:opacity-50"
+        className="flex flex-col items-center gap-1 transition-transform active:scale-90 disabled:opacity-50"
       >
         {bookmarked ? <BookmarkFill /> : <Bookmark />}
+        <span className="body4">찜하기</span>
       </button>
 
       <button

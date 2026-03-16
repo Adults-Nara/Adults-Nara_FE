@@ -28,7 +28,7 @@ export function BaseShortFormController({
       <div className="relative flex-1">
         {/* 1. 우측 액션 버튼 */}
         <div
-          className="pointer-events-auto absolute right-3 bottom-[20%]"
+          className="pointer-events-auto absolute right-3 bottom-[18%]"
           onPointerDown={stopPropagation}
           onPointerUp={stopPropagation}
           onTouchStart={stopPropagation}

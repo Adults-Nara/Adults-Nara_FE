@@ -110,10 +110,6 @@ export default function BaseShortsTab({
     }
   }, [algorithmList]);
 
-  // useEffect(() => {
-
-  // }, [colIndex, rowIndex]);
-
   const lastRequestedRowRef = useRef<number>(-1);
 
   // 현재 rowIndex가 화면에 아직 로드되지 않은 인덱스를 받아와야하는 경우,

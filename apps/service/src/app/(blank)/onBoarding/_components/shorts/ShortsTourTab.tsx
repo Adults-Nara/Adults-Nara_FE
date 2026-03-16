@@ -78,8 +78,8 @@ export const ShortsTourTab = React.memo(
 
     const advanceTutorial = useCallback(() => {
       setTutorialStep((prev) => {
-        if (prev >= 4 && prev < 7) return prev + 1;
-        if (prev >= 7) {
+        if (prev >= 4 && prev < 8) return prev + 1;
+        if (prev >= 8) {
           onCompleteOnboarding();
           console.log(prev);
           return prev;
@@ -103,10 +103,11 @@ export const ShortsTourTab = React.memo(
     // 현재 포커스된 액션 타입 계산 (memoized)
     const focusedAction = useMemo((): ActionType | null => {
       const steps: Record<number, ActionType> = {
-        4: 'like',
-        5: 'dislike',
-        6: 'bookmark',
-        7: 'comment',
+        4: 'SUPERLIKE',
+        5: 'LIKE',
+        6: 'DISLIKE',
+        7: 'BOOKMARK',
+        8: 'COMMENT',
       };
       return steps[tutorialStep] || null;
     }, [tutorialStep]);
@@ -139,7 +140,7 @@ export const ShortsTourTab = React.memo(
           dislikes: video.dislikes,
           comments: video.comments,
           isBookmarked: video.isBookmarked,
-          isLiked: video.isLiked,
+          interaction: video.interaction,
 
           watchProgress: 0,
           longformUrl: '',
