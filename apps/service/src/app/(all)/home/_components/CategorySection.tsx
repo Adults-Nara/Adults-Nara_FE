@@ -2,7 +2,7 @@
 
 import { useMyChildTags, useVideosByTag } from '@/lib/tanstack/query/tag.query';
 import { CATEGORY_MAP } from '@/types/category';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import CategoryTagList from './CategoryTagList';
 import CategoryVideoList from './CategoryVideoList';
 

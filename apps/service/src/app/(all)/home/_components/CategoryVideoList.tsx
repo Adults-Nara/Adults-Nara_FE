@@ -1,5 +1,6 @@
 'use client';
 
+import VideoVerticalCardSkeleton from '@/components/skeleton/VideoVerticalCardSkeleton';
 import VideoVerticalCard from '@/components/thumbnail/VideoVerticalCard';
 import { ROUTES } from '@/constant/routes';
 import { TagVideoResponse } from '@/models/tag.model';
@@ -39,10 +40,30 @@ const CategoryVideoList = ({
     dragFree: false,
   });
 
-  //TODO: 추후 로딩 에러 UI구현
-  if (isPending) return <span>태그비디오 로딩중,,,</span>;
-  if (isError) return <span>태그비디오 에러,,,</span>;
-  if (videos.length === 0) return <span>해당 주제의 영상이 없습니다..</span>;
+  if (isPending)
+    return (
+      <div className="flex flex-nowrap gap-4 overflow-hidden px-3 py-0.5">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="w-50 shrink-0">
+            <VideoVerticalCardSkeleton />
+          </div>
+        ))}
+      </div>
+    );
+  if (isError)
+    return (
+      <div className="border-primary-500 mx-3 flex flex-col items-center justify-center gap-5 rounded-lg border py-15">
+        <span className="body2 text-primary-500">주제 영상 에러</span>
+      </div>
+    );
+  if (videos.length === 0)
+    return (
+      <div className="mx-5 flex flex-col items-center justify-center rounded-lg border border-gray-400 py-15">
+        <span className="body2 text-gray-600">
+          해당 주제 영상이 없습니다...
+        </span>
+      </div>
+    );
 
   return (
     <div className="overflow-hidden px-3 py-0.5" ref={videoListRef}>
