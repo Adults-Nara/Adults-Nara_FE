@@ -1,0 +1,4 @@
+import * as React from "react";
+import type { SVGProps } from "react";
+const SvgGreat = (props: SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 28 26" {...props}><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.767} d="M1.76 12.912h4.153v10.502H1.76a.876.876 0 0 1-.877-.876v-8.75a.876.876 0 0 1 .877-.876M5.914 12.912l4.451-7.116a1.91 1.91 0 0 1 1.648-.911 1.946 1.946 0 0 1 2.015 1.928v5.1h4.905a2.014 2.014 0 0 1 1.928 2.313l-1.402 8.486a2 2 0 0 1-1.98 1.753H8.77a3.5 3.5 0 0 1-1.577-.369l-1.262-.63" /><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.767} d="m13.883 5.383 2.007-3.587a1.91 1.91 0 0 1 1.648-.911 1.945 1.945 0 0 1 2.015 1.927v5.1h4.905a2.016 2.016 0 0 1 1.928 2.314l-1.402 8.486c-.06.483-.294.928-.659 1.25-.365.324-3.455.42-3.942.421M5.914 12.912v9.943" /></svg>;
+export default SvgGreat;
