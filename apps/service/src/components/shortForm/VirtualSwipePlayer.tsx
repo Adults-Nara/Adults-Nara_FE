@@ -49,13 +49,14 @@ export interface VirtualSwipePlayerProps {
 
 export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   /* --- 비디오 제어 및 시청 기록 로직 --- */
-  const playerRef = useRef<any>(null); // ReactPlayer ref
+  const playerRef = useRef<HTMLVideoElement>(null); // ReactPlayer ref
   const currentTimeRef = useRef<number>(0);
   const isLogin = useIsLoggedIn();
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
   const isPlaying = playingVideoId === props.currentVideo.videoId;
   const initializedVideoIdRef = useRef<string | null>(null);
   const latestStopWatchingRef = useRef(props.onStopWatching);
+  const latestProgressUpdateRef = useRef(props.onWatchProgressUpdate);
   const lastReportedTimeRef = useRef<number>(Date.now());
 
   const getStayingTimeDelta = useCallback(() => {
@@ -69,12 +70,16 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     latestStopWatchingRef.current = props.onStopWatching;
   }, [props.onStopWatching]);
 
+  useEffect(() => {
+    latestProgressUpdateRef.current = props.onWatchProgressUpdate;
+  }, [props.onWatchProgressUpdate]);
+
   // 벗어날 때 기록 저장
   useEffect(() => {
     return () => {
       if (latestStopWatchingRef.current && playerRef.current) {
         const finalTime =
-          playerRef.current.getCurrentTime?.() ?? currentTimeRef.current;
+          playerRef.current.currentTime ?? currentTimeRef.current;
         latestStopWatchingRef.current(
           props.currentVideo.videoId,
           Math.floor(finalTime),
@@ -95,33 +100,21 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
 
   // 10초마다 주기적 업데이트
   useEffect(() => {
-    if (
-      !isPlaying ||
-      props.videoLoading ||
-      !props.onWatchProgressUpdate ||
-      !isLogin ||
-      props.currentVideo.isAd
-    )
+    if (!isPlaying || props.videoLoading || !isLogin || props.currentVideo.isAd)
       return;
 
     const interval = setInterval(() => {
-      if (playerRef.current) {
-        const currentTime = playerRef.current.getCurrentTime?.() || 0;
+      if (playerRef.current && latestProgressUpdateRef.current) {
+        const currentTime = playerRef.current.currentTime || 0;
         currentTimeRef.current = currentTime;
-        props.onWatchProgressUpdate?.(
+        latestProgressUpdateRef.current(
           Math.floor(currentTime),
           getStayingTimeDelta(),
         );
       }
     }, 10000);
     return () => clearInterval(interval);
-  }, [
-    isPlaying,
-    props.videoLoading,
-    props.currentVideo.videoId,
-    props.onWatchProgressUpdate,
-    isLogin,
-  ]);
+  }, [isPlaying, props.videoLoading, props.currentVideo.videoId, isLogin]);
 
   /* 통합 포인터(터치/마우스) 스와이프 로직 */
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -251,14 +244,13 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
               playing={isPlaying}
               muted={false}
               controls={false}
-              loop
               playsInline
               width="100%"
               height="100%"
               style={{ objectFit: 'cover' }}
               onPlay={() => {
                 if (!isLogin) return;
-                const currentTime = playerRef.current?.getCurrentTime?.() || 0;
+                const currentTime = playerRef.current?.currentTime || 0;
                 if (props.onStartWatching && currentTime < 1) {
                   props.onStartWatching(
                     props.currentVideo.videoId,
@@ -274,10 +266,13 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                     getStayingTimeDelta(),
                   );
                   // TODO : 영상이 끝났을 때, 포인트 적립 토스트
+                  console.log('영상이 끝났습니다. 포인트가 적립되었습니다!');
                 } else {
                   // TODO : 로그인 유도 토스트
                   console.log('로그인을 해주세요.');
                 }
+                // 처음으로 돌리기
+                if (playerRef.current) playerRef.current.currentTime = 0;
               }}
             />
           )}
