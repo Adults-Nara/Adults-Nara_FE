@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   useVideoS3Url,
   useVideoDetail,
@@ -63,6 +63,10 @@ export function VideoPlaybackManager() {
   const { mutate: stopWatching } = useStopWatching();
 
   const lastReportedTimeRef = useRef(Date.now());
+
+  useEffect(() => {
+    lastReportedTimeRef.current = Date.now();
+  }, [videoId]);
 
   const getStayingTimeDelta = useCallback(() => {
     const now = Date.now();
