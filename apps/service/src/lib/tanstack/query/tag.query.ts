@@ -7,6 +7,7 @@ import {
   getTagWatchStats,
   getUserPreferences,
   getMyPreferences,
+  getMonthlyStats,
 } from '@/services/tag.api';
 
 export const TAG_KEYS = {
@@ -112,3 +113,11 @@ export function useMyPreferences(limit: number = 10) {
     isError,
   };
 }
+
+//월 통계 배치
+export const useMonthlyStats = (year?: number, month?: number) => {
+  return useQuery({
+    queryKey: ['monthlyStats', year, month],
+    queryFn: () => getMonthlyStats(year, month),
+  });
+};

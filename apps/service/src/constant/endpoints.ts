@@ -86,4 +86,7 @@ export const API_ENDPOINTS = {
   AD: {
     BASE: '/ads',
   },
+  STATISTICS: {
+    MONTHLY: '/statistics/monthly',
+  },
 } as const;

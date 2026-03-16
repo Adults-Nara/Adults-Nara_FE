@@ -9,6 +9,7 @@ import {
   UpdateUserTagRequest,
   OnboardingTagRequest,
   TagScoreDto,
+  MonthlyStatsResponseDto,
 } from '@/models/tag.model';
 
 // 부모 태그 + 자식 태그 목록 조회
@@ -89,5 +90,20 @@ export const getMyPreferences = async (limit: number = 10) => {
     `/api/v1/preferences/me?limit=${limit}`,
     { method: 'GET' },
   );
+  return response.data;
+};
+
+//월 통계 배치
+export const getMonthlyStats = async (year?: number, month?: number) => {
+  const params = new URLSearchParams();
+
+  if (year) params.append('year', year.toString());
+  if (month) params.append('month', month.toString());
+
+  const response = await httpClient<ApiResponse<MonthlyStatsResponseDto>>(
+    `${API_ENDPOINTS.STATISTICS.MONTHLY}?${params.toString()}`,
+    { method: 'GET' },
+  );
+
   return response.data;
 };
