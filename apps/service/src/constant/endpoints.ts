@@ -51,7 +51,7 @@ export const API_ENDPOINTS = {
   },
   COMMENTS: {
     BASE: (videoId: string) => `/comment/videos/${videoId}`,
-    DETAIL: (commentId: number) => `/comment/${commentId}`,
+    DETAIL: (commentId: string) => `/comment/${commentId}`,
     MY: (videoId: string) => `/comment/videos/${videoId}/me`,
   },
   ADMIN: {

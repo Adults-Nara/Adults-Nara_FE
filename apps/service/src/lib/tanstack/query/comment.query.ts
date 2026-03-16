@@ -1,18 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { getComments, getMyComment } from '@/services/comment.api';
-import {
-  CommentCreateRequest,
-  CommentEditRequest,
-} from '@/models/comment.model';
 
-export function useComments(
-  videoId: string,
-  page: number = 0,
-  size: number = 20,
-) {
-  return useQuery({
-    queryKey: ['comments', videoId, page, size],
-    queryFn: () => getComments(videoId, page, size),
+export function useComments(videoId: string, size: number = 20) {
+  return useInfiniteQuery({
+    queryKey: ['comments', videoId, size],
+
+    queryFn: ({ pageParam = 0 }) => getComments(videoId, pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) => {
+      if (!lastPage.hasMore) {
+        return undefined;
+      }
+      return pages.length;
+    },
+    enabled: !!videoId,
   });
 }
 

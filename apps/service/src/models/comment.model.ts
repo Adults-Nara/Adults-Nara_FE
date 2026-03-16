@@ -1,7 +1,7 @@
 export interface CommentItemResponse {
   commentId: string;
   nickname: string;
-  profileImageUrl: string;
+  profileImageUrl: string | null;
   text: string;
   createdAt: string;
 }
