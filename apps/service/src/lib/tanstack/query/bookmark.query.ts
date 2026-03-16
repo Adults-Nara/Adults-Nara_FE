@@ -35,12 +35,12 @@ export function useBookmarkListInfinite(
 
 export function useBookmarkStatus(videoId?: string) {
   const isLogin = useIsLoggedIn();
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isSuccess } = useQuery({
     queryKey: ['bookmarkStatus', videoId],
     queryFn: () => getBookmarkStatus(videoId as string),
     enabled: isLogin && !!videoId,
   });
-  return { data, isLoading, isError };
+  return { data, isLoading, isError, isSuccess };
 }
 
 export function useBookmarkSummary() {

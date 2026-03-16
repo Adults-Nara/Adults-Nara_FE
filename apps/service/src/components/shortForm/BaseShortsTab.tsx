@@ -6,6 +6,7 @@ import {
   useRef,
   startTransition,
   useCallback,
+  useMemo,
 } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
@@ -19,6 +20,7 @@ import { ShortTabActionButtons } from '@/app/(blank)/shorts/_components/ShortTab
 import { ShortFormVideoData } from '@/types/video';
 import { useRelatedVideosInfinite } from '@/lib/tanstack/query/recommendation.query';
 import {
+  useVideoDetail,
   useVideoS3Url,
   videoS3UrlQueryOptions,
 } from '@/lib/tanstack/query/video.query';
@@ -76,7 +78,7 @@ export default function BaseShortsTab({
   const [hList, setHList] = useState<ShortFormVideoData[]>([]);
 
   const sourceVideoIdRef = useRef<string>(vList[rowIndex]?.videoId);
-
+  const { data: realTimeDetail } = useVideoDetail(hList[colIndex]?.videoId);
   const isLogin = useIsLoggedIn();
   const queryClient = useQueryClient();
 
@@ -107,6 +109,10 @@ export default function BaseShortsTab({
       });
     }
   }, [algorithmList]);
+
+  // useEffect(() => {
+
+  // }, [colIndex, rowIndex]);
 
   const lastRequestedRowRef = useRef<number>(-1);
 
@@ -189,6 +195,25 @@ export default function BaseShortsTab({
   // 이웃 영상들 도출
   const currentVideo = hList[colIndex];
 
+  // 실시간 영상 정보와 현재 영상을 합치는 로직 (tags, comments)
+  const mergedCurrentVideo = useMemo(() => {
+    if (!currentVideo) return null;
+
+    // 현재 영상의 상세 정보가 불러와졌고, ID가 일치하는 경우에만 병합
+    if (realTimeDetail && realTimeDetail.videoId === currentVideo.videoId) {
+      return {
+        ...currentVideo,
+        tags: [
+          ...(realTimeDetail.tagIds ?? []),
+          ...(realTimeDetail.aiTagIds ?? []),
+        ],
+        comments: realTimeDetail.commentCount,
+      };
+    }
+
+    return currentVideo;
+  }, [currentVideo, realTimeDetail]);
+
   // URL Shallow Routing (비디오 ID 동기화)
   useEffect(() => {
     if (!currentVideo?.videoId) return;
@@ -269,7 +294,7 @@ export default function BaseShortsTab({
     data: s3Data,
     isPending: isS3Pending,
     isError: isS3Error,
-  } = useVideoS3Url(currentVideo?.videoId);
+  } = useVideoS3Url(mergedCurrentVideo?.videoId);
   const rawS3Url = s3Data?.masterUrl;
   // stream.asinna.store를 /stream/ 프록시로 치환 → CORS 우회 (next.config.ts rewrites)
   const s3Url =
@@ -278,7 +303,7 @@ export default function BaseShortsTab({
       : rawS3Url;
 
   const { mutate: updatePosition } = useUpdateWatchPosition(
-    currentVideo ? currentVideo.videoId : '0',
+    mergedCurrentVideo?.videoId ?? '0',
   );
 
   const handleStartWatching = (_videoId: string, watchSeconds: number) => {
@@ -309,11 +334,15 @@ export default function BaseShortsTab({
   if (isS3Error) {
     return <>영상을 불러오지 못했습니다.</>;
   }
-  if (!currentVideo || currentVideo.videoId === undefined || isS3Pending) {
-    return <LoadingSpinner thumbnail={currentVideo?.thumbnail || ''} />;
+  if (
+    !mergedCurrentVideo ||
+    mergedCurrentVideo.videoId === undefined ||
+    isS3Pending
+  ) {
+    return <LoadingSpinner thumbnail={mergedCurrentVideo?.thumbnail || ''} />;
   } else {
     const virtualSwipePlayerProps: VirtualSwipePlayerProps = {
-      currentVideo,
+      currentVideo: mergedCurrentVideo,
       upVideo,
       downVideo,
       leftVideo,
@@ -322,20 +351,20 @@ export default function BaseShortsTab({
       videoUrl: s3Url,
       videoLoading: isS3Pending || isS3Error,
       getThumbnailUrl: (v) => v.thumbnail,
-      watchProgress: currentVideo.watchProgress ?? 0,
+      watchProgress: mergedCurrentVideo.watchProgress ?? 0,
       onStartWatching: handleStartWatching,
       onWatchProgressUpdate: handleWatchProgressUpdate,
       onStopWatching: handleStopWatching,
       onSwipe: handleSwipe,
-      renderController: (currentVideo) => (
+      renderController: (videoToRender) => (
         <BaseShortFormController
-          data={currentVideo}
+          data={videoToRender}
           isReady={true}
           actionSlot={
             <ShortTabActionButtons
-              videoId={currentVideo.videoId}
-              isAd={currentVideo.isAd ?? false}
-              commentNum={currentVideo.comments}
+              videoId={videoToRender.videoId}
+              isAd={videoToRender.isAd ?? false}
+              commentNum={videoToRender.comments}
             />
           }
         />
