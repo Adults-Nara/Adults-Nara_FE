@@ -1,8 +1,9 @@
 'use client';
 import ReactPlayer from 'react-player';
-import { useRef, useState, ReactNode, useEffect } from 'react';
+import { useRef, useState, ReactNode, useEffect, useCallback } from 'react';
 import { ShortFormVideoData } from '@/types/video';
 import { useIsLoggedIn } from '@/store/useAuthStore';
+import { AdProgressBar } from '@/app/(blank)/long/_components/AdProgressBar';
 
 /**
  * 숏폼 플레이어 전용 스타일
@@ -32,9 +33,15 @@ export interface VirtualSwipePlayerProps {
   getThumbnailUrl: (video: ShortFormVideoData) => string;
   // Progress & events
   watchProgress?: number; // start position
-  onStartWatching?: (videoId: string) => void; // Called when video begins playing
-  onWatchProgressUpdate?: (currentTime: number) => void; // every 10s callback
-  onStopWatching?: (videoId: string, watchTime: number) => void;
+  onStartWatching?: (videoId: string, watchSeconds: number) => void; // Called when video begins playing
+  onWatchProgressUpdate?: (currentTime: number, watchSeconds: number) => void; // every 10s callback
+  onStopWatching?: (
+    videoId: string,
+    lastTime: number,
+    watchSeconds: number,
+  ) => void;
+
+  hasNextPage?: boolean; // more vertical videos may be loaded
 
   onSwipe: (direction: 'up' | 'down' | 'left' | 'right') => void;
   renderController?: (video: ShortFormVideoData) => ReactNode;
@@ -42,13 +49,22 @@ export interface VirtualSwipePlayerProps {
 
 export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   /* --- 비디오 제어 및 시청 기록 로직 --- */
-  const playerRef = useRef<HTMLVideoElement | null>(null);
+  const playerRef = useRef<any>(null); // ReactPlayer ref
   const currentTimeRef = useRef<number>(0);
   const isLogin = useIsLoggedIn();
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
   const isPlaying = playingVideoId === props.currentVideo.videoId;
   const initializedVideoIdRef = useRef<string | null>(null);
   const latestStopWatchingRef = useRef(props.onStopWatching);
+  const lastReportedTimeRef = useRef<number>(Date.now());
+
+  const getStayingTimeDelta = useCallback(() => {
+    const now = Date.now();
+    const delta = Math.floor((now - lastReportedTimeRef.current) / 1000);
+    lastReportedTimeRef.current = now;
+    return delta;
+  }, []);
+
   useEffect(() => {
     latestStopWatchingRef.current = props.onStopWatching;
   }, [props.onStopWatching]);
@@ -56,10 +72,13 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   // 벗어날 때 기록 저장
   useEffect(() => {
     return () => {
-      if (latestStopWatchingRef.current) {
+      if (latestStopWatchingRef.current && playerRef.current) {
+        const finalTime =
+          playerRef.current.getCurrentTime?.() ?? currentTimeRef.current;
         latestStopWatchingRef.current(
           props.currentVideo.videoId,
-          Math.floor(currentTimeRef.current),
+          Math.floor(finalTime),
+          getStayingTimeDelta(),
         );
       }
     };
@@ -80,15 +99,19 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
       !isPlaying ||
       props.videoLoading ||
       !props.onWatchProgressUpdate ||
-      !isLogin
+      !isLogin ||
+      props.currentVideo.isAd
     )
       return;
 
     const interval = setInterval(() => {
       if (playerRef.current) {
-        const currentTime = playerRef.current.currentTime;
+        const currentTime = playerRef.current.getCurrentTime?.() || 0;
         currentTimeRef.current = currentTime;
-        props.onWatchProgressUpdate?.(Math.floor(currentTime));
+        props.onWatchProgressUpdate?.(
+          Math.floor(currentTime),
+          getStayingTimeDelta(),
+        );
       }
     }, 10000);
     return () => clearInterval(interval);
@@ -133,7 +156,8 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
       if ((dx > 0 && !props.leftVideo) || (dx < 0 && !props.rightVideo)) return;
       setOffset({ x: dx, y: 0 });
     } else {
-      if ((dy > 0 && !props.upVideo) || (dy < 0 && !props.downVideo)) return;
+      const canSwipeDown = !!props.downVideo || !!props.hasNextPage;
+      if ((dy > 0 && !props.upVideo) || (dy < 0 && !canSwipeDown)) return;
       setOffset({ x: 0, y: dy });
     }
   };
@@ -167,7 +191,8 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
       if (dx < -thresholdX && props.rightVideo) swipedDirection = 'right';
       else if (dx > thresholdX && props.leftVideo) swipedDirection = 'left';
     } else if (dragAxis.current === 'y') {
-      if (dy < -thresholdY && props.downVideo) swipedDirection = 'down';
+      if (dy < -thresholdY && (props.downVideo || props.hasNextPage))
+        swipedDirection = 'down';
       else if (dy > thresholdY && props.upVideo) swipedDirection = 'up';
     }
 
@@ -212,8 +237,8 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
         <div className="absolute inset-0 h-full w-full">
           {props.videoUrl && (
             <ReactPlayer
-              key={`player-${props.currentVideo.videoId}`}
               className="shortform-player"
+              key={props.currentVideo.videoId}
               onReady={() => {
                 if (
                   initializedVideoIdRef.current !== props.currentVideo.videoId
@@ -233,28 +258,39 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
               style={{ objectFit: 'cover' }}
               onPlay={() => {
                 if (!isLogin) return;
-                if (
-                  props.onStartWatching &&
-                  playerRef.current?.currentTime === 0
-                ) {
-                  props.onStartWatching(props.currentVideo.videoId);
+                const currentTime = playerRef.current?.getCurrentTime?.() || 0;
+                if (props.onStartWatching && currentTime < 1) {
+                  props.onStartWatching(
+                    props.currentVideo.videoId,
+                    getStayingTimeDelta(),
+                  );
                 }
               }}
-              onTimeUpdate={() => {
-                // currentTimeRef를 항상 최신 시청 위치로 유지 (unmount cleanup에서 사용)
-                if (playerRef.current) {
-                  currentTimeRef.current = playerRef.current.currentTime;
-                }
-              }}
-              onPause={() => {
-                if (playingVideoId === props.currentVideo.videoId) {
-                  setPlayingVideoId(null);
+              onEnded={() => {
+                if (isLogin) {
+                  props.onStopWatching?.(
+                    props.currentVideo.videoId,
+                    Math.floor(props.currentVideo.duration),
+                    getStayingTimeDelta(),
+                  );
+                  // TODO : 영상이 끝났을 때, 포인트 적립 토스트
+                } else {
+                  // TODO : 로그인 유도 토스트
+                  console.log('로그인을 해주세요.');
                 }
               }}
             />
           )}
 
           {props.renderController && props.renderController(props.currentVideo)}
+          {props.currentVideo.isAd && (
+            <div className="pointer-events-none absolute bottom-0 left-0 z-50 w-full p-1">
+              <AdProgressBar
+                playerRef={playerRef}
+                duration={props.currentVideo.duration}
+              />
+            </div>
+          )}
         </div>
 
         {/* 로딩 스피너 오버레이 (영상이 안 왔을 때) */}

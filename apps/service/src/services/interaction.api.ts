@@ -29,3 +29,12 @@ export const dislikeVideo = async (videoId: string) => {
   );
   return response.data;
 };
+
+// 쌍따봉
+export const superLikeVideo = async (videoId: string) => {
+  const response = await httpClient<ApiResponse<void>>(
+    API_ENDPOINTS.INTERACTIONS.SUPERLIKE(videoId),
+    { method: 'POST' },
+  );
+  return response.data;
+};

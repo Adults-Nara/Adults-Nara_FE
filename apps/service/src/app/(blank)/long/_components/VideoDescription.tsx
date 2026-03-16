@@ -1,3 +1,4 @@
+import { findLabelByValue } from '@/utils/findLabelByValue';
 import { Chip } from '@repo/ui';
 import { Sparkles, FileText, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
@@ -78,7 +79,7 @@ export function VideoDescription({
         <div className="flex flex-wrap gap-2 pt-2">
           {tags.map((v) => (
             <Chip key={v} className="text-gray-700">
-              {v}
+              {`# ${findLabelByValue(v)}`}
             </Chip>
           ))}
         </div>

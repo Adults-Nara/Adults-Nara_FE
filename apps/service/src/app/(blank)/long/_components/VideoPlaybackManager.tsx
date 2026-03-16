@@ -65,7 +65,10 @@ export function VideoPlaybackManager() {
   const handleWatchProgressUpdate = useCallback(
     (currentTime: number) => {
       if (isLoggedIn && currentTime > 0) {
-        updatePosition({ lastPosition: currentTime });
+        updatePosition({
+          lastPosition: currentTime,
+          watchSeconds: currentTime,
+        });
       }
     },
     [isLoggedIn, updatePosition],
@@ -77,7 +80,7 @@ export function VideoPlaybackManager() {
         stopWatching({
           // TODO : videoId 없는 경우 처리
           videoId: videoId || '0',
-          body: { lastPosition: currentTime },
+          body: { lastPosition: currentTime, watchSeconds: currentTime },
         });
       }
     },

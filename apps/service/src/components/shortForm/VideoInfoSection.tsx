@@ -1,3 +1,4 @@
+import { findLabelByValue } from '@/utils/findLabelByValue';
 import { Button } from '@repo/ui';
 
 interface VideoInfoSectionProps {
@@ -8,6 +9,7 @@ interface VideoInfoSectionProps {
   };
   longformUrl: string; // 영상의 긴 형식 URL (예: 유튜브 링크)
   tags?: string[];
+  isAd?: boolean;
 }
 
 export function VideoInfoSection({
@@ -15,9 +17,12 @@ export function VideoInfoSection({
   uploader,
   longformUrl,
   tags,
+  isAd,
 }: VideoInfoSectionProps) {
   return (
-    <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/50 to-transparent p-4">
+    <div
+      className={`absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/50 to-transparent p-4 ${isAd && 'pb-14'}`}
+    >
       {/* 업로더 정보 */}
       <div className="mb-2 flex items-center gap-2.5">
         <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full">
@@ -32,6 +37,11 @@ export function VideoInfoSection({
           )}
         </div>
         <span className="title3">{uploader.name}</span>
+        {isAd && (
+          <span className="rounded-sm bg-white/30 px-1.5 py-0.5 text-[10px] font-bold text-white uppercase">
+            AD
+          </span>
+        )}
       </div>
 
       {/* 영상 제목 및 시청 버튼 */}
@@ -43,7 +53,7 @@ export function VideoInfoSection({
               key={tag}
               className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs text-white"
             >
-              #{tag}
+              # {findLabelByValue(tag)}
             </span>
           ))}
         </div>

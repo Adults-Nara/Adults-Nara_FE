@@ -60,7 +60,7 @@ export default function AuthProvider({
 
     // 로그인 된 유저인데 설정한 태그가 0개라면 온보딩으로 이동
     if (isLoggedIn && tags.length === 0 && !isExcluded) {
-      // router.replace(ROUTES.ONBOARDING);
+      router.replace(ROUTES.ONBOARDING);
     }
   }, [isInitialized, isPending, isLoggedIn, tags, pathname, router]);
 

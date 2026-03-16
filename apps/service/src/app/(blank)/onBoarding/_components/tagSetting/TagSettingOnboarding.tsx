@@ -3,6 +3,7 @@ import { OnboardingHeader } from '../common/OnboardingHeader';
 import { TagSettingOnboardingTab } from './TagSettingTab';
 import { TagSettingCompleteTab } from './TagSettingCompleteTab';
 import { useRouter } from 'next/navigation';
+import { useUpdateUserTags } from '@/lib/tanstack/mutation/tag.mutation';
 
 interface TagSettingOnboardingProps {
   selectedCategory: string[];
@@ -22,10 +23,13 @@ export function TagSettingOnboarding({
     );
   };
   const router = useRouter();
+  const { mutate } = useUpdateUserTags();
 
   const onComplete = () => {
     // 가입 및 카테고리 저장 api 호출
-
+    mutate({
+      tagIds: selectedCategories.map((cat) => Number(cat)),
+    });
     router.replace('/home');
   };
 

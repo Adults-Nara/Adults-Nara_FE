@@ -1,3 +1,5 @@
+import { InteractionType } from './interaction';
+
 export interface VideoData {
   videoId: string;
   videoUrl?: string;
@@ -8,9 +10,10 @@ export interface VideoData {
   dislikes: number;
   comments: number;
   isBookmarked: boolean;
-  isLiked?: boolean | null;
+  interaction?: InteractionType;
   tags?: string[];
   watchProgress?: number;
+  duration: number;
 }
 
 export interface LongFormVideoData extends VideoData {

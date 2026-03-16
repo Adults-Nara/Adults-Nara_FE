@@ -13,6 +13,8 @@ import {
   useVideoS3Url,
 } from '@/lib/tanstack/query/video.query';
 import { mapVideoDetailToShortsData } from '@/utils/videoMapper';
+import { InteractionType } from '@/types/interaction';
+import { motion } from 'framer-motion';
 
 export interface ShortsExperienceTabProps {
   onCompleteExperience: (collectedData: string[]) => void;
@@ -41,7 +43,7 @@ const EXPERIENCE_VIDEO_IDS: string[][] = [
 ];
 
 interface UserAction {
-  isLiked: boolean | null;
+  interacted: InteractionType | null;
   isBookmarked: boolean;
   isSeen: boolean;
 }
@@ -58,6 +60,7 @@ const makePlaceholderVideo = (videoId: string): ShortFormVideoData => ({
   isBookmarked: false,
   longformUrl: '',
   tags: [],
+  duration: 0,
 });
 
 export const ShortsExperienceTab = React.memo(
@@ -74,7 +77,11 @@ export const ShortsExperienceTab = React.memo(
     // 관심사 분석을 위한 사용자의 반응(좋아요, 싫어요, 북마크) 수집 상태
     const [userActions, setUserActions] = useState<UserAction[][]>(() =>
       EXPERIENCE_VIDEO_IDS.map((row) =>
-        row.map(() => ({ isLiked: null, isBookmarked: false, isSeen: false })),
+        row.map(() => ({
+          interacted: null,
+          isBookmarked: false,
+          isSeen: false,
+        })),
       ),
     );
 
@@ -106,7 +113,7 @@ export const ShortsExperienceTab = React.memo(
       return {
         ...mapped,
         videoUrl: s3Data?.masterUrl ?? '',
-        isLiked: action.isLiked,
+        interaction: action.interacted,
         isBookmarked: action.isBookmarked,
       };
     }, [detailData, s3Data, rowIndex, colIndex, userActions, currentVideoId]);
@@ -193,28 +200,28 @@ export const ShortsExperienceTab = React.memo(
         setUserActions((prev) => {
           const newActions = [...prev];
           const current = prev[rowIndex][colIndex];
-          let isLiked = current.isLiked;
+          let interacted = current.interacted;
           let isBookmarked = current.isBookmarked;
 
-          if (action === 'like' || action === 'dislike') {
-            const changeLike = action === 'like';
-            if (isLiked === null) {
-              isLiked = changeLike;
-            } else if (isLiked != changeLike) {
-              isLiked = changeLike;
-            } else {
-              isLiked = null;
-            }
+          if (
+            action === 'LIKE' ||
+            action === 'DISLIKE' ||
+            action === 'SUPERLIKE'
+          ) {
+            if (action === interacted) interacted = null;
+            else if (action === 'LIKE') interacted = 'LIKE';
+            else if (action === 'DISLIKE') interacted = 'DISLIKE';
+            else interacted = 'SUPERLIKE';
           }
 
-          if (action === 'bookmark') {
+          if (action === 'BOOKMARK') {
             isBookmarked = !isBookmarked;
           }
 
           newActions[rowIndex] = [...prev[rowIndex]];
           newActions[rowIndex][colIndex] = {
             ...current,
-            isLiked,
+            interacted,
             isBookmarked,
             isSeen: true,
           };
@@ -234,13 +241,17 @@ export const ShortsExperienceTab = React.memo(
           const videoId = EXPERIENCE_VIDEO_IDS[row][col];
           const tags = videoTagsCache[videoId] ?? [];
 
-          if (action.isLiked === true) {
+          if (action.interacted === 'LIKE') {
             tags.forEach((tag) => {
               categoryScores.set(tag, (categoryScores.get(tag) || 0) + 2);
             });
-          } else if (action.isLiked === false) {
+          } else if (action.interacted === 'DISLIKE') {
             tags.forEach((tag) => {
               categoryScores.set(tag, (categoryScores.get(tag) || 0) - 2);
+            });
+          } else if (action.interacted === 'SUPERLIKE') {
+            tags.forEach((tag) => {
+              categoryScores.set(tag, (categoryScores.get(tag) || 0) + 3);
             });
           }
 
@@ -283,7 +294,7 @@ export const ShortsExperienceTab = React.memo(
                 <ShortsOnBoardingActionButtons
                   focusedAction={null}
                   onMockAction={handleAction}
-                  isLiked={video.isLiked}
+                  interaction={video.interaction}
                   isBookmarked={video.isBookmarked}
                 />
               </div>
@@ -299,7 +310,9 @@ export const ShortsExperienceTab = React.memo(
         <div className="absolute top-20 right-4 z-50">
           <button
             onClick={handleComplete}
-            className={`rounded px-4 py-2 text-white ${isComplete ? 'bg-primary-500' : 'bg-white/20'}`}
+            className={`rounded px-4 py-2 text-white ${
+              isComplete ? 'bg-primary-500' : 'bg-white/20'
+            }`}
           >
             완료
           </button>

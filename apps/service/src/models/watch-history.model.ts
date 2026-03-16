@@ -1,5 +1,6 @@
 export interface WatchPositionRequest {
   lastPosition: number;
+  watchSeconds: number;
 }
 
 export interface WatchHistoryResponse {

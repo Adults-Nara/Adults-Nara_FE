@@ -3,12 +3,13 @@ import { ApiResponse } from '@/types/api';
 import { httpClient } from './httpClient';
 import { RecommendationVideoResponse } from '@/models/recommendations.model';
 
-export const getRecommendationFeed = async (
+export const getRecommendationFeedVertical = async (
   page: number = 0,
-  size: number = 3,
+  size: number = 10,
+  videoType: 'SHORT' | 'LONG' = 'SHORT',
 ) => {
   const response = await httpClient<ApiResponse<RecommendationVideoResponse>>(
-    `${API_ENDPOINTS.RECOMMENDATION.FEED_VERTICAL}?videoType=SHORT&page=${page}&size=${size}`,
+    `${API_ENDPOINTS.RECOMMENDATION.FEED_VERTICAL}?videoType=${videoType}&page=${page}&size=${size}`,
     { method: 'GET' },
   );
   return response.data;
@@ -17,7 +18,7 @@ export const getRecommendationFeed = async (
 export const getRecommendationRelated = async (
   videoId: string,
   page: number = 0,
-  size: number = 3,
+  size: number = 10,
   videoType: 'SHORT' | 'LONG' = 'SHORT',
 ) => {
   const response = await httpClient<ApiResponse<RecommendationVideoResponse>>(

@@ -6,87 +6,77 @@ import {
   BookmarkFill,
   Bookmark,
   Comment,
+  GreatFill,
+  Great,
 } from '@repo/ui';
-import { useEffect, useState } from 'react';
 import { useInteraction } from '@/lib/tanstack/query/interaction.query';
 import {
   useDislikeVideo,
   useLikeVideo,
+  useSuperLikeVideo,
 } from '@/lib/tanstack/mutation/interaction.mutation';
 import { useBookmarkStatus } from '@/lib/tanstack/query/bookmark.query';
 import { useToggleBookmark } from '@/lib/tanstack/mutation/bookmark.mutation';
 import { useIsLoggedIn } from '@/store/useAuthStore';
+import { InteractionType } from '@/types/interaction';
 import { useSheetStore } from '@/store/useSheetStore';
 import CommentList from '@/components/comment/CommentList';
 
 interface ShortTabActionButtonsProps {
   videoId: string;
+  isAd: boolean;
+  commentNum: number;
 }
 
-export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
+export function ShortTabActionButtons({
+  videoId,
+  isAd,
+  commentNum,
+}: ShortTabActionButtonsProps) {
   const { data: interaction, isLoading: interactionLoading } =
     useInteraction(videoId);
   const { data: bookmark, isLoading: bookmarkLoading } =
     useBookmarkStatus(videoId);
 
-  const { mutate: mutateLike } = useLikeVideo();
-  const { mutate: mutateDislike } = useDislikeVideo();
-  const { mutate: mutateBookmark } = useToggleBookmark();
+  const { mutate: mutateLike, isPending: isLikePending } = useLikeVideo();
+  const { mutate: mutateDislike, isPending: isDislikePending } =
+    useDislikeVideo();
+  const { mutate: mutateSuperlike, isPending: isSuperlikePending } =
+    useSuperLikeVideo();
+  const { mutate: mutateBookmark, isPending: isBookmarkPending } =
+    useToggleBookmark();
 
-  // 낙관적 업데이트를 위해, useState 사용
-  const [liked, setLiked] = useState<boolean | null>();
-  const [bookmarked, setBookmarked] = useState<boolean | null>();
-  const isLogin = useIsLoggedIn();
+  const isLoggedIn = useIsLoggedIn();
+  const interacted = interaction?.interactionType ?? null;
+  const bookmarked = bookmark?.isBookmarked ?? false;
   const sheetOpen = useSheetStore((state) => state.open);
 
-  useEffect(() => {
-    if (!interaction) return;
-    switch (interaction.interactionType) {
+  // isLoading or isPending이면 버튼 비활성화 → debounce 효과
+  const isInteractionBusy =
+    interactionLoading ||
+    isLikePending ||
+    isDislikePending ||
+    isSuperlikePending;
+  const isBookmarkBusy = bookmarkLoading || isBookmarkPending;
+
+  const handleInteracted = (type: InteractionType) => {
+    if (!isLoggedIn || isInteractionBusy) return;
+
+    switch (type) {
       case 'LIKE':
-        setLiked(true);
+        mutateLike(videoId);
         break;
       case 'DISLIKE':
-        setLiked(false);
+        mutateDislike(videoId);
         break;
-    }
-  }, [interaction]);
-
-  useEffect(() => {
-    if (bookmark?.isBookmarked !== undefined) {
-      setBookmarked(bookmark.isBookmarked);
-    }
-  }, [bookmark]);
-
-  // 좋아요, 싫어요 로직
-  const handleLike = (changeTo: boolean) => {
-    if (!isLogin) {
-      // TODO : 로그인 모달 띄우기
-      console.log('로그인이 필요합니다.');
-      return;
-    }
-    if (changeTo === liked) {
-      setLiked(null);
-    } else {
-      setLiked(changeTo);
-    }
-    // API 호출
-    if (changeTo === true) {
-      mutateLike(videoId);
-    } else {
-      mutateDislike(videoId);
+      case 'SUPERLIKE':
+        mutateSuperlike(videoId);
+        break;
     }
   };
 
-  // 북마크 로직
   const handleBookmark = () => {
-    if (!isLogin) {
-      // TODO : 로그인 모달 띄우기
-      console.log('로그인이 필요합니다.');
-      return;
-    }
-    setBookmarked(!bookmarked);
-
-    // API 호출
+    if (isAd || !isLoggedIn || isBookmarkBusy) return;
     mutateBookmark(videoId);
   };
 
@@ -94,29 +84,42 @@ export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
   const handleComment = () => {
     sheetOpen('댓글', <CommentList videoId={videoId} />, false);
   };
-  if (interactionLoading || bookmarkLoading) return null;
 
   return (
-    <div className="flex flex-col items-center gap-6 text-[28px] drop-shadow-sm">
+    <div className="flex flex-col items-center gap-7 text-[32px] drop-shadow-sm">
       <button
-        onClick={() => handleLike(true)}
-        className="transition-transform active:scale-90"
+        onClick={() => handleInteracted('SUPERLIKE')}
+        disabled={isInteractionBusy}
+        className="flex flex-col items-center gap-1 text-[36px] transition-transform active:scale-90 disabled:opacity-50"
       >
-        {liked === true ? <LikeFill /> : <Like />}
+        {interacted === 'SUPERLIKE' ? <GreatFill /> : <Great />}
+        <span className="body4">최고예요</span>
+      </button>
+      <button
+        onClick={() => handleInteracted('LIKE')}
+        disabled={isInteractionBusy}
+        className="flex flex-col items-center gap-1 transition-transform active:scale-90 disabled:opacity-50"
+      >
+        {interacted === 'LIKE' ? <LikeFill /> : <Like />}
+        <span className="body4">좋아요</span>
       </button>
 
       <button
-        onClick={() => handleLike(false)}
-        className="transition-transform active:scale-90"
+        onClick={() => handleInteracted('DISLIKE')}
+        disabled={isInteractionBusy}
+        className="flex flex-col items-center gap-1 transition-transform active:scale-90 disabled:opacity-50"
       >
-        {liked === false ? <DislikeFill /> : <Dislike />}
+        {interacted === 'DISLIKE' ? <DislikeFill /> : <Dislike />}
+        <span className="body4">싫어요</span>
       </button>
 
       <button
         onClick={handleBookmark}
-        className="transition-transform active:scale-90"
+        disabled={isBookmarkBusy}
+        className="flex flex-col items-center gap-1 transition-transform active:scale-90 disabled:opacity-50"
       >
         {bookmarked ? <BookmarkFill /> : <Bookmark />}
+        <span className="body4">찜하기</span>
       </button>
 
       <button
@@ -124,8 +127,7 @@ export function ShortTabActionButtons({ videoId }: ShortTabActionButtonsProps) {
         onClick={handleComment}
       >
         <Comment />
-        {/* TODO: 댓글 개수 표시 */}
-        <span className="body4">{10}</span>
+        <span className="body4">{commentNum}</span>
       </button>
     </div>
   );

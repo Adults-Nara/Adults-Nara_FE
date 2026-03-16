@@ -58,7 +58,6 @@ export function usePlaylistAutoPlay(currentVideoId?: string) {
     currentVideoId,
     10,
     'LONG',
-    !!currentVideoId,
   );
 
   const handleVideoEnd = useCallback(async () => {
