@@ -3,7 +3,7 @@ import useObserver from '@/hooks/useObserver';
 import { useMyPointTransactionHistory } from '@/lib/tanstack/query/point.query';
 import { PointTransaction } from '@/models/point.model';
 import { cn, LeftArrow2, RightArrow } from '@repo/ui';
-import { MessageSquareX } from 'lucide-react';
+import { CircleX, MessageSquareX } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const TIME_ZONE = 'Asia/Seoul';
@@ -89,7 +89,6 @@ const PointHistory = () => {
     isFetchingNextPage,
   });
 
-  //TODO:추후 에러로딩 UI구현
   if (isPending) {
     return (
       <div className="flex flex-col items-center justify-center py-20 opacity-50">
@@ -100,13 +99,14 @@ const PointHistory = () => {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
+      <div className="flex flex-col items-center justify-center gap-2 py-20">
+        <CircleX size={35} className="text-primary-500" />
         <span className="body2 text-primary-600">
           내역을 불러오지 못했습니다.
         </span>
         <button
           onClick={() => refetch()}
-          className="body3 mt-2 underline opacity-60"
+          className="body3 underline opacity-60"
         >
           다시 시도하기
         </button>

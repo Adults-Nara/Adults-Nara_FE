@@ -32,7 +32,7 @@ const RewardSummary = ({ showDetailLink = true }: RewardSummaryProps) => {
 
   if (verifyPending || pointPending)
     return (
-      <div className="bg-primary-900 flex h-55 w-full flex-col items-center justify-center gap-4 rounded-lg p-4">
+      <div className="bg-primary-900 flex h-50 w-full flex-col items-center justify-center gap-4 rounded-lg p-4">
         <Spinner size={60} />
       </div>
     );
