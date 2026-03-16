@@ -101,7 +101,7 @@ export function VideoPlaybackManager() {
     lastReportedTimeRef.current = Date.now();
   });
 
-  // 광고 종료/스킵 시 lastReportedTimeRef 리셋 후 원래 �핸들러 호출
+  // 광고 종료/스킵 시 lastReportedTimeRef 리셋 후 원래 핸들러 호출
   const handleAdEnded = useCallback(
     (duration: number) => {
       lastReportedTimeRef.current = Date.now();
