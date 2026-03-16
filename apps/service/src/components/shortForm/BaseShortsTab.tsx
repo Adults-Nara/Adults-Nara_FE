@@ -246,6 +246,8 @@ export default function BaseShortsTab({
   const handleSwipe = (direction: 'up' | 'down' | 'left' | 'right') => {
     if (direction === 'up' || direction === 'down') {
       const nextRow = direction === 'down' ? rowIndex + 1 : rowIndex - 1;
+      sourceVideoIdRef.current = vList[nextRow]?.videoId;
+      fetchNextPage();
 
       if (
         direction === 'down' &&
