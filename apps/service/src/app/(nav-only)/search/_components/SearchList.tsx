@@ -1,5 +1,6 @@
 'use client';
 
+import VideoLargeCardSkeleton from '@/components/skeleton/VideoLargeCardSkeleton';
 import VideoLargeCard from '@/components/thumbnail/VideoLargeCard';
 import { ROUTES } from '@/constant/routes';
 import useObserver from '@/hooks/useObserver';
@@ -7,6 +8,7 @@ import { useSearchVideos } from '@/lib/tanstack/query/search-ranking.query';
 import { VideoSearchResponse } from '@/models/search.model';
 import { ThumbnailData } from '@/types/video';
 import { formatVideoTime } from '@/utils/format';
+import { CircleX, SearchX } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
@@ -52,13 +54,7 @@ const SearchList = () => {
     isFetchingNextPage,
   });
 
-  //TODO: 로딩에러페이지 UI 추후 구현
-  if (isPending) return <span>검색결과 로딩중..</span>;
-  if (isError) return <span>검색결과 오류..</span>;
-
-  const videos = data.pages.flatMap((page) => page.content) ?? [];
-
-  if (videos.length === 0) return <span>검색결과가 없습니다.</span>;
+  const videos = data?.pages.flatMap((page) => page.content) ?? [];
 
   if (!currentKeyword && !currentTag) {
     return (
@@ -98,20 +94,45 @@ const SearchList = () => {
       </div>
 
       <div className="flex flex-col">
-        {videos.map((data) => {
-          return (
-            <Link
-              key={data.videoId}
-              href={
-                data.videoType === 'SHORT'
-                  ? `${ROUTES.SHORTS}?v=${data.videoId}`
-                  : `${ROUTES.LONG}?v=${data.videoId}`
-              }
-            >
-              <VideoLargeCard data={mapSearchToThumbanil(data)} />
-            </Link>
-          );
-        })}
+        {isPending ? (
+          <div className="flex flex-col gap-1 overflow-hidden">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <VideoLargeCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="text-primary-500 flex flex-col items-center justify-center py-5">
+            <div className="mb-2">
+              <CircleX size={35} />
+            </div>
+            <span className="title2">검색중 에러발생</span>
+            <span className="body3 mt-1">
+              검색어를 지우고 다시 시도해주세요
+            </span>
+          </div>
+        ) : videos.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-5 opacity-40">
+            <div className="mb-2">
+              <SearchX size={35} />
+            </div>
+            <span className="title2">검색결과가 없습니다.</span>
+          </div>
+        ) : (
+          videos.map((data) => {
+            return (
+              <Link
+                key={data.videoId}
+                href={
+                  data.videoType === 'SHORT'
+                    ? `${ROUTES.SHORTS}?v=${data.videoId}`
+                    : `${ROUTES.LONG}?v=${data.videoId}`
+                }
+              >
+                <VideoLargeCard data={mapSearchToThumbanil(data)} />
+              </Link>
+            );
+          })
+        )}
       </div>
       <div ref={observerRef} />
     </div>
