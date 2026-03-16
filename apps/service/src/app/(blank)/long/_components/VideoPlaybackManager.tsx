@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import {
   useVideoS3Url,
   useVideoDetail,
@@ -40,7 +40,7 @@ export function VideoPlaybackManager() {
     onDismissToast,
   } = useAdManager(videoId ? videoId : null);
 
-  // 💡 핵심: 광고가 완전히 끝났거나 애초에 당첨되지 않아 스킵된 상태인지 확인
+  // 광고가 완전히 끝났거나 애초에 당첨되지 않아 스킵된 상태인지 확인
   const isAdFinishedOrSkipped = adState === 'COMPLETED_OR_SKIPPED';
 
   // 3. 메인 영상 S3 호출 (광고가 완전히 끝났을 때만 API 실행)
@@ -62,12 +62,21 @@ export function VideoPlaybackManager() {
   const { mutate: updatePosition } = useUpdateWatchPosition(videoId || '0');
   const { mutate: stopWatching } = useStopWatching();
 
+  const lastReportedTimeRef = useRef(Date.now());
+
+  const getStayingTimeDelta = useCallback(() => {
+    const now = Date.now();
+    const delta = Math.floor((now - lastReportedTimeRef.current) / 1000);
+    lastReportedTimeRef.current = now;
+    return delta;
+  }, []);
+
   const handleWatchProgressUpdate = useCallback(
     (currentTime: number) => {
       if (isLoggedIn && currentTime > 0) {
         updatePosition({
           lastPosition: currentTime,
-          watchSeconds: currentTime,
+          watchSeconds: getStayingTimeDelta(),
         });
       }
     },
@@ -88,7 +97,23 @@ export function VideoPlaybackManager() {
   );
 
   // 재생 목록(찜 목록 등) 자동 재생 훅
-  const handleVideoEnd = usePlaylistAutoPlay(videoId || undefined);
+  const handleVideoEnd = usePlaylistAutoPlay(videoId || undefined, () => {
+    lastReportedTimeRef.current = Date.now();
+  });
+
+  // 광고 종료/스킵 시 lastReportedTimeRef 리셋 후 원래 �핸들러 호출
+  const handleAdEnded = useCallback(
+    (duration: number) => {
+      lastReportedTimeRef.current = Date.now();
+      onAdEnded(duration);
+    },
+    [onAdEnded],
+  );
+
+  const handleAdSkipped = useCallback(() => {
+    lastReportedTimeRef.current = Date.now();
+    onAdSkipped();
+  }, [onAdSkipped]);
 
   if (!videoId) {
     return (
@@ -154,8 +179,8 @@ export function VideoPlaybackManager() {
         progress={isAdPlaying ? 0 : progress}
         thumbnail={detailData?.thumbnailUrl ?? ''}
         isAdMode={isAdPlaying}
-        onAdEnded={onAdEnded}
-        onAdSkip={onAdSkipped}
+        onAdEnded={handleAdEnded} // 광고가 끝났을 때 메인 영상으로 넘어가도록
+        onAdSkip={handleAdSkipped}
         onEnded={handleVideoEnd}
         onWatchProgressUpdate={handleWatchProgressUpdate}
         onStopWatching={handleStopWatching}
