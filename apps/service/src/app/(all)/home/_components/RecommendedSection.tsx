@@ -7,7 +7,7 @@ import { useHomeFeedVideoInfinite } from '@/lib/tanstack/query/recommendation.qu
 import { RecommendationVideoItem } from '@/models/recommendations.model';
 import { ThumbnailData } from '@/types/video';
 import { formatVideoTime } from '@/utils/format';
-import { Button } from '@repo/ui';
+import { CircleX } from 'lucide-react';
 import Link from 'next/link';
 
 export function mapHomeFeedToThumbnail(
@@ -59,11 +59,17 @@ const RecommendedSection = () => {
             ))}
           </div>
         ) : isError ? (
-          <div className="border-primary-500 mx-3 flex flex-col items-center justify-center gap-5 rounded-lg border py-15">
-            <span className="body2 text-primary-500">추천영상 에러</span>
-            <Button size={'lg'} onClick={() => refetch()}>
+          <div className="border-primary-500 mx-3 flex flex-col items-center justify-center gap-3 rounded-lg border py-15">
+            <CircleX size={35} className="text-primary-500" />
+            <span className="body2 text-primary-500">
+              추천 영상을 가져오지 못했습니다.
+            </span>
+            <button
+              onClick={() => refetch()}
+              className="body3 underline opacity-60"
+            >
               다시 시도하기
-            </Button>
+            </button>
           </div>
         ) : (
           videos.map((data) => {

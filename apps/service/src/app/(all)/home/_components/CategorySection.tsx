@@ -62,6 +62,7 @@ const CategorySection = () => {
     videos,
     isError: isListError,
     isPending: isListPending,
+    refetch: listRefetch,
   } = useVideosByTag(Number(currentCategory), {
     enabled: !isTagsPending && !!currentCategory,
   });
@@ -81,6 +82,7 @@ const CategorySection = () => {
         videos={videos}
         isPending={isListPending}
         isError={isListError}
+        refetch={listRefetch}
       />
     </div>
   );

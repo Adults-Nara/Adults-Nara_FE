@@ -4,8 +4,8 @@ import useEmblaCarousel from 'embla-carousel-react';
 import TopVideoItem from './TopVideoItem';
 import { ROUTES } from '@/constant/routes';
 import Link from 'next/link';
-import { Button } from '@repo/ui';
 import ThumbnailSkeleton from '@/components/skeleton/ThumbnailSkeleton';
+import { CircleX, Inbox } from 'lucide-react';
 
 const TopTenSection = () => {
   const { data, isError, isPending, refetch } = useRanking();
@@ -35,16 +35,23 @@ const TopTenSection = () => {
         </div>
       ) : /* 에러 */
       isError ? (
-        <div className="border-primary-500 mx-3 flex flex-col items-center justify-center gap-5 rounded-lg border py-15">
-          <span className="body2 text-primary-500">인기영상 에러</span>
-          <Button size={'lg'} onClick={() => refetch()}>
+        <div className="border-primary-500 mx-3 flex flex-col items-center justify-center gap-3 rounded-lg border py-15">
+          <CircleX size={35} className="text-primary-500" />
+          <span className="body2 text-primary-500">
+            인기영상을 불러오지 못했습니다.
+          </span>
+          <button
+            onClick={() => refetch()}
+            className="body3 underline opacity-60"
+          >
             다시 시도하기
-          </Button>
+          </button>
         </div>
       ) : // Empty
       data.length === 0 ? (
-        <div className="mx-5 flex flex-col items-center justify-center rounded-lg border border-gray-400 py-15">
-          <span className="body2 text-gray-600">인기 영상이 없습니다...</span>
+        <div className="mx-5 flex flex-col items-center justify-center rounded-lg border border-gray-400 py-15 text-gray-600">
+          <Inbox size={35} />
+          <span className="body2">인기 영상이 없습니다...</span>
         </div>
       ) : (
         <div className="overflow-hidden px-3 py-0.5" ref={videoRef}>

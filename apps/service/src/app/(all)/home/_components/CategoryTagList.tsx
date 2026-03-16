@@ -36,7 +36,7 @@ const CategoryTagList = ({
   if (isError)
     return (
       <div className="body2 text-primary-500 px-3">
-        사용자 주제를 가져올수 없습니다..
+        사용자 선호주제를 가져오지못했습니다.
       </div>
     );
   return (

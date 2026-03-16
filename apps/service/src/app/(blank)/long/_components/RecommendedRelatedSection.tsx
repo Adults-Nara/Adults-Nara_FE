@@ -1,4 +1,5 @@
 'use client';
+import VideoLargeCardSkeleton from '@/components/skeleton/VideoLargeCardSkeleton';
 import VideoLargeCard from '@/components/thumbnail/VideoLargeCard';
 import { ROUTES } from '@/constant/routes';
 import useObserver from '@/hooks/useObserver';
@@ -6,6 +7,7 @@ import { useRelatedVideosInfinite } from '@/lib/tanstack/query/recommendation.qu
 import { RecommendationVideoItem } from '@/models/recommendations.model';
 import { ThumbnailData } from '@/types/video';
 import { formatVideoTime } from '@/utils/format';
+import { CircleX } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -31,7 +33,7 @@ const RecommendedRelatedSection = () => {
   const videoId = searchParams.get('v');
 
   if (!videoId) {
-    return <div>연관 영상을 불러올 수 없습니다.</div>;
+    return;
   }
   const {
     data,
@@ -40,6 +42,7 @@ const RecommendedRelatedSection = () => {
     isFetchingNextPage,
     isError,
     isPending,
+    refetch,
   } = useRelatedVideosInfinite(videoId, 10, 'LONG');
 
   const observerRef = useObserver({
@@ -47,10 +50,6 @@ const RecommendedRelatedSection = () => {
     fetchNextPage,
     isFetchingNextPage,
   });
-
-  //TODO: 추후 로딩에러페이지 구현
-  if (isPending) return <div>로딩중...</div>;
-  if (isError) return <div>에러</div>;
 
   const items = data?.pages.flatMap((page) => page.content) ?? [];
   const videos = items.map(mapRelatedToThumbnail);
@@ -60,22 +59,43 @@ const RecommendedRelatedSection = () => {
       <span className="title1 pl-3">추천영상</span>
 
       <div className="flex flex-col">
-        {videos.map((data) => {
-          return (
-            <Link
-              key={data.id}
-              href={
-                data.type === 'short'
-                  ? `${ROUTES.SHORTS}?v=${data.id}`
-                  : `${ROUTES.LONG}?v=${data.id}`
-              }
+        {isPending ? (
+          <div className="flex flex-col gap-1 overflow-hidden">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <VideoLargeCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="border-primary-500 mx-3 flex flex-col items-center justify-center gap-3 rounded-lg border py-15">
+            <CircleX size={35} className="text-primary-500" />
+            <span className="body2 text-primary-500">
+              추천 영상을 가져오지 못했습니다.
+            </span>
+            <button
+              onClick={() => refetch()}
+              className="body3 underline opacity-60"
             >
-              <VideoLargeCard data={data} />
-            </Link>
-          );
-        })}
+              다시 시도하기
+            </button>
+          </div>
+        ) : (
+          videos.map((data) => {
+            return (
+              <Link
+                key={data.id}
+                href={
+                  data.type === 'short'
+                    ? `${ROUTES.SHORTS}?v=${data.id}`
+                    : `${ROUTES.LONG}?v=${data.id}`
+                }
+              >
+                <VideoLargeCard data={data} />
+              </Link>
+            );
+          })
+        )}
+        <div ref={observerRef} className="h-1" />
       </div>
-      <div ref={observerRef} />
     </div>
   );
 };

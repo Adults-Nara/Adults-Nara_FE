@@ -7,6 +7,7 @@ import { TagVideoResponse } from '@/models/tag.model';
 import { ThumbnailData } from '@/types/video';
 import { formatVideoTime } from '@/utils/format';
 import useEmblaCarousel from 'embla-carousel-react';
+import { CircleX } from 'lucide-react';
 import Link from 'next/link';
 
 export function mapTagListToThumbnail(item: TagVideoResponse): ThumbnailData {
@@ -27,12 +28,14 @@ interface CategoryVideoListProps {
   videos: TagVideoResponse[];
   isError: boolean;
   isPending: boolean;
+  refetch: () => void;
 }
 
 const CategoryVideoList = ({
   videos,
   isError,
   isPending,
+  refetch,
 }: CategoryVideoListProps) => {
   const [videoListRef] = useEmblaCarousel({
     align: 'start',
@@ -52,8 +55,17 @@ const CategoryVideoList = ({
     );
   if (isError)
     return (
-      <div className="border-primary-500 mx-3 flex flex-col items-center justify-center gap-5 rounded-lg border py-15">
-        <span className="body2 text-primary-500">주제 영상 에러</span>
+      <div className="border-primary-500 mx-3 flex flex-col items-center justify-center gap-3 rounded-lg border py-15">
+        <CircleX size={35} className="text-primary-500" />
+        <span className="body2 text-primary-500">
+          주제별 인기영상을 불러오지못했습니다.
+        </span>
+        <button
+          onClick={() => refetch()}
+          className="body3 underline opacity-60"
+        >
+          다시 시도하기
+        </button>
       </div>
     );
   if (videos.length === 0)
