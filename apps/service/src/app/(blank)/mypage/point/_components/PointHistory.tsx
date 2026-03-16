@@ -106,7 +106,7 @@ const PointHistory = () => {
         </span>
         <button
           onClick={() => refetch()}
-          className="mt-2 text-sm underline opacity-60"
+          className="body3 mt-2 underline opacity-60"
         >
           다시 시도하기
         </button>

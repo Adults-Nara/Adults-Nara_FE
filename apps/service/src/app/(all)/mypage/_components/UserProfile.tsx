@@ -1,5 +1,6 @@
 'use client';
 import { ROUTES } from '@/constant/routes';
+import { confirm } from '@/lib/confirm';
 import { useLogout } from '@/lib/tanstack/mutation/auth.mutation';
 import {
   useDeleteUser,
@@ -7,6 +8,7 @@ import {
 } from '@/lib/tanstack/mutation/user.mutation';
 import { useMyuplusVerify } from '@/lib/tanstack/query/uplus.query';
 import { useUserMe } from '@/lib/tanstack/query/user.query';
+import { toast } from '@/lib/toast';
 import { useAuthStore } from '@/store/useAuthStore';
 import {
   Pen,
@@ -22,6 +24,7 @@ import {
   Input,
   Button,
 } from '@repo/ui';
+import { UserXIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -30,7 +33,7 @@ const UserProfile = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [nickname, setNickname] = useState('');
   const phoneNumber = useAuthStore((state) => state.phoneNumber);
-  const { data, isPending, isError } = useUserMe();
+  const { data, isPending, isError, refetch } = useUserMe();
   const { data: myVerify } = useMyuplusVerify({
     phoneNumber: phoneNumber || '0',
   });
@@ -41,52 +44,69 @@ const UserProfile = () => {
 
   const handleSave = () => {
     if (nickname.trim().length === 0) {
-      //TODO: 추후 토스트 변경
-      return console.log('값을 입력해주세요');
+      return toast.error('값을 입력해주세요.');
     }
 
     editMutate(
       { nickname: nickname.trim() },
       {
         onSuccess: () => {
-          //TODO: 추후 토스트로 변경
-          console.log('수정성공');
+          toast.success('수정을 완료되었습니다.');
           setIsEdit(false);
         },
         onError: () => {
-          //TODO: 추후 토스트로 변경
-          console.log('수정실패');
+          toast.error('수정을 실패하였습니다.');
         },
       },
     );
   };
 
-  const handleDelete = () => {
-    //TODO: 추후 모달창 수정
-    const confirmed = window.confirm(
-      '정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
-    );
+  const handleDelete = async () => {
+    const confirmed = await confirm('정말 탈퇴하시겠습니까?', '탈퇴');
     if (!confirmed) return;
 
     deleteMutate('직접 탈퇴', {
       onSuccess: () => {
-        //TODO: 추후 토스트로 변경
-        console.log('탈퇴 성공');
+        toast.success('탈퇴를 성공하였습니다.');
         router.replace(ROUTES.HOME);
       },
       onError: () => {
-        //TODO: 추후 토스트로 변경
-        console.log('탈퇴 실패');
+        toast.error('탈퇴를 실패하였습니다.');
       },
     });
   };
 
-  //TODO: 추후 로딩 에러 화면 구현
   if (isPending) {
-    return <span>로딩중...</span>;
+    return (
+      <div className="flex animate-pulse items-center justify-between rounded-lg bg-white px-4 py-6 shadow-[0_5px_15px_0px_rgba(0,0,0,0.1)]">
+        <div className="flex items-center gap-4">
+          {/* avatar */}
+          <div className="h-15 w-15 shrink-0 rounded-full bg-gray-200" />
+
+          {/* text */}
+          <div className="flex flex-col gap-4">
+            <div className="h-5 w-24 rounded bg-gray-200" />
+            <div className="h-5 w-60 rounded bg-gray-200" />
+          </div>
+        </div>
+      </div>
+    );
   }
   if (isError) {
-    return <span>정보를 불러오지못했습니다</span>;
+    return (
+      <div className="flex w-full flex-col items-center gap-2 rounded-lg bg-gray-100 px-4 py-6 shadow-[0_5px_15px_0px_rgba(0,0,0,0.1)]">
+        <UserXIcon size={35} className="text-primary-600" />
+        <span className="body2 text-primary-600">
+          내정보를 불러오지 못했습니다.
+        </span>
+        <button
+          onClick={() => refetch()}
+          className="body3 mt-2 underline opacity-60"
+        >
+          다시 시도하기
+        </button>
+      </div>
+    );
   }
 
   return (
