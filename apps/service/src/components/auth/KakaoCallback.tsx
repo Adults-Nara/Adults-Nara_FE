@@ -2,7 +2,7 @@
 import { ROUTES } from '@/constant/routes';
 import { useLoginWithKakao } from '@/lib/tanstack/query/auth.query';
 import { useAuthStore } from '@/store/useAuthStore';
-import { Button } from '@repo/ui';
+import { Button, Spinner } from '@repo/ui';
 import { CircleX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -45,7 +45,7 @@ const KakaoCallback = ({ code, state }: KakaoCallback) => {
 
   return (
     <>
-      <p>로그인 처리 중입니다. 잠시만 기다려주세요...</p>
+      <Spinner size={50} />
     </>
   );
 };
