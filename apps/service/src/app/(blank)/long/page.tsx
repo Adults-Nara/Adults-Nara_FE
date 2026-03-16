@@ -1,7 +1,6 @@
-import { Suspense } from 'react';
-import RecommendedSection from '@/app/(all)/home/_components/RecommendedSection';
 import { VideoInfoManager } from './_components/VideoInfoManager';
 import { VideoPlaybackManager } from './_components/VideoPlaybackManager';
+import RecommendedRelatedSection from './_components/RecommendedRelatedSection';
 
 export default function LongPage() {
   return (
@@ -14,7 +13,7 @@ export default function LongPage() {
         <VideoInfoManager />
 
         {/* 추천 영상 */}
-        <RecommendedSection />
+        <RecommendedRelatedSection />
       </div>
     </div>
   );
