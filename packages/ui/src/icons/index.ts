@@ -41,3 +41,5 @@ export { default as Users } from './Users';
 export { default as UserCheck } from './UserCheck';
 export { default as View } from './View';
 export { default as ViewHide } from './ViewHide';
+export { default as Great } from './Great';
+export { default as GreatFill } from './GreatFill';
