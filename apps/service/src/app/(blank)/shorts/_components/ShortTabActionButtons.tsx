@@ -20,11 +20,13 @@ import { useIsLoggedIn } from '@/store/useAuthStore';
 interface ShortTabActionButtonsProps {
   videoId: string;
   isAd: boolean;
+  commentNum: number;
 }
 
 export function ShortTabActionButtons({
   videoId,
   isAd,
+  commentNum,
 }: ShortTabActionButtonsProps) {
   const { data: interaction, isLoading: interactionLoading } =
     useInteraction(videoId);
@@ -131,7 +133,7 @@ export function ShortTabActionButtons({
       >
         <Comment />
         {/* TODO: 댓글 개수 표시 */}
-        <span className="body4">{10}</span>
+        <span className="body4">{commentNum}</span>
       </button>
     </div>
   );

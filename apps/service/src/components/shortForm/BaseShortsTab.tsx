@@ -34,7 +34,9 @@ function applyWindowing<T>(
   prevList: T[],
   newItemsToAdd: T[],
   windowSize: number,
+  currentIndex: number,
   setIndexOffset: React.Dispatch<React.SetStateAction<number>>,
+  minBuffer: number = 15,
 ): T[] {
   const appended = [...prevList, ...newItemsToAdd];
   if (appended.length <= windowSize) return appended;
@@ -73,12 +75,14 @@ export default function BaseShortsTab({
   const [colIndex, setColIndex] = useState(0);
   const [hList, setHList] = useState<ShortFormVideoData[]>([]);
 
+  const sourceVideoIdRef = useRef<string>(vList[rowIndex]?.videoId);
+
   const isLogin = useIsLoggedIn();
   const queryClient = useQueryClient();
 
   // 페이징
   const FETCH_SIZE = 10; // api에 요청하는 개수
-  const WINDOW_SIZE = 30; // 메모리에 담아둘 최대 개수
+  const WINDOW_SIZE = 20; // 메모리에 담아둘 최대 개수
 
   useEffect(() => {
     // api로 algorithmList를 성공적으로 추가한 경우
@@ -92,7 +96,14 @@ export default function BaseShortsTab({
 
         // 기존 리스트 뒤에 다음 페이지 영상 리스트가 추가된 경우
         const newItems = algorithmList.slice(-addedCount);
-        return applyWindowing(prev, newItems, WINDOW_SIZE, setRowIndex);
+        return applyWindowing(
+          prev,
+          newItems,
+          WINDOW_SIZE,
+          colIndex,
+          setRowIndex,
+          10,
+        );
       });
     }
   }, [algorithmList]);
@@ -119,7 +130,7 @@ export default function BaseShortsTab({
     hasNextPage,
     isFetchingNextPage,
     isLoading: isRelatedLoading,
-  } = useRelatedVideosInfinite(vList[rowIndex]?.videoId, FETCH_SIZE);
+  } = useRelatedVideosInfinite(sourceVideoIdRef.current, FETCH_SIZE);
 
   const lastRowIndexRef = useRef(rowIndex);
   const lastRelatedLengthRef = useRef(0);
@@ -156,7 +167,14 @@ export default function BaseShortsTab({
 
         // 기존 리스트 뒤에 다음 페이지 영상 리스트가 추가된 경우
         const newItems = allRelated.slice(-addedCount);
-        return applyWindowing(prev, newItems, WINDOW_SIZE, setColIndex);
+        return applyWindowing(
+          prev,
+          newItems,
+          WINDOW_SIZE,
+          colIndex,
+          setColIndex,
+          10,
+        );
       });
     } else if (
       lastRelatedLengthRef.current === 0 &&
@@ -182,7 +200,11 @@ export default function BaseShortsTab({
     // 히스토리 조작 시 리렌더링 없이 URL만 업데이트 (Next.js native shallow routing)
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set('v', String(currentVideo.videoId));
-    router.replace(`${pathname}?${newParams.toString()}`, { scroll: false });
+    window.history.replaceState(
+      null,
+      '',
+      `${window.location.pathname}?${newParams.toString()}`,
+    );
   }, [currentVideo?.videoId, pathname, router, searchParams]);
 
   const upVideo = rowIndex > 0 ? vList[rowIndex - 1] : null;
@@ -234,7 +256,7 @@ export default function BaseShortsTab({
         setColIndex((prev) => prev + 1);
       });
       if (
-        colIndex + 1 >= hList.length - FETCH_SIZE &&
+        colIndex + 1 >= hList.length - 5 &&
         hasNextPage &&
         !isFetchingNextPage
       ) {
@@ -313,6 +335,7 @@ export default function BaseShortsTab({
             <ShortTabActionButtons
               videoId={currentVideo.videoId}
               isAd={currentVideo.isAd ?? false}
+              commentNum={currentVideo.comments}
             />
           }
         />
