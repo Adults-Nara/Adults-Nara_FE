@@ -78,9 +78,10 @@ export function useAdManager(videoId: string | null): UseAdManagerReturn {
     if (adState === 'FETCHING' && adVideoUrl) {
       clearTimeout(fetchTimeoutRef.current ?? undefined);
       setAdState('PLAYING');
-    }
-    if (!isLoggedIn) {
-      toast.info('로그인 후 광고를 시청하시면 포인트를 받을 수 있습니다.');
+
+      if (!isLoggedIn) {
+        toast.info('로그인 후 광고 포인트를 받아가세요!');
+      }
     }
   }, [adVideoUrl]);
 
