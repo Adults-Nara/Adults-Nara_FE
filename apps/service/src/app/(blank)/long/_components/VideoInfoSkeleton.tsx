@@ -1,5 +1,3 @@
-import { Button } from '@repo/ui';
-
 export function VideoInfoSkeleton() {
   return (
     <div className="flex animate-pulse flex-col gap-3 px-3 py-2">

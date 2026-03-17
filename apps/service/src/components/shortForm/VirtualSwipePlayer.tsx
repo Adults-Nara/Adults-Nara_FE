@@ -4,6 +4,7 @@ import { useRef, useState, ReactNode, useEffect, useCallback } from 'react';
 import { ShortFormVideoData } from '@/types/video';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 import { AdProgressBar } from '@/app/(blank)/long/_components/AdProgressBar';
+import { toast } from '@/lib/toast';
 
 /**
  * 숏폼 플레이어 전용 스타일
@@ -265,11 +266,9 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                     Math.floor(props.currentVideo.duration),
                     getStayingTimeDelta(),
                   );
-                  // TODO : 영상이 끝났을 때, 포인트 적립 토스트
-                  console.log('영상이 끝났습니다. 포인트가 적립되었습니다!');
+                  toast.success('포인트가 적립되었습니다!');
                 } else {
-                  // TODO : 로그인 유도 토스트
-                  console.log('로그인을 해주세요.');
+                  toast.info('로그인을 해야 포인트를 적립할 수 있습니다.');
                 }
                 // 처음으로 돌리기
                 if (playerRef.current) playerRef.current.currentTime = 0;
@@ -327,7 +326,6 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           </div>
         )}
 
-        {/* TODO : 광고일 경우, AD 프로그래스바 */}
         {props.currentVideo.isAd && (
           <div className="absolute bottom-4 left-1/2 h-1 w-3/4 -translate-x-1/2 transform bg-white/50"></div>
         )}

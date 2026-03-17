@@ -12,7 +12,6 @@ import {
 } from '@/lib/tanstack/mutation/watch-history.mutation';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { VideoPlayer } from './VideoPlayer';
-import { AdRewardToast } from './AdRewardToast';
 import { usePlaylistAutoPlay } from '@/hooks/usePlaylistAutoPlay';
 import { useAdManager } from '@/hooks/useAdManager';
 import { useIsLoggedIn } from '@/store/useAuthStore';
@@ -31,14 +30,9 @@ export function VideoPlaybackManager() {
   const progress = isVideoCompleted ? 0 : (watchHistory?.lastPosition ?? 0);
 
   // 2. 광고 상태 머신 (40% 확률 Pre-roll)
-  const {
-    adState,
-    adVideoUrl,
-    showRewardToast,
-    onAdEnded,
-    onAdSkipped,
-    onDismissToast,
-  } = useAdManager(videoId ? videoId : null);
+  const { adState, adVideoUrl, onAdEnded, onAdSkipped } = useAdManager(
+    videoId ? videoId : null,
+  );
 
   // 광고가 완전히 끝났거나 애초에 당첨되지 않아 스킵된 상태인지 확인
   const isAdFinishedOrSkipped = adState === 'COMPLETED_OR_SKIPPED';
@@ -91,8 +85,7 @@ export function VideoPlaybackManager() {
     (currentTime: number) => {
       if (isLoggedIn && currentTime > 0) {
         stopWatching({
-          // TODO : videoId 없는 경우 처리
-          videoId: videoId || '0',
+          videoId: videoId || '-1',
           body: { lastPosition: currentTime, watchSeconds: currentTime },
         });
       }
@@ -189,9 +182,6 @@ export function VideoPlaybackManager() {
         onWatchProgressUpdate={handleWatchProgressUpdate}
         onStopWatching={handleStopWatching}
       />
-      {showRewardToast && (
-        <AdRewardToast key="reward-toast" onDismiss={onDismissToast} />
-      )}
     </div>
   );
 }

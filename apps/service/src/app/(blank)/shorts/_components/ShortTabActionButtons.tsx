@@ -21,6 +21,7 @@ import { useIsLoggedIn } from '@/store/useAuthStore';
 import { InteractionType } from '@/types/interaction';
 import { useSheetStore } from '@/store/useSheetStore';
 import CommentList from '@/components/comment/CommentList';
+import { toast } from '@/lib/toast';
 
 interface ShortTabActionButtonsProps {
   videoId: string;
@@ -33,25 +34,48 @@ export function ShortTabActionButtons({
   isAd,
   commentNum,
 }: ShortTabActionButtonsProps) {
-  const { data: interaction, isLoading: interactionLoading } =
-    useInteraction(videoId);
-  const { data: bookmark, isLoading: bookmarkLoading } =
-    useBookmarkStatus(videoId);
+  const {
+    data: interaction,
+    isLoading: interactionLoading,
+    isError: isInteractionError,
+  } = useInteraction(videoId);
+  const {
+    data: bookmark,
+    isLoading: bookmarkLoading,
+    isError: isBookmarkError,
+  } = useBookmarkStatus(videoId);
 
-  const { mutate: mutateLike, isPending: isLikePending } = useLikeVideo();
-  const { mutate: mutateDislike, isPending: isDislikePending } =
-    useDislikeVideo();
-  const { mutate: mutateSuperlike, isPending: isSuperlikePending } =
-    useSuperLikeVideo();
-  const { mutate: mutateBookmark, isPending: isBookmarkPending } =
-    useToggleBookmark();
+  const {
+    mutate: mutateLike,
+    isPending: isLikePending,
+    isError: isLikeError,
+  } = useLikeVideo();
+  const {
+    mutate: mutateDislike,
+    isPending: isDislikePending,
+    isError: isDislikeError,
+  } = useDislikeVideo();
+  const {
+    mutate: mutateSuperlike,
+    isPending: isSuperlikePending,
+    isError: isSuperlikeError,
+  } = useSuperLikeVideo();
+  const {
+    mutate: mutateBookmark,
+    isPending: isBookmarkPending,
+    isError: isBookmarkMutateError,
+  } = useToggleBookmark();
 
   const isLoggedIn = useIsLoggedIn();
   const interacted = interaction?.interactionType ?? null;
   const bookmarked = bookmark?.isBookmarked ?? false;
   const sheetOpen = useSheetStore((state) => state.open);
 
-  // isLoading or isPending이면 버튼 비활성화 → debounce 효과
+  if (isInteractionError || isBookmarkError) {
+    toast.error('반응 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+  }
+
+  // isLoading or isPending이면 버튼 비활성화. debounce 효과
   const isInteractionBusy =
     interactionLoading ||
     isLikePending ||
@@ -60,24 +84,58 @@ export function ShortTabActionButtons({
   const isBookmarkBusy = bookmarkLoading || isBookmarkPending;
 
   const handleInteracted = (type: InteractionType) => {
-    if (!isLoggedIn || isInteractionBusy) return;
+    if (!isLoggedIn) {
+      toast.info('로그인이 필요합니다. 로그인 후 이용해주세요.');
+      return;
+    }
+    if (isInteractionBusy) {
+      toast.info('반응 처리 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
 
     switch (type) {
       case 'LIKE':
         mutateLike(videoId);
+        if (isLikeError) {
+          toast.error('좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        }
         break;
       case 'DISLIKE':
         mutateDislike(videoId);
+        if (isDislikeError) {
+          toast.error('싫어요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        }
+
         break;
       case 'SUPERLIKE':
         mutateSuperlike(videoId);
+        if (isSuperlikeError) {
+          toast.error(
+            '최고예요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+          );
+        }
         break;
     }
   };
 
   const handleBookmark = () => {
-    if (isAd || !isLoggedIn || isBookmarkBusy) return;
+    if (isAd) {
+      toast.info('광고 영상은 찜하기를 할 수 없습니다.');
+      return;
+    }
+    if (!isLoggedIn) {
+      toast.info('로그인이 필요합니다. 로그인 후 이용해주세요.');
+      return;
+    }
+    if (isBookmarkBusy) {
+      toast.info('찜하기 처리 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
     mutateBookmark(videoId);
+    if (isBookmarkMutateError) {
+      toast.error('찜하기 처리에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    }
   };
 
   // 댓글 창 열기 로직
@@ -115,7 +173,7 @@ export function ShortTabActionButtons({
 
       <button
         onClick={handleBookmark}
-        disabled={isBookmarkBusy}
+        disabled={isBookmarkBusy || isAd}
         className="flex flex-col items-center gap-1 transition-transform active:scale-90 disabled:opacity-50"
       >
         {bookmarked ? <BookmarkFill /> : <Bookmark />}

@@ -23,6 +23,7 @@ import {
 import { useSheetStore } from '@/store/useSheetStore';
 import CommentList from '@/components/comment/CommentList';
 import { InteractionType } from '@/types/interaction';
+import { toast } from '@/lib/toast';
 
 interface VideoInfoProps {
   videoId: string;
@@ -47,13 +48,26 @@ export function VideoInfo({
 }: VideoInfoProps) {
   const isLogin = useIsLoggedIn();
   const sheetOpen = useSheetStore((state) => state.open);
-  const { mutate: toggleBookmarkMutate, isPending: isToggleBookmarkPending } =
-    useToggleBookmark();
-  const { mutate: mutateLike, isPending: isLikePending } = useLikeVideo();
-  const { mutate: mutateDislike, isPending: isDislikePending } =
-    useDislikeVideo();
-  const { mutate: mutateSuperlike, isPending: isSuperlikePending } =
-    useSuperLikeVideo();
+  const {
+    mutate: toggleBookmarkMutate,
+    isPending: isToggleBookmarkPending,
+    isError: isToggleBookmarkError,
+  } = useToggleBookmark();
+  const {
+    mutate: mutateLike,
+    isPending: isLikePending,
+    isError: isLikeError,
+  } = useLikeVideo();
+  const {
+    mutate: mutateDislike,
+    isPending: isDislikePending,
+    isError: isDislikeError,
+  } = useDislikeVideo();
+  const {
+    mutate: mutateSuperlike,
+    isPending: isSuperlikePending,
+    isError: isSuperlikeError,
+  } = useSuperLikeVideo();
 
   const interacted = interaction ?? null;
   const isInteractionBusy =
@@ -62,13 +76,11 @@ export function VideoInfo({
 
   const handleInteraction = (type: InteractionType) => {
     if (isInteractionBusy) {
-      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
-      console.log('반응 처리 중입니다. 잠시만 기다려주세요.');
+      toast.info('반응 처리 중입니다. 잠시후 다시 시도해주세요.');
       return;
     }
     if (!isLogin) {
-      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
-      console.log('로그인이 필요합니다.');
+      toast.info('로그인이 필요합니다.');
       return;
     }
 
@@ -85,20 +97,25 @@ export function VideoInfo({
       default:
         break;
     }
+    if (isLikeError || isDislikeError || isSuperlikeError) {
+      toast.error('반응 처리에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   const toggleBookmark = () => {
     if (isBookmarkBusy) {
-      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
-      console.log('북마크 처리 중입니다. 잠시만 기다려주세요.');
+      toast.info('북마크 처리 중입니다. 잠시후 다시 시도해주세요.');
       return;
     }
     if (!isLogin) {
-      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
-      console.log('로그인이 필요합니다.');
+      toast.info('로그인이 필요합니다.');
       return;
     }
+
     toggleBookmarkMutate(videoId);
+    if (isToggleBookmarkError) {
+      toast.error('북마크 처리에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (
