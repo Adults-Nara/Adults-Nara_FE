@@ -34,7 +34,7 @@ export function TagSettingOnboarding({
   };
 
   return (
-    <div className="flex h-dvh w-full flex-col">
+    <div className="flex w-full flex-col">
       <OnboardingHeader />
       <div className="flex h-full w-full flex-col items-center justify-center gap-10 p-2">
         {settingStep === 'setting' ? (

@@ -20,7 +20,7 @@ const PreferenceEdit = ({
           {selectedCategories.length}/5
         </span>
       </div>
-      <div className="flex flex-col gap-5 px-2">
+      <div className="flex flex-col items-center gap-5 px-2">
         <div className="flex w-full flex-wrap gap-2">
           {selectedCategories.length === 0 ? (
             <span className="body2 text-primary-400 px-1">
@@ -41,7 +41,7 @@ const PreferenceEdit = ({
             })
           )}
         </div>
-        <div className="h-55 overflow-auto">
+        <div className="w-87.5">
           <CategoryAccordion
             selectedCategories={selectedCategories}
             onToggle={onToggle}

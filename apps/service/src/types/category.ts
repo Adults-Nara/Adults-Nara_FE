@@ -58,7 +58,7 @@ export const CATEGORY_MAP: Record<string, { label: string; value: string }[]> =
       { label: '캠핑', value: '2029' },
       { label: '맛집 여행', value: '2030' },
       { label: '배낭여행', value: '2031' },
-      { label: '스마트폰 활용법', value: '2032' },
+      { label: '스마트폰활용법', value: '2032' },
       { label: '원예/자연', value: '2033' },
       { label: '역사/인물', value: '2034' },
     ],
@@ -81,7 +81,7 @@ export const CATEGORY_MAP: Record<string, { label: string; value: string }[]> =
     '1008': [
       // 생활/정보
       { label: '시니어 재테크', value: '2045' },
-      { label: '복지 혜택/지원금', value: '2046' },
+      { label: '혜택/지원금', value: '2046' },
       { label: '생활 꿀팁', value: '2047' },
     ],
   };

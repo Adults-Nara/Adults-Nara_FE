@@ -19,7 +19,7 @@ export const TagSettingOnboardingTab = ({
           : '선호하는 주제를\n3개 이상 선택해주세요.'}
       </p>
 
-      <div className="flex w-full flex-col gap-5">
+      <div className="flex w-full flex-col items-center gap-5">
         <div className="flex w-full flex-wrap justify-center gap-2">
           {selectedCategories.length === 0 ? (
             <span className="body2 text-primary-400 px-1">
@@ -45,20 +45,22 @@ export const TagSettingOnboardingTab = ({
             className={selectedCategories.length < 3 ? 'text-primary-500' : ''}
           >
             {selectedCategories.length}
-          </span>{' '}
+          </span>
           / 5
         </p>
-        <CategoryAccordion
-          selectedCategories={selectedCategories}
-          onToggle={(cat) => {
-            if (selectedCategories.length >= 5) {
-              if (!selectedCategories.includes(cat)) {
-                return;
+        <div className="w-87.5">
+          <CategoryAccordion
+            selectedCategories={selectedCategories}
+            onToggle={(cat) => {
+              if (selectedCategories.length >= 5) {
+                if (!selectedCategories.includes(cat)) {
+                  return;
+                }
               }
-            }
-            onToggle(cat);
-          }}
-        />
+              onToggle(cat);
+            }}
+          />
+        </div>
         <Button
           onClick={() => {
             onComplete(selectedCategories);
@@ -66,7 +68,7 @@ export const TagSettingOnboardingTab = ({
           disabled={
             selectedCategories.length < 5 && selectedCategories.length < 3
           }
-          className="w-full"
+          className="w-87.5"
         >
           다음
         </Button>

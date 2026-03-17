@@ -11,7 +11,7 @@ export const TagSettingCompleteTab = ({
   onComplete: () => void;
 }) => {
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center">
+    <div className="flex h-dvh w-full flex-col items-center justify-center">
       <div className="flex flex-3 flex-col justify-center gap-10">
         <p className="title1 text-center whitespace-pre-wrap">
           이 주제에 관심이 많으신 것 같아요.
