@@ -43,9 +43,7 @@ const CategoryPageClient = () => {
           router.back();
         },
         onError: (error) => {
-          toast.error(
-            `선호주제 저장중에 오류가 발생하였습니다. ${error.message}`,
-          );
+          toast.error('선호주제 저장중에 오류가 발생하였습니다.');
         },
       },
     );
