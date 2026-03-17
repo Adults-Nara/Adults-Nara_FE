@@ -40,7 +40,7 @@ export function VideoPlaybackManager() {
     onDismissToast,
   } = useAdManager(videoId ? videoId : null);
 
-  // 💡 핵심: 광고가 완전히 끝났거나 애초에 당첨되지 않아 스킵된 상태인지 확인
+  // 광고가 완전히 끝났거나 애초에 당첨되지 않아 스킵된 상태인지 확인
   const isAdFinishedOrSkipped = adState === 'COMPLETED_OR_SKIPPED';
 
   // 3. 메인 영상 S3 호출 (광고가 완전히 끝났을 때만 API 실행)

@@ -8,6 +8,8 @@ import {
   Comment,
   Dislike,
   DislikeFill,
+  Great,
+  GreatFill,
   Like,
   LikeFill,
 } from '@repo/ui';
@@ -16,9 +18,11 @@ import { useToggleBookmark } from '@/lib/tanstack/mutation/bookmark.mutation';
 import {
   useLikeVideo,
   useDislikeVideo,
+  useSuperLikeVideo,
 } from '@/lib/tanstack/mutation/interaction.mutation';
 import { useSheetStore } from '@/store/useSheetStore';
 import CommentList from '@/components/comment/CommentList';
+import { InteractionType } from '@/types/interaction';
 
 interface VideoInfoProps {
   videoId: string;
@@ -27,7 +31,7 @@ interface VideoInfoProps {
   uploadDate: string;
   uploader: { name: string; profileImg: string | null };
   comments: number;
-  isLiked?: boolean | null;
+  interaction: InteractionType;
   isBookmarked: boolean;
 }
 
@@ -38,20 +42,26 @@ export function VideoInfo({
   uploadDate,
   uploader,
   comments,
-  isLiked,
+  interaction,
   isBookmarked,
 }: VideoInfoProps) {
   const isLogin = useIsLoggedIn();
   const sheetOpen = useSheetStore((state) => state.open);
   const { mutate: toggleBookmarkMutate, isPending: isToggleBookmarkPending } =
     useToggleBookmark();
-  const { mutate: likeVideoMutate, isPending: isLikeVideoPending } =
-    useLikeVideo();
-  const { mutate: dislikeVideoMutate, isPending: isDislikeVideoPending } =
+  const { mutate: mutateLike, isPending: isLikePending } = useLikeVideo();
+  const { mutate: mutateDislike, isPending: isDislikePending } =
     useDislikeVideo();
+  const { mutate: mutateSuperlike, isPending: isSuperlikePending } =
+    useSuperLikeVideo();
 
-  const handleLike = (changeTo: boolean) => {
-    if (isLikeVideoPending || isDislikeVideoPending) {
+  const interacted = interaction ?? null;
+  const isInteractionBusy =
+    isLikePending || isDislikePending || isSuperlikePending;
+  const isBookmarkBusy = isToggleBookmarkPending;
+
+  const handleInteraction = (type: InteractionType) => {
+    if (isInteractionBusy) {
       // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
       console.log('반응 처리 중입니다. 잠시만 기다려주세요.');
       return;
@@ -62,15 +72,29 @@ export function VideoInfo({
       return;
     }
 
-    if (changeTo) {
-      likeVideoMutate(videoId);
-    } else {
-      dislikeVideoMutate(videoId);
+    switch (type) {
+      case 'SUPERLIKE':
+        mutateSuperlike(videoId);
+        break;
+      case 'LIKE':
+        mutateLike(videoId);
+        break;
+      case 'DISLIKE':
+        mutateDislike(videoId);
+        break;
+      default:
+        break;
     }
   };
 
   const toggleBookmark = () => {
+    if (isBookmarkBusy) {
+      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
+      console.log('북마크 처리 중입니다. 잠시만 기다려주세요.');
+      return;
+    }
     if (!isLogin) {
+      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
       console.log('로그인이 필요합니다.');
       return;
     }
@@ -107,13 +131,29 @@ export function VideoInfo({
 
       {/* 반응 */}
       <div className="flex flex-row flex-wrap gap-1 text-gray-800">
-        <Button variant="noneline" size="lg" onClick={() => handleLike(true)}>
-          {isLiked === true ? <LikeFill /> : <Like />}
+        <Button
+          variant="noneline"
+          size="lg"
+          onClick={() => handleInteraction('SUPERLIKE')}
+        >
+          {interaction === 'SUPERLIKE' ? <GreatFill /> : <Great />}
+          최고예요
+        </Button>
+        <Button
+          variant="noneline"
+          size="lg"
+          onClick={() => handleInteraction('LIKE')}
+        >
+          {interaction === 'LIKE' ? <LikeFill /> : <Like />}
           좋아요
         </Button>
 
-        <Button variant="noneline" size="lg" onClick={() => handleLike(false)}>
-          {isLiked === false ? <DislikeFill /> : <Dislike />}
+        <Button
+          variant="noneline"
+          size="lg"
+          onClick={() => handleInteraction('DISLIKE')}
+        >
+          {interaction === 'DISLIKE' ? <DislikeFill /> : <Dislike />}
           싫어요
         </Button>
         <Button variant="noneline" size="lg" onClick={() => toggleBookmark()}>
