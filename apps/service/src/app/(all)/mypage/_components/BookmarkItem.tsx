@@ -8,7 +8,7 @@ interface BookmarkItemProps {
 
 const BookmarkItem = ({ data, type }: BookmarkItemProps) => {
   return (
-    <div className="flex w-full flex-col overflow-hidden rounded-lg shadow-[0_0_2px_0px_rgba(0,0,0,0.25)]">
+    <div className="flex w-full flex-col overflow-hidden shadow-[0_0_2px_0px_rgba(0,0,0,0.25)]">
       <div
         className={`grid aspect-video w-full bg-gray-200 ${
           type === 'long'
@@ -17,7 +17,10 @@ const BookmarkItem = ({ data, type }: BookmarkItemProps) => {
         }`}
       >
         {data.thumbnails.map((img, index) => (
-          <div key={index} className="relative h-full w-full overflow-hidden">
+          <div
+            key={index}
+            className="relative h-full w-full overflow-hidden rounded-lg"
+          >
             <Thumbnail type={type} src={img} fillContainer />
           </div>
         ))}

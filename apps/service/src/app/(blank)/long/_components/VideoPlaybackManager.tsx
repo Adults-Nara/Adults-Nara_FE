@@ -1,7 +1,8 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import {
   useVideoS3Url,
   useVideoDetail,
@@ -13,6 +14,7 @@ import {
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { VideoPlayer } from './VideoPlayer';
 import { usePlaylistAutoPlay } from '@/hooks/usePlaylistAutoPlay';
+import { NextVideoOverlay } from './NextVideoOverlay';
 import { useAdManager } from '@/hooks/useAdManager';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 
@@ -94,9 +96,30 @@ export function VideoPlaybackManager() {
   );
 
   // 재생 목록(찜 목록 등) 자동 재생 훅
-  const handleVideoEnd = usePlaylistAutoPlay(videoId || undefined, () => {
-    lastReportedTimeRef.current = Date.now();
-  });
+  const { nextVideo, navigateToNext } = usePlaylistAutoPlay(
+    videoId || undefined,
+    () => {
+      lastReportedTimeRef.current = Date.now();
+    },
+  );
+
+  const [showEndOverlay, setShowEndOverlay] = useState(false);
+  const [replayKey, setReplayKey] = useState(0);
+
+  // videoId 변경 시 overlay 상태 초기화
+  useEffect(() => {
+    setShowEndOverlay(false);
+    setReplayKey(0);
+  }, [videoId]);
+
+  const handleVideoEnd = useCallback(() => {
+    setShowEndOverlay(true);
+  }, []);
+
+  const handleReplay = useCallback(() => {
+    setShowEndOverlay(false);
+    setReplayKey((k) => k + 1);
+  }, []);
 
   // 광고 종료/스킵 시 lastReportedTimeRef 리셋 후 원래 핸들러 호출
   const handleAdEnded = useCallback(
@@ -171,17 +194,24 @@ export function VideoPlaybackManager() {
   return (
     <div className="relative w-full bg-black" style={{ aspectRatio: '16/9' }}>
       <VideoPlayer
-        key={videoId} // 안정적인 재조정을 위해 비디오 ID를 키로 사용
+        key={`${videoId}-${replayKey}`}
         src={currentUrl || null}
-        progress={isAdPlaying ? 0 : progress}
+        progress={isAdPlaying || replayKey > 0 ? 0 : progress}
         thumbnail={detailData?.thumbnailUrl ?? ''}
         isAdMode={isAdPlaying}
-        onAdEnded={handleAdEnded} // 광고가 끝났을 때 메인 영상으로 넘어가도록
+        onAdEnded={handleAdEnded}
         onAdSkip={handleAdSkipped}
         onEnded={handleVideoEnd}
         onWatchProgressUpdate={handleWatchProgressUpdate}
         onStopWatching={handleStopWatching}
       />
+      {showEndOverlay && nextVideo && (
+        <NextVideoOverlay
+          nextVideo={nextVideo}
+          onNavigate={navigateToNext}
+          onReplay={handleReplay}
+        />
+      )}
     </div>
   );
 }
