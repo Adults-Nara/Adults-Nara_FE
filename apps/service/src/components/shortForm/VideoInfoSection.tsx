@@ -1,6 +1,8 @@
 import { ROUTES } from '@/constant/routes';
 import { findLabelByValue } from '@/utils/findLabelByValue';
 import { Button } from '@repo/ui';
+import { useRouter } from 'next/navigation';
+
 interface VideoInfoSectionProps {
   title: string;
   uploader: {
@@ -19,6 +21,7 @@ export function VideoInfoSection({
   tags,
   isAd,
 }: VideoInfoSectionProps) {
+  const router = useRouter();
   return (
     <div
       className={`absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/50 to-transparent p-4 ${isAd && 'pb-14'}`}
@@ -63,6 +66,9 @@ export function VideoInfoSection({
           asChild
           size={null}
           className="title3 h-12.5 w-full bg-white/70 px-5 text-black"
+          onClick={() => {
+            router.push(longformUrl);
+          }}
         >
           <a href={longformUrl} target="_blank" rel="noopener noreferrer">
             해당영상 시청하기
