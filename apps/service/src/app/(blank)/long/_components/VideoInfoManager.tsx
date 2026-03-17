@@ -57,7 +57,7 @@ export function VideoInfoManager() {
           name: detailData.userNickname,
           profileImg: detailData.userProfile,
         }}
-        isLiked={isLiked}
+        interaction={interactionData?.interactionType ?? null}
         isBookmarked={isBookmarked}
       />
       <div className="px-4 pb-4">
