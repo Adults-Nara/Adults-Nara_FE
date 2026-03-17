@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Thumbnail from '@/components/thumbnail/Thumbnail';
 import { NextVideoInfo } from '@/hooks/usePlaylistAutoPlay';
+import { useLongPressTTS } from '@/hooks/useLongPressTTS';
 
 interface NextVideoOverlayProps {
   nextVideo: NextVideoInfo;
@@ -18,6 +19,7 @@ export function NextVideoOverlay({
   onReplay,
 }: NextVideoOverlayProps) {
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
+  const titleTTS = useLongPressTTS(`다음 영상: ${nextVideo.title}`);
   const timerRef = useRef<ReturnType<typeof setInterval>>(null);
 
   useEffect(() => {
@@ -60,6 +62,7 @@ export function NextVideoOverlay({
         type="button"
         onClick={onNavigate}
         className="flex w-44 flex-col overflow-hidden rounded-lg shadow-lg transition hover:scale-105 active:scale-100"
+        {...titleTTS}
       >
         <div className="relative w-full rounded-lg">
           <Thumbnail src={nextVideo.thumbnailUrl} type="long" />

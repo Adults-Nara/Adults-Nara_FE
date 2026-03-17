@@ -1,4 +1,5 @@
 import Thumbnail from '@/components/thumbnail/Thumbnail';
+import { useLongPressTTS } from '@/hooks/useLongPressTTS';
 import { Crown, Heart } from 'lucide-react';
 import Image from 'next/image';
 
@@ -45,6 +46,7 @@ export default function TopVideoItem({
   };
 
   const badgeStyle = getRankBadgeStyle(rank);
+  const titleTTS = useLongPressTTS(title);
 
   return (
     <div className="group relative aspect-video w-full overflow-hidden rounded-xl shadow-md transition-all duration-300">
@@ -75,7 +77,9 @@ export default function TopVideoItem({
 
       {/* 텍스트 콘텐츠 */}
       <div className="absolute right-0 bottom-0 left-0 p-4">
-        <h3 className="title3 line-clamp-2 text-white">{title}</h3>
+        <h3 className="title3 line-clamp-2 text-white" {...titleTTS}>
+          {title}
+        </h3>
         <div className="mt-1 flex items-center gap-1">
           <Heart className="h-4 w-4 text-[#F1C40F]" fill="#F1C40F" />
           <span className="body3 text-[#F1C40F]">{score.toLocaleString()}</span>

@@ -35,3 +35,22 @@
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-in;
 }
+
+/* 모바일 꾹 누르기 메뉴 및 텍스트 선택 방지 */
+* {
+  -webkit-touch-callout: none; /* iOS Safari: 링크/이미지 꾹 누를 때 메뉴 방지 */
+  -webkit-user-select: none;    /* Safari */
+  -khtml-user-select: none;     /* Konqueror HTML */
+  -moz-user-select: none;       /* Firefox */
+  -ms-user-select: none;        /* Internet Explorer/Edge */
+  user-select: none;            /* Standard */
+}
+
+/* 입력창 등 텍스트 입력이 필요한 곳은 허용 */
+input, textarea {
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}

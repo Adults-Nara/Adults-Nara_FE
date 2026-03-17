@@ -24,6 +24,7 @@ import { useSheetStore } from '@/store/useSheetStore';
 import CommentList from '@/components/comment/CommentList';
 import { InteractionType } from '@/types/interaction';
 import { toast } from '@/lib/toast';
+import { useLongPressTTS } from '@/hooks/useLongPressTTS';
 
 interface VideoInfoProps {
   videoId: string;
@@ -69,6 +70,10 @@ export function VideoInfo({
     isError: isSuperlikeError,
   } = useSuperLikeVideo();
 
+  const titleTTS = useLongPressTTS(title);
+  const viewInfoTTS = useLongPressTTS(
+    `조회수 ${formatViewCount(viewCount)}, ${formatRelativeTime(uploadDate)}`,
+  );
   const interacted = interaction ?? null;
   const isInteractionBusy =
     isLikePending || isDislikePending || isSuperlikePending;
@@ -122,8 +127,8 @@ export function VideoInfo({
     <div className="flex flex-col gap-3 px-3 py-2">
       {/* 제목 및 영상 정보*/}
       <div className="flex flex-col gap-1">
-        <p className="title2 wrap-break-word whitespace-normal">{title}</p>
-        <div className="body4 flex flex-row text-gray-700">
+        <p className="title2 wrap-break-word whitespace-normal" {...titleTTS}>{title}</p>
+        <div className="body4 flex flex-row text-gray-700" {...viewInfoTTS}>
           <p>조회수 {formatViewCount(viewCount)}</p>
           <p className="mx-1">·</p>
           <p>{formatRelativeTime(uploadDate)}</p>

@@ -1,7 +1,23 @@
+'use client';
+
 import { ROUTES } from '@/constant/routes';
 import { findLabelByValue } from '@/utils/findLabelByValue';
 import { Button } from '@repo/ui';
 import { useRouter } from 'next/navigation';
+import { useLongPressTTS } from '@/hooks/useLongPressTTS';
+
+function TagItem({ tag }: { tag: string }) {
+  const label = `# ${findLabelByValue(tag)}`;
+  const tts = useLongPressTTS(label);
+  return (
+    <span
+      className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs text-white"
+      {...tts}
+    >
+      {label}
+    </span>
+  );
+}
 interface VideoInfoSectionProps {
   title: string;
   uploader: {
@@ -21,6 +37,9 @@ export function VideoInfoSection({
   isAd,
 }: VideoInfoSectionProps) {
   const router = useRouter();
+  const titleTTS = useLongPressTTS(title);
+  const uploaderTTS = useLongPressTTS(uploader.name);
+  const adTTS = useLongPressTTS('광고 영상입니다');
   return (
     <div
       className={`pointer-events-auto absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/50 to-transparent p-4 ${isAd && 'pb-14'} `}
@@ -38,25 +57,23 @@ export function VideoInfoSection({
             <div className="bg-primary-100 h-full w-full rounded-full" />
           )}
         </div>
-        <span className="title3">{uploader.name}</span>
+        <span className="title3" {...uploaderTTS}>{uploader.name}</span>
         {isAd && (
-          <span className="rounded-sm bg-white/30 px-1.5 py-0.5 text-[10px] font-bold text-white uppercase">
+          <span
+            className="rounded-sm bg-white/30 px-1.5 py-0.5 text-[10px] font-bold text-white uppercase"
+            {...adTTS}
+          >
             AD
           </span>
         )}
       </div>
 
       {/* 영상 제목 및 시청 버튼 */}
-      <p className="title3 mb-3">{title}</p>
+      <p className="title3 mb-3" {...titleTTS}>{title}</p>
       {tags && tags.length > 0 && (
         <div className="mb-3 flex flex-wrap gap-1.5">
           {tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs text-white"
-            >
-              # {findLabelByValue(tag)}
-            </span>
+            <TagItem key={tag} tag={tag} />
           ))}
         </div>
       )}

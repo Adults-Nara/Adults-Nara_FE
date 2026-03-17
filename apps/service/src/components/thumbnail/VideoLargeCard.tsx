@@ -1,13 +1,17 @@
+'use client';
+
 import { ThumbnailData } from '@/types/video';
 import Thumbnail from './Thumbnail';
 import { formatRelativeTime, formatViewCount } from '@/utils/format';
 import Image from 'next/image';
+import { useLongPressTTS } from '@/hooks/useLongPressTTS';
 
 interface VideoLargeCardProps {
   data: ThumbnailData;
 }
 
 const VideoLargeCard = ({ data }: VideoLargeCardProps) => {
+  const titleTTS = useLongPressTTS(data.title);
   return (
     <div className="flex w-full flex-col overflow-hidden">
       <Thumbnail
@@ -27,7 +31,7 @@ const VideoLargeCard = ({ data }: VideoLargeCardProps) => {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <span className="title3 line-clamp-2">{data.title}</span>
+          <span className="title3 line-clamp-2" {...titleTTS}>{data.title}</span>
           <span className="body4 text-gray-700">
             {data.uploader} · 조회수 {formatViewCount(data.views)} ·{' '}
             {formatRelativeTime(data.date)}
