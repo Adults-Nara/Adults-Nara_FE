@@ -338,7 +338,13 @@ export default function BaseShortsTab({
     mergedCurrentVideo.videoId === undefined ||
     isS3Pending
   ) {
-    return <LoadingSpinner thumbnail={mergedCurrentVideo?.thumbnail || ''} />;
+    return (
+      <div className="h-dvh">
+        <LoadingSpinner
+          thumbnail={mergedCurrentVideo?.thumbnail || undefined}
+        />
+      </div>
+    );
   } else {
     const virtualSwipePlayerProps: VirtualSwipePlayerProps = {
       currentVideo: mergedCurrentVideo,

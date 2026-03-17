@@ -79,6 +79,9 @@ export function useAdManager(videoId: string | null): UseAdManagerReturn {
       clearTimeout(fetchTimeoutRef.current ?? undefined);
       setAdState('PLAYING');
     }
+    if (!isLoggedIn) {
+      toast.info('로그인 후 광고를 시청하시면 포인트를 받을 수 있습니다.');
+    }
   }, [adVideoUrl]);
 
   // 에러 처리 (광고 API 에러 또는 S3 변환 에러)

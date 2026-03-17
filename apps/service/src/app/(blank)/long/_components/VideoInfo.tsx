@@ -133,15 +133,11 @@ export function VideoInfo({
       {/* 업로더 프로필 */}
       <div className="flex flex-row items-center gap-2">
         <div>
-          {uploader.profileImg ? (
-            <img
-              src={uploader.profileImg}
-              alt="profile"
-              className="h-8 w-8 rounded-full"
-            />
-          ) : (
-            <div className="bg-primary-100 h-8 w-8 rounded-full"></div>
-          )}
+          <img
+            src={uploader.profileImg ?? './defaultProfile.png'}
+            alt="profile"
+            className="h-8 w-8 rounded-full"
+          />
         </div>
         <div className="title3">{uploader.name}</div>
       </div>

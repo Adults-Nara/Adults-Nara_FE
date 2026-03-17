@@ -181,7 +181,6 @@ export function VideoPlayer({
             className="absolute inset-0 h-full w-full object-cover opacity-50"
           />
         ) : null}
-        {/* 원하신다면 여기에 LoadingSpinner를 넣으셔도 좋습니다 */}
       </div>
     );
   }

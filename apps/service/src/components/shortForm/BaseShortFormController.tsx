@@ -44,7 +44,7 @@ export function BaseShortFormController({
           title={data.title}
           uploader={{
             name: data.uploader.name,
-            profileImg: data.uploader.profileImg || '',
+            profileImg: data.uploader.profileImg ?? './defaultProfile.png',
           }}
           longformUrl={data.longformUrl}
           tags={data.tags}
