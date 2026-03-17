@@ -58,10 +58,6 @@ export function ShortTabActionButtons({
   const bookmarked = bookmark?.isBookmarked ?? false;
   const sheetOpen = useSheetStore((state) => state.open);
 
-  if (isInteractionError || isBookmarkError) {
-    toast.error('반응 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
-  }
-
   // isLoading or isPending이면 버튼 비활성화. debounce 효과
   const isInteractionBusy =
     interactionLoading ||
