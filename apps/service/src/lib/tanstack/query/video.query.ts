@@ -17,15 +17,17 @@ export const videoS3UrlQueryOptions = (videoId?: string) =>
 
 export function useVideoS3Url(videoId?: string) {
   const hasValidVideoId = !!videoId;
-  const { data, isPending, isError } = useQuery({
+  const { data, isPending, isError, refetch } = useQuery({
     ...videoS3UrlQueryOptions(videoId),
     enabled: hasValidVideoId,
+    retry: 1,
   });
 
   return {
     data,
     isPending,
     isError,
+    refetch,
   };
 }
 

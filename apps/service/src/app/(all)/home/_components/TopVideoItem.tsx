@@ -1,7 +1,6 @@
 import Thumbnail from '@/components/thumbnail/Thumbnail';
 import { useLongPressTTS } from '@/hooks/useLongPressTTS';
 import { Crown, Heart } from 'lucide-react';
-import Image from 'next/image';
 
 export interface TopVideoItemProps {
   rank: number;

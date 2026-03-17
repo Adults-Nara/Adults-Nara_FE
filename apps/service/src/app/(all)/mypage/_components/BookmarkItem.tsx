@@ -2,7 +2,6 @@
 
 import Thumbnail from '@/components/thumbnail/Thumbnail';
 import { BookmarkPlaylistResponse } from '@/models/bookmark.model';
-import { useLongPressTTS } from '@/hooks/useLongPressTTS';
 
 interface BookmarkItemProps {
   data: BookmarkPlaylistResponse;

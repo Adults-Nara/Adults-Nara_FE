@@ -49,32 +49,18 @@ export function VideoInfo({
 }: VideoInfoProps) {
   const isLogin = useIsLoggedIn();
   const sheetOpen = useSheetStore((state) => state.open);
-  const {
-    mutate: toggleBookmarkMutate,
-    isPending: isToggleBookmarkPending,
-    isError: isToggleBookmarkError,
-  } = useToggleBookmark();
-  const {
-    mutate: mutateLike,
-    isPending: isLikePending,
-    isError: isLikeError,
-  } = useLikeVideo();
-  const {
-    mutate: mutateDislike,
-    isPending: isDislikePending,
-    isError: isDislikeError,
-  } = useDislikeVideo();
-  const {
-    mutate: mutateSuperlike,
-    isPending: isSuperlikePending,
-    isError: isSuperlikeError,
-  } = useSuperLikeVideo();
+  const { mutate: toggleBookmarkMutate, isPending: isToggleBookmarkPending } =
+    useToggleBookmark();
+  const { mutate: mutateLike, isPending: isLikePending } = useLikeVideo();
+  const { mutate: mutateDislike, isPending: isDislikePending } =
+    useDislikeVideo();
+  const { mutate: mutateSuperlike, isPending: isSuperlikePending } =
+    useSuperLikeVideo();
 
   const titleTTS = useLongPressTTS(title);
   const viewInfoTTS = useLongPressTTS(
     `조회수 ${formatViewCount(viewCount)}, ${formatRelativeTime(uploadDate)}`,
   );
-  const interacted = interaction ?? null;
   const isInteractionBusy =
     isLikePending || isDislikePending || isSuperlikePending;
   const isBookmarkBusy = isToggleBookmarkPending;
@@ -91,19 +77,34 @@ export function VideoInfo({
 
     switch (type) {
       case 'SUPERLIKE':
-        mutateSuperlike(videoId);
+        mutateSuperlike(videoId, {
+          onError: () => {
+            toast.error(
+              '최고예요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          },
+        });
         break;
       case 'LIKE':
-        mutateLike(videoId);
+        mutateLike(videoId, {
+          onError: () => {
+            toast.error(
+              '좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          },
+        });
         break;
       case 'DISLIKE':
-        mutateDislike(videoId);
+        mutateDislike(videoId, {
+          onError: () => {
+            toast.error(
+              '싫어요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          },
+        });
         break;
       default:
         break;
-    }
-    if (isLikeError || isDislikeError || isSuperlikeError) {
-      toast.error('반응 처리에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -117,17 +118,20 @@ export function VideoInfo({
       return;
     }
 
-    toggleBookmarkMutate(videoId);
-    if (isToggleBookmarkError) {
-      toast.error('북마크 처리에 실패했습니다. 다시 시도해주세요.');
-    }
+    toggleBookmarkMutate(videoId, {
+      onError: () => {
+        toast.error('북마크 처리에 실패했습니다. 다시 시도해주세요.');
+      },
+    });
   };
 
   return (
     <div className="flex flex-col gap-3 px-3 py-2">
       {/* 제목 및 영상 정보*/}
       <div className="flex flex-col gap-1">
-        <p className="title2 wrap-break-word whitespace-normal" {...titleTTS}>{title}</p>
+        <p className="title2 wrap-break-word whitespace-normal" {...titleTTS}>
+          {title}
+        </p>
         <div className="body4 flex flex-row text-gray-700" {...viewInfoTTS}>
           <p>조회수 {formatViewCount(viewCount)}</p>
           <p className="mx-1">·</p>

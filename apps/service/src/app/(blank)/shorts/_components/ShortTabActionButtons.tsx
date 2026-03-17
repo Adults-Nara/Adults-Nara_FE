@@ -45,26 +45,13 @@ export function ShortTabActionButtons({
     isError: isBookmarkError,
   } = useBookmarkStatus(videoId);
 
-  const {
-    mutate: mutateLike,
-    isPending: isLikePending,
-    isError: isLikeError,
-  } = useLikeVideo();
-  const {
-    mutate: mutateDislike,
-    isPending: isDislikePending,
-    isError: isDislikeError,
-  } = useDislikeVideo();
-  const {
-    mutate: mutateSuperlike,
-    isPending: isSuperlikePending,
-    isError: isSuperlikeError,
-  } = useSuperLikeVideo();
-  const {
-    mutate: mutateBookmark,
-    isPending: isBookmarkPending,
-    isError: isBookmarkMutateError,
-  } = useToggleBookmark();
+  const { mutate: mutateLike, isPending: isLikePending } = useLikeVideo();
+  const { mutate: mutateDislike, isPending: isDislikePending } =
+    useDislikeVideo();
+  const { mutate: mutateSuperlike, isPending: isSuperlikePending } =
+    useSuperLikeVideo();
+  const { mutate: mutateBookmark, isPending: isBookmarkPending } =
+    useToggleBookmark();
 
   const isLoggedIn = useIsLoggedIn();
   const interacted = interaction?.interactionType ?? null;
@@ -95,25 +82,34 @@ export function ShortTabActionButtons({
 
     switch (type) {
       case 'LIKE':
-        mutateLike(videoId);
-        if (isLikeError) {
-          toast.error('좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.');
-        }
+        mutateLike(videoId, {
+          onError: () => {
+            toast.error(
+              '좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          },
+        });
+
         break;
       case 'DISLIKE':
-        mutateDislike(videoId);
-        if (isDislikeError) {
-          toast.error('싫어요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.');
-        }
+        mutateDislike(videoId, {
+          onError: () => {
+            toast.error(
+              '싫어요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          },
+        });
 
         break;
       case 'SUPERLIKE':
-        mutateSuperlike(videoId);
-        if (isSuperlikeError) {
-          toast.error(
-            '최고예요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
-          );
-        }
+        mutateSuperlike(videoId, {
+          onError: () => {
+            toast.error(
+              '최고예요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          },
+        });
+
         break;
     }
   };
@@ -132,10 +128,11 @@ export function ShortTabActionButtons({
       return;
     }
 
-    mutateBookmark(videoId);
-    if (isBookmarkMutateError) {
-      toast.error('찜하기 처리에 실패했습니다. 잠시 후 다시 시도해주세요.');
-    }
+    mutateBookmark(videoId, {
+      onError: () => {
+        toast.error('찜하기 처리에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      },
+    });
   };
 
   // 댓글 창 열기 로직

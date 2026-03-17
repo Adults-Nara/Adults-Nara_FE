@@ -4,6 +4,7 @@ import ReactPlayer from 'react-player';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { VideoControllerOverlay } from './VideoOverlay';
 import { PageHeader } from './PageHeader';
+import { toast } from '@/lib/toast';
 
 interface VideoPlayerProps {
   src: string | null;
@@ -163,10 +164,16 @@ export function VideoPlayer({
   }, []);
 
   const toggleFullscreen = useCallback(() => {
-    if (document.fullscreenElement !== containerRef.current) {
-      containerRef.current?.requestFullscreen().catch(console.error);
+    const container = containerRef.current;
+
+    if (container?.requestFullscreen()) {
+      if (document.fullscreenElement !== container) {
+        container.requestFullscreen().catch(console.error);
+      } else {
+        document.exitFullscreen().catch(console.error);
+      }
     } else {
-      document.exitFullscreen().catch(console.error);
+      toast.error('이 브라우저는 전체화면 모드를 지원하지 않습니다.');
     }
   }, []);
   if (!src) {
@@ -208,6 +215,7 @@ export function VideoPlayer({
         playing={isPlaying}
         playbackRate={playbackRate}
         controls={false}
+        playsInline
         onReady={() => {
           // 광고 모드가 아니면, progress가 0보다 클 때에만 시점을 이동
           if (playerRef.current && progress > 0) {

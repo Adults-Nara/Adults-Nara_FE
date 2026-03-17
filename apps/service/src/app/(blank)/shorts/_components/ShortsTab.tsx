@@ -128,14 +128,6 @@ export default function ShortsTab({ params }: ShortsTabProps) {
     );
   }
 
-  if (targetVideoId && isDetailError) {
-    return (
-      <div className="flex h-dvh w-full items-center justify-center bg-black text-white">
-        유효한 영상이 아닙니다.
-      </div>
-    );
-  }
-
   // 데이터가 완벽하게 준비된 이후에만 BaseShortsTab 렌더링
   return (
     <BaseShortsTab
