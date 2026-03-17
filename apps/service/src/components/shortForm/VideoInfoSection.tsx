@@ -1,6 +1,6 @@
+import { ROUTES } from '@/constant/routes';
 import { findLabelByValue } from '@/utils/findLabelByValue';
 import { Button } from '@repo/ui';
-
 interface VideoInfoSectionProps {
   title: string;
   uploader: {
@@ -60,10 +60,13 @@ export function VideoInfoSection({
       )}
       {longformUrl !== '' && (
         <Button
+          asChild
           size={null}
           className="title3 h-12.5 w-full bg-white/70 px-5 text-black"
         >
-          해당영상 시청하기
+          <a href={longformUrl} target="_blank" rel="noopener noreferrer">
+            해당영상 시청하기
+          </a>
         </Button>
       )}
     </div>
