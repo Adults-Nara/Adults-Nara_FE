@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
     LOGOUT: '/auth/token/logout',
     REFRESH: '/auth/token/refresh',
     ME: '/auth/me',
+    ONBOARDING_COMPLETE: '/auth/onboarding/complete',
   },
 
   RECOMMENDATION: {

@@ -29,3 +29,13 @@ export const userLogout = async () => {
   );
   return response.data;
 };
+
+export const onBoardingComplete = async () => {
+  const response = await httpClient<ApiResponse<void>>(
+    API_ENDPOINTS.AUTH.ONBOARDING_COMPLETE,
+    {
+      method: 'POST',
+    },
+  );
+  return response.data;
+};

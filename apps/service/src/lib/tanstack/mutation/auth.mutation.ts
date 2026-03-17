@@ -1,6 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { loginKakaoUrl, userLogout } from '@/services/auth.api';
+import {
+  loginKakaoUrl,
+  onBoardingComplete,
+  userLogout,
+} from '@/services/auth.api';
 import { useAuthStore } from '@/store/useAuthStore';
+import { toast } from '@/lib/toast';
 
 export function useLoginKakaoUrl() {
   return useMutation({
@@ -9,8 +14,7 @@ export function useLoginKakaoUrl() {
       window.location.href = data;
     },
     onError: (error) => {
-      console.error('로그인 URL 요청 실패:', error);
-      alert('카카오 로그인 페이지를 불러올 수 없습니다.');
+      toast.error(`'로그인 URL 요청 실패:${error}`);
     },
   });
 }
@@ -25,5 +29,11 @@ export function useLogout() {
       queryClient.clear();
       setAccessToken(null);
     },
+  });
+}
+
+export function useOnBoardingComplete() {
+  return useMutation({
+    mutationFn: onBoardingComplete,
   });
 }
