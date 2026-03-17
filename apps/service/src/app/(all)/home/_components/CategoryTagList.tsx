@@ -1,6 +1,7 @@
 'use client';
 import useEmblaCarousel from 'embla-carousel-react';
 import { Chip } from '@repo/ui';
+import { ChipSkeleton } from '@/components/skeleton/ChipSkeleton';
 
 interface CategoryTagListProps {
   tags: {
@@ -26,9 +27,18 @@ const CategoryTagList = ({
     dragFree: true,
   });
 
-  //TODO: 추후 로딩 에러 UI구현
-  if (isPending) return <span>태그 로딩중,,,</span>;
-  if (isError) return <span>태그 에러,,,</span>;
+  if (isPending)
+    return (
+      <div className="gap-2.5 overflow-hidden px-3">
+        <ChipSkeleton count={4} />
+      </div>
+    );
+  if (isError)
+    return (
+      <div className="body2 text-primary-500 px-3">
+        사용자 선호주제를 가져오지못했습니다.
+      </div>
+    );
   return (
     <div className="overflow-hidden px-3" ref={categoryRef}>
       <div className="flex gap-2.5">

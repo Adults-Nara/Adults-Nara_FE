@@ -2,8 +2,9 @@
 import { ROUTES } from '@/constant/routes';
 import { useLoginWithKakao } from '@/lib/tanstack/query/auth.query';
 import { useAuthStore } from '@/store/useAuthStore';
-import { Button } from '@repo/ui';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Button, Spinner } from '@repo/ui';
+import { CircleX } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 interface KakaoCallback {
@@ -27,8 +28,11 @@ const KakaoCallback = ({ code, state }: KakaoCallback) => {
 
   if (isError)
     return (
-      <>
-        <p>로그인 실패. 다시 시도해 주세요.</p>
+      <div className="text-primary-500 flex flex-col items-center justify-center gap-3 py-5">
+        <div className="mb-2">
+          <CircleX size={35} />
+        </div>
+        <span className="title2">로그인 중 에러 발생</span>
         <Button
           onClick={() => router.replace(ROUTES.LOGIN)}
           variant={'outline'}
@@ -36,19 +40,12 @@ const KakaoCallback = ({ code, state }: KakaoCallback) => {
         >
           로그인화면으로
         </Button>
-      </>
+      </div>
     );
 
   return (
     <>
-      <p>로그인 처리 중입니다. 잠시만 기다려주세요...</p>
-      <Button
-        onClick={() => router.replace(ROUTES.LOGIN)}
-        variant={'outline'}
-        className="w-fit"
-      >
-        로그인화면으로
-      </Button>
+      <Spinner size={50} />
     </>
   );
 };

@@ -4,9 +4,11 @@ import useEmblaCarousel from 'embla-carousel-react';
 import TopVideoItem from './TopVideoItem';
 import { ROUTES } from '@/constant/routes';
 import Link from 'next/link';
+import ThumbnailSkeleton from '@/components/skeleton/ThumbnailSkeleton';
+import { CircleX, Inbox } from 'lucide-react';
 
 const TopTenSection = () => {
-  const { data, isError, isPending } = useRanking();
+  const { data, isError, isPending, refetch } = useRanking();
 
   const [videoRef] = useEmblaCarousel({
     align: 'start',
@@ -14,9 +16,6 @@ const TopTenSection = () => {
     dragFree: false,
   });
 
-  //TODO: 로딩에러 페이지 추후 제작
-  if (isPending) return <span>랭킹 로딩중...</span>;
-  if (isError) return <span>랭킹 에러...</span>;
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col px-3">
@@ -25,8 +24,35 @@ const TopTenSection = () => {
           사용자들이 가장 많이 저장한 영상이에요
         </span>
       </div>
-      {data.length === 0 ? (
-        <span>상위 10위 영상이 없습니다.</span>
+      {/* 로딩시 */}
+      {isPending ? (
+        <div className="flex flex-nowrap gap-4 overflow-hidden px-3 py-0.5">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="w-[90%] shrink-0">
+              <ThumbnailSkeleton />
+            </div>
+          ))}
+        </div>
+      ) : /* 에러 */
+      isError ? (
+        <div className="border-primary-500 mx-3 flex flex-col items-center justify-center gap-3 rounded-lg border py-15">
+          <CircleX size={35} className="text-primary-500" />
+          <span className="body2 text-primary-500">
+            인기영상을 불러오지 못했습니다.
+          </span>
+          <button
+            onClick={() => refetch()}
+            className="body3 underline opacity-60"
+          >
+            다시 시도하기
+          </button>
+        </div>
+      ) : // Empty
+      data.length === 0 ? (
+        <div className="mx-5 flex flex-col items-center justify-center rounded-lg border border-gray-400 py-15 text-gray-600">
+          <Inbox size={35} />
+          <span className="body2">인기 영상이 없습니다...</span>
+        </div>
       ) : (
         <div className="overflow-hidden px-3 py-0.5" ref={videoRef}>
           <div className="flex gap-4">

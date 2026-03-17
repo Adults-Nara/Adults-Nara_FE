@@ -57,7 +57,7 @@ export function useMyChildTags() {
 
 // 태그별 영상 목록 조회
 export function useVideosByTag(tagId: number, options?: { enabled?: boolean }) {
-  const { data, isPending, isError } = useQuery({
+  const { data, isPending, isError, refetch } = useQuery({
     queryKey: TAG_KEYS.videosByTag(tagId),
     queryFn: () => getVideosByTag(tagId),
     enabled: (options?.enabled ?? true) && !!tagId,
@@ -67,6 +67,7 @@ export function useVideosByTag(tagId: number, options?: { enabled?: boolean }) {
     videos: data ?? [],
     isPending,
     isError,
+    refetch,
   };
 }
 

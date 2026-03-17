@@ -2,6 +2,7 @@ export { Button } from './Button';
 export { Input } from './input';
 export { Chip } from './Chip';
 export { Textarea } from './Textarea';
+export { Spinner } from './Spinner';
 export {
   Accordion,
   AccordionItem,

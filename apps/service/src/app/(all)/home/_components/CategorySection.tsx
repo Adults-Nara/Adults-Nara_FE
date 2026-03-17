@@ -2,7 +2,7 @@
 
 import { useMyChildTags, useVideosByTag } from '@/lib/tanstack/query/tag.query';
 import { CATEGORY_MAP } from '@/types/category';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import CategoryTagList from './CategoryTagList';
 import CategoryVideoList from './CategoryVideoList';
 
@@ -62,6 +62,7 @@ const CategorySection = () => {
     videos,
     isError: isListError,
     isPending: isListPending,
+    refetch: listRefetch,
   } = useVideosByTag(Number(currentCategory), {
     enabled: !isTagsPending && !!currentCategory,
   });
@@ -81,6 +82,7 @@ const CategorySection = () => {
         videos={videos}
         isPending={isListPending}
         isError={isListError}
+        refetch={listRefetch}
       />
     </div>
   );
