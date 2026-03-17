@@ -37,9 +37,9 @@ const UserProfile = () => {
   const { data: myVerify } = useMyuplusVerify({
     phoneNumber: phoneNumber || '0',
   });
-  const { mutate: logout } = useLogout();
+  const { mutateAsync: logout } = useLogout();
   const { mutate: editMutate } = useUpdateUser();
-  const { mutate: deleteMutate } = useDeleteUser();
+  const { mutateAsync: deleteMutateAsync } = useDeleteUser();
   const router = useRouter();
 
   const handleSave = () => {
@@ -64,18 +64,24 @@ const UserProfile = () => {
   const handleDelete = async () => {
     const confirmed = await confirm('정말 탈퇴하시겠습니까?', '탈퇴');
     if (!confirmed) return;
-
-    deleteMutate('직접 탈퇴', {
-      onSuccess: () => {
-        toast.success('탈퇴를 성공하였습니다.');
-        router.replace(ROUTES.HOME);
-      },
-      onError: () => {
-        toast.error('탈퇴를 실패하였습니다.');
-      },
-    });
+    try {
+      await deleteMutateAsync('직접 탈퇴');
+      toast.success('탈퇴가 완료되었습니다.');
+      router.replace('/');
+    } catch (e) {
+      toast.error(`탈퇴중 오류 발생하였습니다.`);
+    }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success('로그아웃이 완료되었습니다.');
+      router.replace('/');
+    } catch (e) {
+      toast.error(`로그아웃중 오류 발생하였습니다.`);
+    }
+  };
   if (isPending) {
     return (
       <div className="flex animate-pulse items-center justify-between rounded-lg bg-white px-4 py-6 shadow-[0_5px_15px_0px_rgba(0,0,0,0.1)]">
@@ -163,7 +169,7 @@ const UserProfile = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     variant="destructive"
-                    onClick={() => logout()}
+                    onClick={handleLogout}
                   >
                     <Logout />
                     로그아웃
