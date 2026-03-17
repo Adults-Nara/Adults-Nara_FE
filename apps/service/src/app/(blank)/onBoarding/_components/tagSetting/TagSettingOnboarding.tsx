@@ -4,6 +4,8 @@ import { TagSettingOnboardingTab } from './TagSettingTab';
 import { TagSettingCompleteTab } from './TagSettingCompleteTab';
 import { useRouter } from 'next/navigation';
 import { useUpdateUserTags } from '@/lib/tanstack/mutation/tag.mutation';
+import { useOnBoardingComplete } from '@/lib/tanstack/mutation/auth.mutation';
+import { toast } from '@/lib/toast';
 
 interface TagSettingOnboardingProps {
   selectedCategory: string[];
@@ -23,14 +25,20 @@ export function TagSettingOnboarding({
     );
   };
   const router = useRouter();
-  const { mutate } = useUpdateUserTags();
+  const { mutateAsync: tagUpdateMutate } = useUpdateUserTags();
+  const { mutateAsync: completeMutate } = useOnBoardingComplete();
 
-  const onComplete = () => {
+  const onComplete = async () => {
     // 가입 및 카테고리 저장 api 호출
-    mutate({
-      tagIds: selectedCategories.map((cat) => Number(cat)),
-    });
-    router.replace('/home');
+    try {
+      await tagUpdateMutate({
+        tagIds: selectedCategories.map((cat) => Number(cat)),
+      });
+      await completeMutate();
+      router.replace('/home');
+    } catch (e) {
+      toast.error('온보딩 처리 중 오류가 발생하였습니다.');
+    }
   };
 
   return (

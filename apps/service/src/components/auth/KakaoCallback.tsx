@@ -22,7 +22,11 @@ const KakaoCallback = ({ code, state }: KakaoCallback) => {
   useEffect(() => {
     if (isSuccess) {
       setAccessToken(data.accessToken);
-      router.replace(ROUTES.HOME);
+      if (data.onboardingCompleted) {
+        router.replace(ROUTES.HOME);
+      } else {
+        router.replace(ROUTES.ONBOARDING);
+      }
     }
   }, [isSuccess, data, setAccessToken, router]);
 
