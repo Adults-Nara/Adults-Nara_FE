@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   useVideoS3Url,
   useVideoDetail,
@@ -62,12 +62,25 @@ export function VideoPlaybackManager() {
   const { mutate: updatePosition } = useUpdateWatchPosition(videoId || '0');
   const { mutate: stopWatching } = useStopWatching();
 
+  const lastReportedTimeRef = useRef(Date.now());
+
+  useEffect(() => {
+    lastReportedTimeRef.current = Date.now();
+  }, [videoId]);
+
+  const getStayingTimeDelta = useCallback(() => {
+    const now = Date.now();
+    const delta = Math.floor((now - lastReportedTimeRef.current) / 1000);
+    lastReportedTimeRef.current = now;
+    return delta;
+  }, []);
+
   const handleWatchProgressUpdate = useCallback(
     (currentTime: number) => {
       if (isLoggedIn && currentTime > 0) {
         updatePosition({
           lastPosition: currentTime,
-          watchSeconds: currentTime,
+          watchSeconds: getStayingTimeDelta(),
         });
       }
     },
@@ -88,7 +101,23 @@ export function VideoPlaybackManager() {
   );
 
   // 재생 목록(찜 목록 등) 자동 재생 훅
-  const handleVideoEnd = usePlaylistAutoPlay(videoId || undefined);
+  const handleVideoEnd = usePlaylistAutoPlay(videoId || undefined, () => {
+    lastReportedTimeRef.current = Date.now();
+  });
+
+  // 광고 종료/스킵 시 lastReportedTimeRef 리셋 후 원래 핸들러 호출
+  const handleAdEnded = useCallback(
+    (duration: number) => {
+      lastReportedTimeRef.current = Date.now();
+      onAdEnded(duration);
+    },
+    [onAdEnded],
+  );
+
+  const handleAdSkipped = useCallback(() => {
+    lastReportedTimeRef.current = Date.now();
+    onAdSkipped();
+  }, [onAdSkipped]);
 
   if (!videoId) {
     return (
@@ -154,8 +183,8 @@ export function VideoPlaybackManager() {
         progress={isAdPlaying ? 0 : progress}
         thumbnail={detailData?.thumbnailUrl ?? ''}
         isAdMode={isAdPlaying}
-        onAdEnded={onAdEnded}
-        onAdSkip={onAdSkipped}
+        onAdEnded={handleAdEnded} // 광고가 끝났을 때 메인 영상으로 넘어가도록
+        onAdSkip={handleAdSkipped}
         onEnded={handleVideoEnd}
         onWatchProgressUpdate={handleWatchProgressUpdate}
         onStopWatching={handleStopWatching}

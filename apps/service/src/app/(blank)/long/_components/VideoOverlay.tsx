@@ -3,7 +3,7 @@ import { PlayButton } from './PlayButton';
 import { ProgressBar } from './ProgressBar';
 import { AdProgressBar } from './AdProgressBar';
 import { PageHeader } from './PageHeader';
-import { useState, type RefObject } from 'react';
+import { useState, useEffect, useRef, useCallback, type RefObject } from 'react';
 
 interface VideoControllerOverlayProps {
   show: boolean;
@@ -39,30 +39,49 @@ export function VideoControllerOverlay({
   isAdMode = false,
   onSkip,
 }: VideoControllerOverlayProps) {
+  const [showAdOverlay, setShowAdOverlay] = useState(true);
+  const adHideTimer = useRef<ReturnType<typeof setTimeout>>(null);
+
+  const resetAdHideTimer = useCallback(() => {
+    setShowAdOverlay(true);
+    clearTimeout(adHideTimer.current ?? undefined);
+    adHideTimer.current = setTimeout(() => setShowAdOverlay(false), 3000);
+  }, []);
+
+  useEffect(() => {
+    if (!isAdMode) return;
+    resetAdHideTimer();
+    return () => clearTimeout(adHideTimer.current ?? undefined);
+  }, [isAdMode, resetAdHideTimer]);
+
+  const handleClick = useCallback(() => {
+    if (isAdMode) resetAdHideTimer();
+    else onShowControls();
+  }, [isAdMode, resetAdHideTimer, onShowControls]);
+
   return (
     <div
       className={`absolute inset-0 flex flex-col items-center justify-end transition-opacity duration-300 ${
         show || isAdMode ? 'opacity-100' : 'pointer-events-none opacity-0'
       }`}
-      onClick={onShowControls}
+      onClick={handleClick}
     >
       {/* 광고 모드일 때는 항상 배경 딤을 약간 주거나, 상황에 따라 조절 */}
       <div
-        className={`absolute inset-0 ${isAdMode ? 'pointer-events-none' : 'bg-black/30'}`}
+        className={`absolute inset-0 ${isAdMode ? 'pointer-events-none duration-300' : 'bg-black/30'}`}
       />
 
-      {/* 광고 중에는 숨김 */}
-      {!isAdMode && (
-        <>
-          {/* 뒤로가기 버튼 */}
-          {!isFullscreen && <PageHeader />}
+      <>
+        {/* 뒤로가기 버튼 */}
+        {!isFullscreen && <PageHeader />}
 
-          {/* 영상 중앙 플레이버튼 - 자동재생 실패 시나 일시정지 시 필요 */}
+        {/* 영상 중앙 플레이버튼 - 자동재생 실패 시나 일시정지 시 필요 */}
+        {(!isAdMode || showAdOverlay) && (
           <div className="absolute inset-0 flex items-center justify-center">
             <PlayButton isPlaying={isPlaying} onTogglePlay={onTogglePlay} />
           </div>
-        </>
-      )}
+        )}
+      </>
 
       {/* 광고 전용 UI: 스킵 버튼 */}
       {isAdMode && onSkip && (

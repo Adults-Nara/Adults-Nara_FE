@@ -50,8 +50,8 @@ export function VideoInfoManager() {
         videoId={videoIdStr}
         title={detailData.title}
         // TODO: 백엔드 API 업데이트 후 실제 값 매핑 (현재 VideoDetailResponse에 없음)
-        viewCount={0}
-        comments={0}
+        viewCount={detailData.viewCount}
+        comments={detailData.commentCount}
         uploadDate={detailData.createdAt}
         uploader={{
           name: detailData.userNickname,
