@@ -1,4 +1,3 @@
-import { ROUTES } from '@/constant/routes';
 import {
   BackofficeLoginRequest,
   BackofficeSignRequest,
@@ -39,7 +38,6 @@ export function useBackofficeLogout() {
     onSuccess: () => {
       queryClient.clear();
       setAccessToken(null, null);
-      window.location.href = ROUTES.LOGIN;
     },
   });
 }
@@ -52,7 +50,6 @@ export function useBackofficeAccount() {
     onSuccess: () => {
       queryClient.clear();
       setAccessToken(null, null);
-      window.location.href = ROUTES.LOGIN;
     },
   });
 }

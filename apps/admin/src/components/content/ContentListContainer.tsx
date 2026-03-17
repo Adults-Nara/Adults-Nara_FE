@@ -21,6 +21,7 @@ import {
   useContentDelete,
   useContentStatusUpload,
 } from '@/lib/tanstack/mutation/content.mutation';
+import { toast } from '@/lib/toast';
 
 interface ContentListContainerProps {
   currentPage: number;
@@ -52,13 +53,11 @@ const ContentListContainer = ({
 
   const createMutationCallbacks = (successMessage: string) => ({
     onSuccess: () => {
-      // TODO: 토스트로 변경
-      console.log(successMessage);
+      toast.success(successMessage);
       setSelectedIds([]);
     },
-    onError: (error: Error) => {
-      // TODO: 토스트로 변경
-      console.error(error.message);
+    onError: () => {
+      toast.success('작업을 실패하였습니다.');
     },
   });
 
@@ -70,7 +69,7 @@ const ContentListContainer = ({
       onConfirm: () =>
         deleteMutate(
           { videoIds: [id] },
-          createMutationCallbacks(`영상 삭제 성공 ${id}`),
+          createMutationCallbacks(`영상 삭제 성공`),
         ),
     });
   };
@@ -80,7 +79,7 @@ const ContentListContainer = ({
       onConfirm: () =>
         statusMutate(
           { videoIds: selectedIds, visibility: 'PUBLIC' },
-          createMutationCallbacks(`영상 활성화 성공 성공 ${selectedIds}`),
+          createMutationCallbacks(`영상 활성화 성공 성공`),
         ),
     });
   };
@@ -89,7 +88,7 @@ const ContentListContainer = ({
       onConfirm: () =>
         statusMutate(
           { videoIds: selectedIds, visibility: 'PRIVATE' },
-          createMutationCallbacks(`영상 비활성화 성공 ${selectedIds}`),
+          createMutationCallbacks(`영상 비활성화 성공`),
         ),
     });
   };
@@ -98,7 +97,7 @@ const ContentListContainer = ({
       onConfirm: () =>
         deleteMutate(
           { videoIds: selectedIds },
-          createMutationCallbacks(`영상 다중삭제 성공 ${selectedIds}`),
+          createMutationCallbacks(`영상 다중삭제 성공`),
         ),
     });
   };
@@ -146,14 +145,15 @@ const ContentListContainer = ({
           <span>{selectedIds.length}개 선택됨</span>
           <div className="flex gap-2">
             <Button onClick={handlerAllActive} variant={'outline'} size={'lg'}>
-              <Power className="h-5 w-5" /> 활성화
+              <Unpower className="h-5 w-5" /> 활성화
             </Button>
             <Button
               onClick={handlerAllDeactivated}
               variant={'outline'}
               size={'lg'}
             >
-              <Unpower className="h-5 w-5" /> 비활성화
+              <Power className="h-5 w-5" />
+              비활성화
             </Button>
             <Button onClick={handlerAllDelete} variant={'default'} size={'lg'}>
               <Delete className="h-5 w-5" /> 삭제

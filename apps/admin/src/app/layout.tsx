@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Dialog } from '@/components/common';
 import QueryProvider from '@/lib/tanstack/QueryProvider';
+import ToastContainer from '@/components/toast/ToastContainer';
+import ConfirmModal from '@/components/confirm/ConfirmModal';
 
 export const metadata: Metadata = {
   title: '어신나 관리자 페이지',
@@ -19,6 +21,8 @@ export default function RootLayout({
         <QueryProvider>
           {children}
           <Dialog />
+          <ToastContainer />
+          <ConfirmModal />
         </QueryProvider>
       </body>
     </html>

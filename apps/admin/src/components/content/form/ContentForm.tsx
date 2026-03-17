@@ -12,6 +12,7 @@ import ContentCategorySection from './ContentCategorySection';
 import ContentUploadSection from './ContentUploadSection';
 import { useState } from 'react';
 import { Button, Delete, Upload } from '@repo/ui';
+import { Loader2 } from 'lucide-react';
 
 interface ContentFormProps {
   mode: 'create' | 'edit';
@@ -19,6 +20,7 @@ interface ContentFormProps {
   onSubmit: (data: UploadRequest, thumbnail: File | null) => void;
   onDelete?: () => void;
   setVideoId?: (videoId: string) => void;
+  isPending?: boolean;
 }
 const ContentForm = ({
   mode,
@@ -26,6 +28,7 @@ const ContentForm = ({
   onSubmit,
   onDelete,
   setVideoId,
+  isPending,
 }: ContentFormProps) => {
   // 썸네일 파일 상태 (실제 파일 객체)
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
@@ -80,10 +83,20 @@ const ContentForm = ({
             <Button
               type="submit"
               variant="outline"
+              disabled={isPending}
               className="flex w-fit items-center gap-2"
             >
-              <Upload className="h-6 w-6" />
-              {isEdit ? '콘텐츠 수정' : '콘텐츠 업로드'}
+              {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Upload className="h-6 w-6" />
+              )}
+
+              {isPending
+                ? '업로드중...'
+                : isEdit
+                  ? '콘텐츠 수정'
+                  : '콘텐츠 업로드'}
             </Button>
           </div>
         </div>

@@ -1,10 +1,12 @@
 'use client';
 import { ROUTES } from '@/constant/routes';
+import { confirm } from '@/lib/confirm';
 import {
   useBackofficeAccount,
   useBackofficeLogout,
 } from '@/lib/tanstack/mutation/auth.mutation';
 import { useBackofficeMe } from '@/lib/tanstack/query/auth.query';
+import { toast } from '@/lib/toast';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useDialogStore } from '@/store/useDialogStore';
 import {
@@ -25,11 +27,12 @@ import {
 } from '@repo/ui';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const { openDialog } = useDialogStore();
   const { data: userData, isError, isPending, refetch } = useBackofficeMe();
   const { mutate: logoutMutate } = useBackofficeLogout();
@@ -45,28 +48,26 @@ const Sidebar = () => {
   const handleLogout = () => {
     logoutMutate(undefined, {
       onSuccess: () => {
-        //TODO:토스트로 추후변경
-        console.log('로그아웃 성공');
+        toast.success('로그아웃 성공');
+        router.push(ROUTES.LOGIN);
       },
-      onError: (error) => {
-        console.error('로그아웃 요청 실패:', error);
-        alert('로그아웃에 실패했습니다. 다시 시도해 주세요');
+      onError: () => {
+        toast.error('로그아웃에 실패했습니다. 다시 시도해 주세요');
       },
     });
   };
-  const handleAccount = () => {
-    openDialog('UPLOADER', 'delete', {
-      onConfirm: () =>
-        accountMutate(undefined, {
-          onSuccess: () => {
-            //TODO:토스트로 추후변경
-            console.log('회원탈퇴 성공');
-          },
-          onError: (error) => {
-            console.error('회원탈퇴 요청 실패:', error);
-            alert('탈퇴에 실패했습니다. 다시 시도해 주세요');
-          },
-        }),
+  const handleAccount = async () => {
+    const ok = await confirm('회원탈퇴를 진행하시겠습니까?', '탈퇴');
+
+    if (!ok) return;
+    accountMutate(undefined, {
+      onSuccess: () => {
+        toast.success('회원탈퇴 성공');
+        router.push(ROUTES.LOGIN);
+      },
+      onError: () => {
+        toast.error('회원탈퇴에 실패했습니다. 다시 시도해 주세요');
+      },
     });
   };
 
@@ -79,14 +80,12 @@ const Sidebar = () => {
   if (isPending)
     return (
       <div className="bg-navy flex h-full min-w-75 flex-col justify-center gap-5 px-10 text-white">
-        {/* TODO: 사이드바 로딩UI  */}
         <span className="text-center">로딩중...</span>
       </div>
     );
   if (isError)
     return (
       <div className="bg-navy flex h-full min-w-75 flex-col justify-center gap-5 px-10 text-white">
-        {/* TODO: 사이드바 에러UI  */}
         <span className="text-center">유저 정보를 불러오지못했습니다.</span>
         <Button onClick={() => refetch()}>재시도</Button>
       </div>

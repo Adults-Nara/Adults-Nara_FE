@@ -1,6 +1,7 @@
 'use client';
 import { ROUTES } from '@/constant/routes';
 import { useBackofficeLogin } from '@/lib/tanstack/mutation/auth.mutation';
+import { toast } from '@/lib/toast';
 import { BackofficeLoginRequest } from '@/models/auth.model';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Button, Input, Logo } from '@repo/ui';
@@ -22,13 +23,11 @@ const LoginForm = () => {
   const onSubmit = (data: BackofficeLoginRequest) => {
     mutate(data, {
       onSuccess: (res) => {
-        //TODO:추후 토스트 (로그인성공)
         setAccessToken(res.accessToken, res.role);
         router.push(ROUTES.CONTENT);
       },
-      onError: (error) => {
-        //TODO:추후 토스트
-        console.error('로그인 실패:', error.message);
+      onError: () => {
+        toast.error(`로그인 실패`);
       },
     });
   };
