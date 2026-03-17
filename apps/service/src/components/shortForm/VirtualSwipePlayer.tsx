@@ -76,6 +76,12 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     latestProgressUpdateRef.current = props.onWatchProgressUpdate;
   }, [props.onWatchProgressUpdate]);
 
+  useEffect(() => {
+    if (!isLogin && props.currentVideo.isAd) {
+      toast.info('로그인 후 광고 포인트를 받아가세요!');
+    }
+  }, [props.currentVideo.videoId]);
+
   // 벗어날 때 기록 저장
   useEffect(() => {
     return () => {
