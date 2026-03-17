@@ -1,4 +1,5 @@
 'use client';
+import { ChipSkeleton } from '@/components/skeleton/ChipSkeleton';
 import { ROUTES } from '@/constant/routes';
 import {
   useMyChildTags,
@@ -15,7 +16,6 @@ const CategoryBoard = () => {
     isError: statsError,
     isPending: statsPending,
   } = useTagWatchStats();
-  //TODO: 로딩 에러 페이지 추후 구현
   const route = useRouter();
   return (
     <div className="flex w-full flex-col gap-4 rounded-lg bg-gray-100 p-4 shadow-[0_5px_15px_0px_rgba(0,0,0,0.1)]">
@@ -30,11 +30,17 @@ const CategoryBoard = () => {
       </div>
       <div className="flex w-full flex-wrap gap-2">
         {tagPending ? (
-          <div>선호주제 로딩중...</div>
+          <div className="gap-2.5 overflow-hidden px-3">
+            <ChipSkeleton count={4} />
+          </div>
         ) : tagError ? (
-          <div>선호주제에러 발생</div>
+          <div className="body2 text-primary-500 px-3 py-2">
+            사용자 주제를 가져올 수 없습니다.
+          </div>
         ) : tags.length === 0 ? (
-          <div>선호주제없음...</div>
+          <div className="body2 text-primary-500 px-3 py-2">
+            선택된 주제가 없습니다.
+          </div>
         ) : (
           tags.map((cat) => {
             return (
@@ -47,7 +53,11 @@ const CategoryBoard = () => {
       </div>
       <div className="flex w-full flex-col gap-4">
         {statsPending ? (
-          <div>시청기록 로딩중...</div>
+          <div className="flex animate-pulse flex-col items-start gap-4 px-4">
+            <div className="h-6 w-70 rounded bg-gray-200" />
+            <div className="h-6 w-70 rounded bg-gray-200" />
+            <div className="h-6 w-70 rounded bg-gray-200" />
+          </div>
         ) : statsError ? (
           <div>시청기록에러 발생</div>
         ) : stats.length === 0 ? (
@@ -57,7 +67,7 @@ const CategoryBoard = () => {
             return (
               <div key={rank.tagId} className="flex gap-4">
                 <span className="title3 text-primary-500 w-5">{index + 1}</span>
-                <span className="body2 w-20">{rank.tagName}</span>
+                <span className="body2 w-30">{rank.tagName}</span>
                 <span className="body2 text-gray-700">
                   {formatSecondsToTime(rank.totalWatchSeconds)}
                 </span>

@@ -2,7 +2,7 @@
 
 import useObserver from '@/hooks/useObserver';
 import { useComments } from '@/lib/tanstack/query/comment.query';
-import { Button, Input, LeftArrow, Send } from '@repo/ui';
+import { Button, Input, LeftArrow, Send, Spinner } from '@repo/ui';
 import CommentItem from './CommentItem';
 import { useState } from 'react';
 import {
@@ -11,7 +11,9 @@ import {
   useEditComment,
 } from '@/lib/tanstack/mutation/comment.mutation';
 import { useIsLoggedIn } from '@/store/useAuthStore';
-import { MessageSquareX } from 'lucide-react';
+import { CircleX, MessageSquareX } from 'lucide-react';
+import { toast } from '@/lib/toast';
+import { confirm } from '@/lib/confirm';
 
 interface CommentListProps {
   videoId: string;
@@ -34,6 +36,7 @@ const CommentList = ({ videoId }: CommentListProps) => {
     isFetchingNextPage,
     isError,
     isPending,
+    refetch,
   } = useComments(videoId ?? '');
 
   const observerRef = useObserver({
@@ -48,8 +51,7 @@ const CommentList = ({ videoId }: CommentListProps) => {
 
   const handleCreate = () => {
     if (!isLoggin) {
-      //TODO: 추후토스트메시지
-      console.log('로그인사용자 아님');
+      toast.info('댓글을 작성하려면 로그인이 필요합니다.');
       return;
     }
     if (!videoId) return;
@@ -59,11 +61,10 @@ const CommentList = ({ videoId }: CommentListProps) => {
       {
         onSuccess: () => {
           setWrite('');
-          //TODO: 토스트 변경
-          console.log('댓글작성 완료');
+          toast.success('댓글 작성이 완료되었습니다.');
         },
         onError: (error) => {
-          console.log('댓글작성 오류', error.message);
+          toast.error(`댓글 작성중 오류 ${error.message}`);
         },
       },
     );
@@ -87,35 +88,51 @@ const CommentList = ({ videoId }: CommentListProps) => {
       {
         onSuccess: () => {
           setEditText('');
-          //TODO: 토스트 변경
-          console.log('댓글수정 완료');
+          toast.success('댓글 수정이 완료되었습니다.');
           setEditMode(false);
         },
         onError: (error) => {
-          console.log('댓글수정 오류', error.message);
+          toast.error(`댓글 수정중 오류 ${error.message}`);
         },
       },
     );
   };
 
-  //TODO:추후 모달로 확인 한번 받기
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!myComment) return;
-
+    const ok = await confirm('정말 댓글을 삭제 하시겠습니까?', '삭제');
+    if (!ok) return;
     deleteMutate(myComment.commentId, {
       onSuccess: () => {
-        //TODO: 토스트 변경
-        console.log('댓글삭제 완료');
+        toast.success('댓글 삭제가 완료되었습니다.');
       },
       onError: (error) => {
-        console.log('댓글삭제 오류', error.message);
+        toast.error(`댓글 삭제중 오류 ${error.message}`);
       },
     });
   };
 
-  //TODO: 추후 로딩에러페이지 구현
-  if (isPending) return <div>로딩중...</div>;
-  if (isError) return <div>에러</div>;
+  if (isPending)
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <Spinner size={70} />
+      </div>
+    );
+  if (isError)
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-15">
+        <CircleX size={35} className="text-primary-500" />
+        <span className="body2 text-primary-500">
+          댓글을 가져오지 못했습니다.
+        </span>
+        <button
+          onClick={() => refetch()}
+          className="body3 underline opacity-60"
+        >
+          다시 시도하기
+        </button>
+      </div>
+    );
 
   return (
     <div className="flex h-full flex-col">

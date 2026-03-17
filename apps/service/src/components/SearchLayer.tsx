@@ -5,6 +5,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { useAutocomplete } from '@/lib/tanstack/query/search-ranking.query';
 import { MainCategory } from '@/types/category';
 import { Chip, Input, LeftArrow, SearchIcon } from '@repo/ui';
+import { CircleX, SearchX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -103,24 +104,37 @@ const SearchLayer = ({ onClose, initial = '' }: SearchLayerProps) => {
       ) : (
         /* 값이 있을 때: 자동완성 리스트 */
         <div className="flex flex-col gap-6 rounded-b-lg bg-white px-6 py-5">
-          {/* TODO: 추후 로딩 에러 화면 구현 */}
-          {isPending && <span>자동완성 로딩중...</span>}
-          {isError && <span>자동완성 에러</span>}
-          {!isPending && !isError && data?.length === 0 && (
-            <span>검색 결과가 없습니다</span>
-          )}
-          {data?.map((item, i) => (
-            <button
-              key={i}
-              onClick={() => route.push(ROUTES.SEARCH(item))}
-              className="flex items-center gap-3"
-            >
-              <SearchIcon className="h-5 w-5 shrink-0 text-gray-700" />
-              <span className="body2 text-left">
-                {highlightKeyword(item, debouncedKeyword)}
+          {isError ? (
+            <div className="text-primary-500 flex flex-col items-center justify-center py-5">
+              <div className="mb-2">
+                <CircleX size={35} />
+              </div>
+              <span className="title2">자동완성중 에러발생</span>
+              <span className="body3 mt-1">
+                검색어를 지우고 다시 시도해주세요
               </span>
-            </button>
-          ))}
+            </div>
+          ) : !isPending && !isError && data?.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-5 opacity-40">
+              <div className="mb-2">
+                <SearchX size={35} />
+              </div>
+              <span className="title2">검색결과가 없습니다.</span>
+            </div>
+          ) : (
+            data?.map((item, i) => (
+              <button
+                key={i}
+                onClick={() => route.push(ROUTES.SEARCH(item))}
+                className="flex items-center gap-3"
+              >
+                <SearchIcon className="h-5 w-5 shrink-0 text-gray-700" />
+                <span className="body2 text-left">
+                  {highlightKeyword(item, debouncedKeyword)}
+                </span>
+              </button>
+            ))
+          )}
         </div>
       )}
     </div>

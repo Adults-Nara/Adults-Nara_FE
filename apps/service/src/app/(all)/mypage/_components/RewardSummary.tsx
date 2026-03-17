@@ -5,8 +5,8 @@ import { useMyPointBalance } from '@/lib/tanstack/query/point.query';
 import { useMyuplusVerify } from '@/lib/tanstack/query/uplus.query';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useSheetStore } from '@/store/useSheetStore';
-import { Button } from '@repo/ui';
-import { CreditCard, Smartphone } from 'lucide-react';
+import { Button, Spinner } from '@repo/ui';
+import { CircleX, CreditCard, Smartphone } from 'lucide-react';
 import Link from 'next/link';
 import UplusVerificationForm from './UplusVerificationForm';
 
@@ -21,15 +21,39 @@ const RewardSummary = ({ showDetailLink = true }: RewardSummaryProps) => {
     data: myVerify,
     isPending: verifyPending,
     isError: verifyError,
+    refetch: verifyRefetch,
   } = useMyuplusVerify({ phoneNumber: phoneNumber || '0' });
   const {
     data: myPoint,
     isPending: pointPending,
     isError: pointError,
+    refetch: pointRefetch,
   } = useMyPointBalance();
 
-  if (verifyPending || pointPending) return <span>로딩중...</span>;
-  if (verifyError || pointError) return <span>에러...</span>;
+  if (verifyPending || pointPending)
+    return (
+      <div className="bg-primary-900 flex h-50 w-full flex-col items-center justify-center gap-4 rounded-lg p-4">
+        <Spinner size={60} />
+      </div>
+    );
+  if (verifyError || pointError)
+    return (
+      <div className="bg-primary-900 flex h-50 w-full flex-col items-center justify-center gap-4 rounded-lg p-4">
+        <div className="flex flex-col items-center justify-center gap-2 py-5">
+          <CircleX size={35} className="text-white" />
+          <span className="body2 text-white">내역을 불러오지 못했습니다.</span>
+          <button
+            onClick={() => {
+              verifyRefetch();
+              pointRefetch();
+            }}
+            className="body3 text-white underline opacity-60"
+          >
+            다시 시도하기
+          </button>
+        </div>
+      </div>
+    );
 
   return (
     <div className="bg-primary-900 flex w-full flex-col gap-4 rounded-lg p-4">

@@ -1,5 +1,6 @@
 'use client';
 import { useMyuplusVerifyMutation } from '@/lib/tanstack/mutation/uplus.mutation';
+import { toast } from '@/lib/toast';
 import { useSheetStore } from '@/store/useSheetStore';
 import { Button } from '@repo/ui';
 import { useState } from 'react';
@@ -15,17 +16,14 @@ const UplusVerificationForm = () => {
       {
         onSuccess(data) {
           if (data.verified) {
-            //TODO: 추후 토스트메시지
-            console.log('회선연결성공');
+            toast.success('회선연결을 성공하였습니다.');
             sheetClose();
           } else {
-            //TODO: 추후 토스트메시지
-            console.log(data.message);
+            toast.error(data.message);
           }
         },
         onError(error) {
-          //TODO: 추후 토스트메시지
-          console.log('서버에러', error);
+          toast.error(error.message);
         },
       },
     );
