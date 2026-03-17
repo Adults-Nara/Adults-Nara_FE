@@ -20,7 +20,7 @@ const BookmarkList = () => {
 
   if (isPending)
     return (
-      <div className="flex flex-nowrap gap-4 overflow-hidden py-0.5">
+      <div className="flex flex-nowrap gap-4 overflow-hidden p-0.5">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="w-60 shrink-0">
             <VideoVerticalCardSkeleton />

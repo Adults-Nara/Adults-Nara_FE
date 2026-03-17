@@ -7,7 +7,7 @@ import { useHomeFeedVideoInfinite } from '@/lib/tanstack/query/recommendation.qu
 import { RecommendationVideoItem } from '@/models/recommendations.model';
 import { ThumbnailData } from '@/types/video';
 import { formatVideoTime } from '@/utils/format';
-import { CircleX } from 'lucide-react';
+import { CircleX, Inbox } from 'lucide-react';
 import Link from 'next/link';
 
 export function mapHomeFeedToThumbnail(
@@ -70,6 +70,11 @@ const RecommendedSection = () => {
             >
               다시 시도하기
             </button>
+          </div>
+        ) : videos.length === 0 ? (
+          <div className="mx-3 flex flex-col items-center justify-center gap-2 rounded-lg border border-gray-300 py-12 text-gray-600">
+            <Inbox size={35} />
+            <span className="body2">추천 영상이 없습니다.</span>
           </div>
         ) : (
           videos.map((data) => {

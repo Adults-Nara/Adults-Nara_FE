@@ -38,8 +38,9 @@ const RecentHistory = () => {
 
   const { data, isError, isPending, refetch } = useRecentWatchHistory();
 
-  const items = data?.pages[0].items;
-  const noneItems = items?.length === 0;
+  const items = data?.pages?.[0]?.items ?? [];
+  const noneItems = items.length === 0;
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">
@@ -56,7 +57,7 @@ const RecentHistory = () => {
       <div className="overflow-hidden px-0.5 py-0.5" ref={videoListRef}>
         <div className="flex gap-4">
           {isPending ? (
-            <div className="flex flex-nowrap gap-4 overflow-hidden py-0.5">
+            <div className="flex flex-nowrap gap-4 overflow-hidden p-0.5">
               {Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="w-50 shrink-0">
                   <VideoVerticalCardSkeleton />

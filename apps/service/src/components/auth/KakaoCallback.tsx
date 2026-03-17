@@ -32,7 +32,7 @@ const KakaoCallback = ({ code, state }: KakaoCallback) => {
         <div className="mb-2">
           <CircleX size={35} />
         </div>
-        <span className="title2">로그인중 에러발생</span>
+        <span className="title2">로그인 중 에러 발생</span>
         <Button
           onClick={() => router.replace(ROUTES.LOGIN)}
           variant={'outline'}
