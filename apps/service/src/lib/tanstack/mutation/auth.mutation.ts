@@ -13,8 +13,8 @@ export function useLoginKakaoUrl() {
     onSuccess: (data) => {
       window.location.href = data;
     },
-    onError: (error) => {
-      toast.error(`'로그인 URL 요청 실패:${error}`);
+    onError: () => {
+      toast.error('로그인 URL 요청 실패');
     },
   });
 }
