@@ -32,9 +32,6 @@ const RecommendedRelatedSection = () => {
   const searchParams = useSearchParams();
   const videoId = searchParams.get('v');
 
-  if (!videoId) {
-    return;
-  }
   const {
     data,
     fetchNextPage,
@@ -43,13 +40,17 @@ const RecommendedRelatedSection = () => {
     isError,
     isPending,
     refetch,
-  } = useRelatedVideosInfinite(videoId, 10, 'LONG');
+  } = useRelatedVideosInfinite(videoId ?? undefined, 10, 'LONG');
 
   const observerRef = useObserver({
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
   });
+
+  if (!videoId) {
+    return;
+  }
 
   const items = data?.pages.flatMap((page) => page.content) ?? [];
   const videos = items.map(mapRelatedToThumbnail);

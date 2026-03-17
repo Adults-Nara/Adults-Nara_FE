@@ -44,6 +44,7 @@ const BookmarkList = () => {
       </div>
     );
 
+  if (!data) return null;
   const hasShortForm = data.shortForm.totalCount > 0;
   const hasLongForm = data.longForm.totalCount > 0;
 
