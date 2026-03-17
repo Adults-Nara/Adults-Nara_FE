@@ -38,3 +38,21 @@ export interface TagScoreDto {
   tagName: string;
   score: number;
 }
+
+export interface MonthlyStatsResponseDto {
+  year: number;
+  month: number;
+  userId: string;
+  tags: TagWatchStatDto[];
+  hasPrevious: boolean;
+  hasNext: boolean;
+  previousMonth: string;
+  nextMonth: string;
+}
+
+export interface TagWatchStatDto {
+  tagId: string;
+  tagName: string;
+  totalWatchSeconds: number;
+  watchCount: number;
+}

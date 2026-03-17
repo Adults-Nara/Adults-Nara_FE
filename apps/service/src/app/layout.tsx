@@ -9,6 +9,11 @@ import ConfirmModal from '@/components/confirm/ConfirmModal';
 export const metadata: Metadata = {
   title: '어!신나',
   description: '시니어 OTT 서비스 입니다.',
+  openGraph: {
+    title: '어르신 나라',
+    description: '시니어 OTT 서비스 입니다.',
+    images: ['/og-image.png'],
+  },
 };
 
 export default function RootLayout({

@@ -17,12 +17,7 @@ const CategoryAccordion = ({
   onToggle,
 }: CategoryAccordionProps) => {
   return (
-    <Accordion
-      type="single"
-      collapsible
-      defaultValue="item-0"
-      className="rounded-lg border border-gray-400"
-    >
+    <Accordion type="multiple" className="rounded-lg border border-gray-400">
       {MainCategory.map((mCat, index) => {
         const subCategories = CATEGORY_MAP[mCat.key];
 
@@ -39,7 +34,7 @@ const CategoryAccordion = ({
                 </div>
               )}
             </AccordionTrigger>
-            <AccordionContent className="flex w-full flex-wrap items-center justify-between gap-3 px-3 py-2">
+            <AccordionContent className="flex w-full flex-wrap items-center gap-3 px-3 py-2">
               {CATEGORY_MAP[mCat.key].map((sCat, index) => {
                 return (
                   <Chip
