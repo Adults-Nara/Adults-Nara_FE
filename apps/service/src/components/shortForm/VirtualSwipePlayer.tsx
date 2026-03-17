@@ -273,9 +273,12 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                     Math.floor(props.currentVideo.duration),
                     getStayingTimeDelta(),
                   );
-                  toast.success('포인트가 적립되었습니다!');
+                  if (props.currentVideo.isAd) {
+                    toast.success('포인트가 적립되었습니다!');
+                  }
                 } else {
-                  toast.info('로그인을 해야 포인트를 적립할 수 있습니다.');
+                  if (props.currentVideo.isAd)
+                    toast.info('로그인을 해야 포인트를 적립할 수 있습니다.');
                 }
                 // 처음으로 돌리기
                 if (playerRef.current) playerRef.current.currentTime = 0;

@@ -1,6 +1,7 @@
 import { ROUTES } from '@/constant/routes';
 import { findLabelByValue } from '@/utils/findLabelByValue';
 import { Button } from '@repo/ui';
+import { useRouter } from 'next/navigation';
 interface VideoInfoSectionProps {
   title: string;
   uploader: {
@@ -19,9 +20,10 @@ export function VideoInfoSection({
   tags,
   isAd,
 }: VideoInfoSectionProps) {
+  const router = useRouter();
   return (
     <div
-      className={`absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/50 to-transparent p-4 ${isAd && 'pb-14'}`}
+      className={`pointer-events-auto absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/50 to-transparent p-4 ${isAd && 'pb-14'} `}
     >
       {/* 업로더 정보 */}
       <div className="mb-2 flex items-center gap-2.5">
@@ -59,15 +61,25 @@ export function VideoInfoSection({
         </div>
       )}
       {longformUrl !== '' && (
-        <Button
-          asChild
-          size={null}
-          className="title3 h-12.5 w-full bg-white/70 px-5 text-black"
+        <div
+          onPointerDown={(e) => e.stopPropagation()}
+          onPointerUp={(e) => e.stopPropagation()}
+          onPointerMove={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+          className="w-full"
         >
-          <a href={longformUrl} target="_blank" rel="noopener noreferrer">
+          <Button
+            size={null}
+            className="title3 h-12.5 w-full bg-white/70 px-5 text-black"
+            onClick={() => {
+              const url = new URL(longformUrl);
+              const videoId = url.searchParams.get('v');
+              router.push(`${ROUTES.LONG}?v=${videoId}`, { scroll: false });
+            }}
+          >
             해당영상 시청하기
-          </a>
-        </Button>
+          </Button>
+        </div>
       )}
     </div>
   );
