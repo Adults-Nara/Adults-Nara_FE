@@ -22,7 +22,8 @@ const EditContentContainer = ({ videoId }: EditContentContainerProps) => {
   const { data, isPending, isError, refetch } = useContentDetail(videoId);
 
   const { mutate: editMutate, isPending: isEditPending } = useContentEdit();
-  const { mutate: deleteMutate } = useContentDelete();
+  const { mutate: deleteMutate, isPending: isDeletePending } =
+    useContentDelete();
 
   const handleEdit = (data: UploadRequest, thumbnailFile: File | null) => {
     const formData = new FormData();
@@ -102,6 +103,7 @@ const EditContentContainer = ({ videoId }: EditContentContainerProps) => {
         onDelete={handleDelete}
         onSubmit={handleEdit}
         isPending={isEditPending}
+        isDeletePending={isDeletePending}
       />
     </div>
   );

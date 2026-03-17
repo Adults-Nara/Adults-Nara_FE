@@ -5,6 +5,7 @@ import { toast } from '@/lib/toast';
 import { BackofficeLoginRequest } from '@/models/auth.model';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Button, Input, Logo } from '@repo/ui';
+import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -80,7 +81,8 @@ const LoginForm = () => {
 
       <div className="flex w-full flex-col items-center gap-7">
         <Button type="submit" disabled={isPending}>
-          로그인
+          {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+          {isPending ? '로그인 중...' : '로그인'}
         </Button>
         <span className="title3 text-gray-700">
           업로드 계정이 없으신가요?

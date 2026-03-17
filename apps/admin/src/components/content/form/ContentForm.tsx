@@ -21,6 +21,7 @@ interface ContentFormProps {
   onDelete?: () => void;
   setVideoId?: (videoId: string) => void;
   isPending?: boolean;
+  isDeletePending?: boolean;
 }
 const ContentForm = ({
   mode,
@@ -29,6 +30,7 @@ const ContentForm = ({
   onDelete,
   setVideoId,
   isPending,
+  isDeletePending,
 }: ContentFormProps) => {
   // 썸네일 파일 상태 (실제 파일 객체)
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
@@ -76,8 +78,12 @@ const ContentForm = ({
                 variant="default"
                 className="flex w-fit items-center gap-2"
               >
-                <Delete />
-                삭제
+                {isDeletePending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Delete />
+                )}
+                {isDeletePending ? '삭제중...' : '삭제'}
               </Button>
             )}
             <Button
