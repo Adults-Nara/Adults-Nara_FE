@@ -3,7 +3,13 @@ import { PlayButton } from './PlayButton';
 import { ProgressBar } from './ProgressBar';
 import { AdProgressBar } from './AdProgressBar';
 import { PageHeader } from './PageHeader';
-import { useState, useEffect, useRef, useCallback, type RefObject } from 'react';
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  type RefObject,
+} from 'react';
 
 interface VideoControllerOverlayProps {
   show: boolean;
@@ -72,9 +78,6 @@ export function VideoControllerOverlay({
       />
 
       <>
-        {/* 뒤로가기 버튼 */}
-        {!isFullscreen && <PageHeader />}
-
         {/* 영상 중앙 플레이버튼 - 자동재생 실패 시나 일시정지 시 필요 */}
         {(!isAdMode || showAdOverlay) && (
           <div className="absolute inset-0 flex items-center justify-center">

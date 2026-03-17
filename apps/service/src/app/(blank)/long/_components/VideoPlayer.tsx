@@ -3,6 +3,7 @@
 import ReactPlayer from 'react-player';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { VideoControllerOverlay } from './VideoOverlay';
+import { PageHeader } from './PageHeader';
 
 interface VideoPlayerProps {
   src: string | null;
@@ -252,6 +253,7 @@ export function VideoPlayer({
         onToggleFullscreen={toggleFullscreen}
         onSkip={onAdSkip}
       />
+      {!isFullscreen && <PageHeader />}
     </div>
   );
 }
