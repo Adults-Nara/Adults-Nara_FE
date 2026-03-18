@@ -70,27 +70,29 @@ const SearchList = () => {
           ? `"${currentKeyword}" (으)로 검색된 결과`
           : `"${currentTag}" 주제가 포함된 결과`}
       </span>
-      <div className="flex w-full rounded-full bg-gray-200 p-1">
-        <button
-          onClick={() => setType(undefined)}
-          className={`flex-1 rounded-full py-2 text-sm font-medium transition ${type === undefined ? 'bg-white shadow' : 'text-gray-700'}`}
-        >
-          전체
-        </button>
+      <div className="flex w-full px-4">
+        <div className="flex w-full rounded-full bg-gray-200 p-1">
+          <button
+            onClick={() => setType(undefined)}
+            className={`flex-1 rounded-full py-2 text-sm font-medium transition ${type === undefined ? 'bg-white shadow' : 'text-gray-700'}`}
+          >
+            전체
+          </button>
 
-        <button
-          onClick={() => setType('SHORT')}
-          className={`flex-1 rounded-full py-2 text-sm font-medium transition ${type === 'SHORT' ? 'bg-white shadow' : 'text-gray-700'}`}
-        >
-          짧은 영상
-        </button>
+          <button
+            onClick={() => setType('SHORT')}
+            className={`flex-1 rounded-full py-2 text-sm font-medium transition ${type === 'SHORT' ? 'bg-white shadow' : 'text-gray-700'}`}
+          >
+            짧은 영상
+          </button>
 
-        <button
-          onClick={() => setType('LONG')}
-          className={`flex-1 rounded-full py-2 text-sm font-medium transition ${type === 'LONG' ? 'bg-white shadow' : 'text-gray-700'}`}
-        >
-          긴 영상
-        </button>
+          <button
+            onClick={() => setType('LONG')}
+            className={`flex-1 rounded-full py-2 text-sm font-medium transition ${type === 'LONG' ? 'bg-white shadow' : 'text-gray-700'}`}
+          >
+            긴 영상
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col">
