@@ -87,7 +87,6 @@ const UsersListContainer = ({
           toast.error('비활성화중 오류발생: 존재하지않는 ID');
           return;
         }
-        toast.success('비활성화 성공');
         updateUserStatus([id], period, text ?? '관리자가 차단하였습니다.');
       },
     });

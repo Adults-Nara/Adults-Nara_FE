@@ -57,7 +57,7 @@ const ContentListContainer = ({
       setSelectedIds([]);
     },
     onError: () => {
-      toast.success('작업을 실패하였습니다.');
+      toast.error('작업을 실패하였습니다.');
     },
   });
 
@@ -79,7 +79,7 @@ const ContentListContainer = ({
       onConfirm: () =>
         statusMutate(
           { videoIds: selectedIds, visibility: 'PUBLIC' },
-          createMutationCallbacks(`영상 활성화 성공 성공`),
+          createMutationCallbacks(`영상 활성화 성공`),
         ),
     });
   };

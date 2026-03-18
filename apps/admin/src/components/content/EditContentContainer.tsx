@@ -60,7 +60,7 @@ const EditContentContainer = ({ videoId }: EditContentContainerProps) => {
       { videoIds: [videoId] },
       {
         onSuccess: () => {
-          toast.success('영상 삭제을 완료하였습니다.');
+          toast.success('영상 삭제를 완료하였습니다.');
           router.push(ROUTES.CONTENT);
         },
         onError: () => {
@@ -80,7 +80,7 @@ const EditContentContainer = ({ videoId }: EditContentContainerProps) => {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <span className="body2 text-primary-500">
-          비디오 정보을 불러오지 못했습니다.
+          비디오 정보를 불러오지 못했습니다.
         </span>
         <Button type="button" className="w-30" onClick={() => refetch()}>
           재시도
