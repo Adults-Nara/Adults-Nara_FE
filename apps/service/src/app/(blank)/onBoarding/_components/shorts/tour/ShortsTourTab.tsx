@@ -17,8 +17,7 @@ export interface ShortsTourTabProps {
 const ONBOARDING_DATA: ShortFormVideoData[] = [
   {
     videoId: 'ob-1',
-    videoUrl:
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    videoUrl: '/gcs-proxy/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     thumbnail: '',
     uploader: { name: '어른나라', profileImg: null },
     title: '온보딩 첫번째 영상',
@@ -31,8 +30,7 @@ const ONBOARDING_DATA: ShortFormVideoData[] = [
   },
   {
     videoId: 'ob-2',
-    videoUrl:
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+    videoUrl: '/gcs-proxy/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     thumbnail: '',
     uploader: { name: '어른나라', profileImg: null },
     title: '온보딩 두번째 영상',
@@ -45,8 +43,7 @@ const ONBOARDING_DATA: ShortFormVideoData[] = [
   },
   {
     videoId: 'ob-3',
-    videoUrl:
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+    videoUrl: '/gcs-proxy/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
     thumbnail: '',
     uploader: { name: '어른나라', profileImg: null },
     title: '온보딩 세번째 영상',

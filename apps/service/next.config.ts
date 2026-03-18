@@ -17,6 +17,11 @@ const nextConfig: NextConfig = {
         source: '/stream/:path*',
         destination: 'https://stream.asinna.store/:path*',
       },
+      {
+        // /gcs-proxy/** 요청을 commondatastorage.googleapis.com으로 프록시 (CORS 우회)
+        source: '/gcs-proxy/:path*',
+        destination: 'https://commondatastorage.googleapis.com/:path*',
+      },
     ];
   },
   images: {
