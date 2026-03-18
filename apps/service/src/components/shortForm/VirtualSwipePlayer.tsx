@@ -27,7 +27,7 @@ export interface VirtualSwipePlayerProps {
   // Data extraction
   videoUrl: string | undefined;
   videoLoading: boolean;
-  videoError: boolean;
+  videoError?: boolean;
   getThumbnailUrl: (video: ShortFormVideoData) => string;
   // Progress & events
   watchProgress?: number; // start position

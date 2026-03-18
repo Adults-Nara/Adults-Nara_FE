@@ -14,7 +14,7 @@ import {
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { VideoPlayer } from './VideoPlayer';
 import { usePlaylistAutoPlay } from '@/hooks/usePlaylistAutoPlay';
-import { NextVideoOverlay } from './NextVideoOverlay';
+import { NextAutoPlay } from './NextAutoPlay';
 import { useAdManager } from '@/hooks/useAdManager';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 
@@ -197,21 +197,24 @@ export function VideoPlaybackManager() {
         key={`${videoId}-${replayKey}`}
         src={currentUrl || null}
         progress={isAdPlaying || replayKey > 0 ? 0 : progress}
+        endOverlay={
+          showEndOverlay && nextVideo ? (
+            <NextAutoPlay
+              nextVideo={nextVideo}
+              onNavigate={navigateToNext}
+              onReplay={handleReplay}
+            />
+          ) : null
+        }
         thumbnail={detailData?.thumbnailUrl ?? ''}
         isAdMode={isAdPlaying}
         onAdEnded={handleAdEnded}
         onAdSkip={handleAdSkipped}
+        onSeek={() => setShowEndOverlay(false)}
         onEnded={handleVideoEnd}
         onWatchProgressUpdate={handleWatchProgressUpdate}
         onStopWatching={handleStopWatching}
       />
-      {showEndOverlay && nextVideo && (
-        <NextVideoOverlay
-          nextVideo={nextVideo}
-          onNavigate={navigateToNext}
-          onReplay={handleReplay}
-        />
-      )}
     </div>
   );
 }

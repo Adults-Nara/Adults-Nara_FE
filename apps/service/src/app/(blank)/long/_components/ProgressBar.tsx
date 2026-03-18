@@ -1,112 +1,144 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  type RefObject,
+} from 'react';
 
 interface ProgressBarProps {
-  currentTime: number;
+  videoRef: RefObject<HTMLVideoElement | null>;
   duration: number;
   onSeek: (time: number) => void;
-  isDragging: React.RefObject<boolean>;
+  isDragging: RefObject<boolean>;
 }
 
+const LONG_PRESS_DELAY = 500;
+
 export const ProgressBar = React.memo(function ProgressBar({
-  currentTime,
+  videoRef,
   duration,
   isDragging,
   onSeek,
 }: ProgressBarProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
-  const trackFillRef = useRef<HTMLDivElement>(null);
+  const fillRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
-  const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const longPressTimer = useRef<ReturnType<typeof setTimeout>>(null);
+  const seekRafRef = useRef<number>(null);
+  const animRafRef = useRef<number>(null);
 
-  // 위치 조정
-  const updateBar = (p: number) => {
-    if (trackFillRef.current) {
-      trackFillRef.current.style.width = `${p}%`;
-    }
-    if (handleRef.current) {
-      handleRef.current.style.left = `calc(${p}% - 8px)`;
-    }
-  };
-
-  // 드래그 중이 아닐 때만 DOM 업데이트
   useEffect(() => {
-    if (isDragging.current) return;
-    updateBar(percent);
-  }, [percent]);
+    const loop = () => {
+      if (!isDragging.current && videoRef.current && duration > 0) {
+        const p = (videoRef.current.currentTime / duration) * 100;
+        if (fillRef.current) fillRef.current.style.width = `${p}%`;
+        if (handleRef.current) handleRef.current.style.left = `${p}%`;
+      }
+      animRafRef.current = requestAnimationFrame(loop);
+    };
+    animRafRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animRafRef.current ?? 0);
+  }, [videoRef, duration, isDragging]);
 
-  const calcPercent = (clientX: number) => {
+  // 진행바 기준으로 퍼센트 계산
+  const calcPercent = useCallback((clientX: number) => {
     const rect = trackRef.current?.getBoundingClientRect();
     if (!rect) return 0;
-    return Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1) * 100;
-  };
+    return Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
+  }, []);
+
+  const applyDrag = useCallback(
+    (clientX: number) => {
+      const p = calcPercent(clientX);
+      if (fillRef.current) fillRef.current.style.width = `${p * 100}%`;
+      if (handleRef.current) handleRef.current.style.left = `${p * 100}%`;
+
+      if (seekRafRef.current) cancelAnimationFrame(seekRafRef.current);
+      seekRafRef.current = requestAnimationFrame(() => {
+        onSeek(p * duration);
+      });
+    },
+    [calcPercent, duration, onSeek],
+  );
+
+  const handlePressStart = useCallback(
+    (clientX: number) => {
+      isDragging.current = true;
+      applyDrag(clientX);
+      longPressTimer.current = setTimeout(
+        () => setIsExpanded(true),
+        LONG_PRESS_DELAY,
+      );
+    },
+    [isDragging, applyDrag],
+  );
+
+  const handleMove = useCallback(
+    (clientX: number) => {
+      if (!isDragging.current) return;
+      applyDrag(clientX);
+    },
+    [isDragging, applyDrag],
+  );
+
+  const handleRelease = useCallback(() => {
+    clearTimeout(longPressTimer.current ?? undefined);
+    if (seekRafRef.current) cancelAnimationFrame(seekRafRef.current);
+    isDragging.current = false;
+    setIsExpanded(false);
+  }, [isDragging]);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging.current) return;
-      updateBar(calcPercent(e.clientX));
+    const onMouseMove = (e: MouseEvent) => handleMove(e.clientX);
+    const onMouseUp = () => handleRelease();
+    const onTouchMove = (e: TouchEvent) => {
+      if (isDragging.current) e.preventDefault();
+      handleMove(e.touches[0].clientX);
     };
+    const onTouchEnd = () => handleRelease();
 
-    const handleMouseUp = (e: MouseEvent) => {
-      if (!isDragging.current) return;
-      isDragging.current = false;
-      onSeek((calcPercent(e.clientX) / 100) * duration);
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!isDragging.current) return;
-      updateBar(calcPercent(e.touches[0].clientX));
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (!isDragging.current) return;
-      isDragging.current = false;
-      onSeek((calcPercent(e.changedTouches[0].clientX) / 100) * duration);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('touchmove', handleTouchMove, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd);
-
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
     };
-  }, [duration, onSeek]);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    isDragging.current = true;
-    updateBar(calcPercent(e.clientX));
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    isDragging.current = true;
-    updateBar(calcPercent(e.touches[0].clientX));
-  };
+  }, [handleMove, handleRelease, isDragging]);
 
   return (
     <div
-      ref={trackRef}
-      className="group w-full flex-1 cursor-pointer px-3 py-3"
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleTouchStart}
+      className={`relative w-full cursor-pointer px-3 transition-[padding] duration-200 ${
+        isExpanded ? 'py-5' : 'py-3'
+      }`}
+      onMouseDown={(e) => handlePressStart(e.clientX)}
+      onTouchStart={(e) => handlePressStart(e.touches[0].clientX)}
     >
-      <div className="relative h-2.5 rounded-full bg-white/30">
+      {/* 진행바 */}
+      <div
+        ref={trackRef}
+        className={`relative rounded-full bg-white/30 transition-[height] duration-200 ${
+          isExpanded ? 'h-4' : 'h-2.5'
+        }`}
+      >
         <div
-          ref={trackFillRef}
+          ref={fillRef}
           className="bg-primary-500 absolute top-0 left-0 h-full rounded-full"
-          style={isDragging.current ? undefined : { width: `${percent}%` }}
         />
+
+        {/* 핸들 */}
         <div
           ref={handleRef}
-          className="absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-white shadow"
-          style={
-            isDragging.current ? undefined : { left: `calc(${percent}% - 8px)` }
-          }
+          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow transition-[width,height] duration-200 ${
+            isExpanded ? 'h-6 w-6' : 'h-4 w-4'
+          }`}
         />
       </div>
     </div>

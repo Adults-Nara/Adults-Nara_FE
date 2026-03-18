@@ -274,10 +274,8 @@ export const ShortsExperienceTab = React.memo(
       );
       return sortedCategories
         .slice(0, 5)
-        .map((category) => {
-          if (category[1] > 0) return category[0];
-        })
-        .filter((v): v is string => !!v);
+        .filter((category) => category[1] > 0)
+        .map((category) => category[0]);
     }, [userActions, videoTagsCache]);
 
     const handleComplete = useCallback(() => {
@@ -331,6 +329,7 @@ export const ShortsExperienceTab = React.memo(
           getThumbnailUrl={(v) => v.thumbnail}
           onSwipe={handleSwipe}
           renderController={renderController}
+          videoError={videoLoading}
         />
       </div>
     );
