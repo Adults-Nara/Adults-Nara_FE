@@ -1,7 +1,8 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import {
   useVideoS3Url,
   useVideoDetail,
@@ -12,8 +13,8 @@ import {
 } from '@/lib/tanstack/mutation/watch-history.mutation';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { VideoPlayer } from './VideoPlayer';
-import { AdRewardToast } from './AdRewardToast';
 import { usePlaylistAutoPlay } from '@/hooks/usePlaylistAutoPlay';
+import { NextAutoPlay } from './NextAutoPlay';
 import { useAdManager } from '@/hooks/useAdManager';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 
@@ -31,14 +32,9 @@ export function VideoPlaybackManager() {
   const progress = isVideoCompleted ? 0 : (watchHistory?.lastPosition ?? 0);
 
   // 2. 광고 상태 머신 (40% 확률 Pre-roll)
-  const {
-    adState,
-    adVideoUrl,
-    showRewardToast,
-    onAdEnded,
-    onAdSkipped,
-    onDismissToast,
-  } = useAdManager(videoId ? videoId : null);
+  const { adState, adVideoUrl, onAdEnded, onAdSkipped } = useAdManager(
+    videoId ? videoId : null,
+  );
 
   // 광고가 완전히 끝났거나 애초에 당첨되지 않아 스킵된 상태인지 확인
   const isAdFinishedOrSkipped = adState === 'COMPLETED_OR_SKIPPED';
@@ -91,8 +87,7 @@ export function VideoPlaybackManager() {
     (currentTime: number) => {
       if (isLoggedIn && currentTime > 0) {
         stopWatching({
-          // TODO : videoId 없는 경우 처리
-          videoId: videoId || '0',
+          videoId: videoId || '-1',
           body: { lastPosition: currentTime, watchSeconds: currentTime },
         });
       }
@@ -101,9 +96,30 @@ export function VideoPlaybackManager() {
   );
 
   // 재생 목록(찜 목록 등) 자동 재생 훅
-  const handleVideoEnd = usePlaylistAutoPlay(videoId || undefined, () => {
-    lastReportedTimeRef.current = Date.now();
-  });
+  const { nextVideo, navigateToNext } = usePlaylistAutoPlay(
+    videoId || undefined,
+    () => {
+      lastReportedTimeRef.current = Date.now();
+    },
+  );
+
+  const [showEndOverlay, setShowEndOverlay] = useState(false);
+  const [replayKey, setReplayKey] = useState(0);
+
+  // videoId 변경 시 overlay 상태 초기화
+  useEffect(() => {
+    setShowEndOverlay(false);
+    setReplayKey(0);
+  }, [videoId]);
+
+  const handleVideoEnd = useCallback(() => {
+    setShowEndOverlay(true);
+  }, []);
+
+  const handleReplay = useCallback(() => {
+    setShowEndOverlay(false);
+    setReplayKey((k) => k + 1);
+  }, []);
 
   // 광고 종료/스킵 시 lastReportedTimeRef 리셋 후 원래 핸들러 호출
   const handleAdEnded = useCallback(
@@ -178,20 +194,27 @@ export function VideoPlaybackManager() {
   return (
     <div className="relative w-full bg-black" style={{ aspectRatio: '16/9' }}>
       <VideoPlayer
-        key={videoId} // 안정적인 재조정을 위해 비디오 ID를 키로 사용
+        key={`${videoId}-${replayKey}`}
         src={currentUrl || null}
-        progress={isAdPlaying ? 0 : progress}
+        progress={isAdPlaying || replayKey > 0 ? 0 : progress}
+        endOverlay={
+          showEndOverlay && nextVideo ? (
+            <NextAutoPlay
+              nextVideo={nextVideo}
+              onNavigate={navigateToNext}
+              onReplay={handleReplay}
+            />
+          ) : null
+        }
         thumbnail={detailData?.thumbnailUrl ?? ''}
         isAdMode={isAdPlaying}
-        onAdEnded={handleAdEnded} // 광고가 끝났을 때 메인 영상으로 넘어가도록
+        onAdEnded={handleAdEnded}
         onAdSkip={handleAdSkipped}
+        onSeek={() => setShowEndOverlay(false)}
         onEnded={handleVideoEnd}
         onWatchProgressUpdate={handleWatchProgressUpdate}
         onStopWatching={handleStopWatching}
       />
-      {showRewardToast && (
-        <AdRewardToast key="reward-toast" onDismiss={onDismissToast} />
-      )}
     </div>
   );
 }

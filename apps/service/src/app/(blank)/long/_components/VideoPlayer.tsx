@@ -1,8 +1,16 @@
 'use client';
 
-import ReactPlayer from 'react-player';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { VideoControllerOverlay } from './VideoOverlay';
+import { PageHeader } from './PageHeader';
+import { toast } from '@/lib/toast';
+import { useHlsPlayer } from '@/hooks/useHlsPlayer';
 
 interface VideoPlayerProps {
   src: string | null;
@@ -14,6 +22,8 @@ interface VideoPlayerProps {
   isAdMode?: boolean;
   onAdEnded?: (duration: number) => void;
   onAdSkip?: () => void;
+  onSeek?: () => void;
+  endOverlay?: ReactNode;
 }
 
 export function VideoPlayer({
@@ -26,12 +36,14 @@ export function VideoPlayer({
   isAdMode = false,
   onAdEnded,
   onAdSkip,
+  onSeek,
+  endOverlay,
 }: VideoPlayerProps) {
   const playerRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [playbackRate, setPlaybackRate] = useState<number>(1);
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(true);
@@ -40,73 +52,98 @@ export function VideoPlayer({
   const isPlayingRef = useRef(isPlaying);
   const isDragging = useRef(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [videoNode, setVideoNode] = useState<HTMLVideoElement | null>(null);
-  // src(url)가 바뀔 때마다 상태 초기화
+
+  const { levels, currentLevel, setLevel } = useHlsPlayer(playerRef, src);
+
+  // src가 바뀔 때마다 상태 초기화
   useEffect(() => {
     setCurrentTime(0);
     setDuration(0);
     setIsReady(false);
-    setIsPlaying(true);
+    setIsPlaying(false);
     setShowControls(true);
     clearTimeout(hideTimer.current ?? undefined);
   }, [src]);
-  const handleRefCallback = useCallback((node: HTMLVideoElement | null) => {
-    playerRef.current = node;
-    setVideoNode(node);
-  }, []);
-  useEffect(() => {
-    const node = videoNode;
-    if (!node) return;
 
-    if (node.readyState >= 1) {
-      setDuration(node.duration);
+  // loadedmetadata: duration 설정 및 progress 시작 지점 이동
+  useEffect(() => {
+    const video = playerRef.current;
+    if (!video) return;
+
+    const handleLoadedMetadata = () => {
+      setDuration(video.duration);
       if (progress > 0) {
-        node.currentTime = progress;
+        video.currentTime = progress;
       }
       setIsReady(true);
-    } else {
-      const handleLoadedMetadata = () => {
-        setDuration(node.duration);
-        if (progress > 0) {
-          node.currentTime = progress;
-        }
-        setIsReady(true);
-      };
-      node.addEventListener('loadedmetadata', handleLoadedMetadata);
-      return () =>
-        node.removeEventListener('loadedmetadata', handleLoadedMetadata);
-    }
-  }, [videoNode, progress]);
+    };
 
+    if (video.readyState >= 1) {
+      handleLoadedMetadata();
+    } else {
+      video.addEventListener('loadedmetadata', handleLoadedMetadata);
+      return () =>
+        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+    }
+  }, [src]);
+
+  // 실제 재생 상태 동기화 (autoplay 성공/실패, 외부 개입 등 모두 반영)
+  useEffect(() => {
+    const video = playerRef.current;
+    if (!video) return;
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
+    video.addEventListener('play', onPlay);
+    video.addEventListener('pause', onPause);
+    return () => {
+      video.removeEventListener('play', onPlay);
+      video.removeEventListener('pause', onPause);
+    };
+  }, []);
+
+  // currentTime 폴링
   useEffect(() => {
     if (!isPlaying) return;
-
     const interval = setInterval(() => {
       if (isDragging.current) return;
       if (playerRef.current) {
         setCurrentTime(playerRef.current.currentTime);
       }
     }, 100);
-
     return () => clearInterval(interval);
   }, [isPlaying]);
 
-  // 광고 모드일 때는 시청 기록 업데이트 타이머를 돌리지 않음
+  // 시청 기록 업데이트 (광고 제외)
   useEffect(() => {
     if (!isPlaying || isAdMode) return;
-
     const watchHistoryInterval = setInterval(() => {
       if (playerRef.current && onWatchProgressUpdate) {
         onWatchProgressUpdate(playerRef.current.currentTime);
       }
     }, 10000);
-
     return () => clearInterval(watchHistoryInterval);
   }, [isPlaying, isAdMode, onWatchProgressUpdate]);
+
+  // playbackRate 동기화
+  useEffect(() => {
+    if (playerRef.current) {
+      playerRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate]);
 
   useEffect(() => {
     isPlayingRef.current = isPlaying;
   }, [isPlaying]);
+
+  // 언마운트 시 시청 기록 저장 (광고 제외)
+  useEffect(() => {
+    return () => {
+      clearTimeout(hideTimer.current ?? undefined);
+      if (!isAdMode && playerRef.current) {
+        onStopWatching?.(playerRef.current.currentTime);
+      }
+    };
+  }, [isAdMode, onStopWatching]);
 
   const resetHideTimer = useCallback(() => {
     setShowControls(true);
@@ -121,53 +158,64 @@ export function VideoPlayer({
   }, []);
 
   const togglePlay = useCallback(() => {
-    if (isPlayingRef.current) {
+    const video = playerRef.current;
+    if (!video) return;
+    if (!video.paused) {
+      video.pause();
       stopHideTimer();
-      // 광고 모드가 아닐 때만 시청 기록 저장
-      if (!isAdMode && playerRef.current) {
-        onStopWatching?.(playerRef.current.currentTime);
-      }
+      if (!isAdMode) onStopWatching?.(video.currentTime);
     } else {
+      video.play().catch(() => {});
       resetHideTimer();
     }
-    setIsPlaying((prev) => !prev);
   }, [resetHideTimer, stopHideTimer, isAdMode, onStopWatching]);
 
-  // 언마운트 시 시청 기록 저장 (광고 제외)
-  useEffect(() => {
-    return () => {
-      clearTimeout(hideTimer.current ?? undefined);
-      // 언마운트 시점에 playerRef가 남아있는지 확인
-      if (!isAdMode && playerRef.current) {
-        onStopWatching?.(playerRef.current.currentTime);
+  const handleSeek = useCallback(
+    (time: number) => {
+      if (playerRef.current) {
+        playerRef.current.currentTime = time;
+        setCurrentTime(time);
+        onSeek?.();
       }
-    };
-  }, [isAdMode, onStopWatching]);
-
-  const handleSeek = useCallback((time: number) => {
-    if (playerRef.current) {
-      playerRef.current.currentTime = time;
-      setCurrentTime(time);
-    }
-  }, []);
+    },
+    [onSeek],
+  );
 
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(document.fullscreenElement === containerRef.current);
     };
-
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () =>
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
   const toggleFullscreen = useCallback(() => {
-    if (document.fullscreenElement !== containerRef.current) {
-      containerRef.current?.requestFullscreen().catch(console.error);
+    const container = containerRef.current;
+    if (!container) return;
+    if (document.fullscreenElement !== container) {
+      container.requestFullscreen().catch(() => {
+        toast.error('이 브라우저는 전체화면 모드를 지원하지 않습니다.');
+      });
     } else {
       document.exitFullscreen().catch(console.error);
     }
   }, []);
+
+  const handleEnded = useCallback(() => {
+    stopHideTimer();
+    if (isAdMode) {
+      onAdEnded?.(duration);
+    } else {
+      setIsPlaying(false);
+      setShowControls(true);
+      if (playerRef.current) {
+        onStopWatching?.(playerRef.current.currentTime);
+      }
+      onEnded?.();
+    }
+  }, [isAdMode, duration, onAdEnded, onStopWatching, onEnded, stopHideTimer]);
+
   if (!src) {
     return (
       <div
@@ -181,10 +229,10 @@ export function VideoPlayer({
             className="absolute inset-0 h-full w-full object-cover opacity-50"
           />
         ) : null}
-        {/* 원하신다면 여기에 LoadingSpinner를 넣으셔도 좋습니다 */}
       </div>
     );
   }
+
   return (
     <div
       ref={containerRef}
@@ -202,41 +250,14 @@ export function VideoPlayer({
         }
       }}
     >
-      <ReactPlayer
-        ref={handleRefCallback}
-        src={src}
-        playing={isPlaying}
-        playbackRate={playbackRate}
-        controls={false}
-        onReady={() => {
-          // 광고 모드가 아니면, progress가 0보다 클 때에만 시점을 이동
-          if (playerRef.current && progress > 0) {
-            playerRef.current.currentTime = progress;
-          }
-        }}
-        width="100%"
-        height="100%"
+      <video
+        ref={playerRef}
+        playsInline
         className="pointer-events-none h-full w-full"
-        onEnded={() => {
-          stopHideTimer();
-
-          if (isAdMode) {
-            // 광고 영상 종료
-            onAdEnded?.(duration);
-          } else {
-            // 일반 메인 영상 종료
-            togglePlay();
-            setIsPlaying(false);
-            setShowControls(true);
-            if (playerRef.current) {
-              onStopWatching?.(playerRef.current.currentTime);
-            }
-            onEnded?.();
-          }
-        }}
+        onEnded={handleEnded}
+        autoPlay
       />
 
-      {/* VideoControllerOverlay에 광고 모드 속성 전달 */}
       <VideoControllerOverlay
         show={isReady && showControls}
         isAdMode={isAdMode}
@@ -245,14 +266,20 @@ export function VideoPlayer({
         duration={duration}
         playbackRate={playbackRate}
         isDragging={isDragging}
-        isFullscreen={isFullscreen}
+        videoRef={playerRef}
+        endOverlay={endOverlay}
+        levels={levels}
+        currentLevel={currentLevel}
         onTogglePlay={togglePlay}
         onShowControls={resetHideTimer}
         onSeek={handleSeek}
         onPlaybackRateChange={setPlaybackRate}
         onToggleFullscreen={toggleFullscreen}
+        onLevelChange={setLevel}
         onSkip={onAdSkip}
+        isFullscreen={isFullscreen}
       />
+      {!isFullscreen && <PageHeader />}
     </div>
   );
 }

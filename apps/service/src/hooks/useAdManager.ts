@@ -6,6 +6,7 @@ import { useAd } from '@/lib/tanstack/query/ad.query';
 import { useVideoS3Url } from '@/lib/tanstack/query/video.query';
 import { useStopWatching } from '@/lib/tanstack/mutation/watch-history.mutation';
 import { useIsLoggedIn } from '@/store/useAuthStore';
+import { toast } from '@/lib/toast';
 
 // TODO : 광고 노출 확률 수정
 const AD_PROBABILITY = 1;
@@ -14,22 +15,19 @@ const AD_FETCH_TIMEOUT_MS = 5000;
 interface UseAdManagerReturn {
   adState: AdState;
   adVideoUrl: string | null;
-  showRewardToast: boolean;
   onAdEnded: (duration: number) => void;
   onAdSkipped: () => void;
-  onDismissToast: () => void;
 }
 
 export function useAdManager(videoId: string | null): UseAdManagerReturn {
   const [adState, setAdState] = useState<AdState>('IDLE');
   const [shouldFetchAd, setShouldFetchAd] = useState(false);
-  const [showRewardToast, setShowRewardToast] = useState(false);
   const fetchTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
   const isLoggedIn = useIsLoggedIn();
   // 1. 광고 메타데이터 호출
   const { data: adData, isError: isAdError } = useAd(videoId, shouldFetchAd);
 
-  // 💡 2. 광고 ID가 들어오면 즉시 연쇄적으로 S3 URL 호출 (React Query Chaining)
+  // 2. 광고 ID가 들어오면 즉시 연쇄적으로 S3 URL 호출 (React Query Chaining)
   const adId = adData?.videoId;
   const { data: s3Data, isError: isS3Error } = useVideoS3Url(
     adId?.toString() || undefined,
@@ -41,7 +39,11 @@ export function useAdManager(videoId: string | null): UseAdManagerReturn {
       ? rawS3Url?.replace(process.env.NEXT_PUBLIC_STREAM_DOMAIN!, '/stream')
       : rawS3Url;
 
-  const { mutate: stopWatching } = useStopWatching();
+  const {
+    mutate: stopWatching,
+    isPending: isStopWatchingPending,
+    isError: isStopWatchingError,
+  } = useStopWatching();
 
   useEffect(() => {
     // 1. 초기화: 새로운 영상이 오면 무조건 이전 상태를 리셋
@@ -76,6 +78,10 @@ export function useAdManager(videoId: string | null): UseAdManagerReturn {
     if (adState === 'FETCHING' && adVideoUrl) {
       clearTimeout(fetchTimeoutRef.current ?? undefined);
       setAdState('PLAYING');
+
+      if (!isLoggedIn) {
+        toast.info('로그인 후 광고 포인트를 받아가세요!');
+      }
     }
   }, [adVideoUrl]);
 
@@ -96,11 +102,11 @@ export function useAdManager(videoId: string | null): UseAdManagerReturn {
             body: { lastPosition: duration, watchSeconds: duration },
           });
         }
-        // TODO: 광고 시청 완료 토스트 노출 (보상 안내)
-        console.log('광고 시청 완료! 보상 지급');
-      } else {
-        // TODO: 비로그인 상태인 경우, 로그인 유도 토스트 노출
-        console.log('비로그인 상태입니다. 로그인을 해주세요.');
+        if (!isStopWatchingPending && !isStopWatchingError) {
+          toast.success('포인트가 적립되었습니다.');
+        } else {
+          toast.error('포인트 적립 중 오류가 발생했습니다. 다시 시도해주세요.');
+        }
       }
       setAdState('COMPLETED_OR_SKIPPED');
     },
@@ -108,14 +114,11 @@ export function useAdManager(videoId: string | null): UseAdManagerReturn {
   );
 
   const onAdSkipped = useCallback(() => setAdState('COMPLETED_OR_SKIPPED'), []);
-  const onDismissToast = useCallback(() => setShowRewardToast(false), []);
 
   return {
     adState,
-    adVideoUrl: adVideoUrl || null, // 완벽하게 조립된 URL 반환!
-    showRewardToast,
+    adVideoUrl: adVideoUrl || null,
     onAdEnded,
     onAdSkipped,
-    onDismissToast,
   };
 }

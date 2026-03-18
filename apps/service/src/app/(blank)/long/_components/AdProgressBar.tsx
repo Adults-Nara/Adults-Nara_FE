@@ -2,7 +2,7 @@
 
 import { formatVideoTime } from '@/utils/format';
 import { Coin } from '@repo/ui';
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AdProgressBarProps {

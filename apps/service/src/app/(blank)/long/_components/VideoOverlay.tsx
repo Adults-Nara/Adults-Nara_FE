@@ -2,8 +2,17 @@ import { ControlBar } from './ControlBar';
 import { PlayButton } from './PlayButton';
 import { ProgressBar } from './ProgressBar';
 import { AdProgressBar } from './AdProgressBar';
-import { PageHeader } from './PageHeader';
-import { useState, useEffect, useRef, useCallback, type RefObject } from 'react';
+import { SpeedSelector } from './SpeedSelector';
+import { QualitySelector } from './QualitySelector';
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  type RefObject,
+  type ReactNode,
+} from 'react';
+import { type HlsLevel } from '@/hooks/useHlsPlayer';
 
 interface VideoControllerOverlayProps {
   show: boolean;
@@ -12,13 +21,18 @@ interface VideoControllerOverlayProps {
   duration: number;
   playbackRate: number;
   isDragging: RefObject<boolean>;
-  isFullscreen: boolean;
+  videoRef: RefObject<HTMLVideoElement | null>;
   onTogglePlay: () => void;
   onShowControls: () => void;
   onSeek: (time: number) => void;
   onPlaybackRateChange: (rate: number) => void;
   onToggleFullscreen: () => void;
-  // 광고 관련 추가
+  isFullscreen?: boolean;
+  levels: HlsLevel[];
+  currentLevel: number;
+  onLevelChange: (index: number) => void;
+  endOverlay?: ReactNode;
+  // 광고 관련
   isAdMode?: boolean;
   onSkip?: () => void;
 }
@@ -30,14 +44,19 @@ export function VideoControllerOverlay({
   duration,
   playbackRate,
   isDragging,
-  isFullscreen,
+  videoRef,
   onTogglePlay,
   onShowControls,
   onSeek,
   onPlaybackRateChange,
   onToggleFullscreen,
+  isFullscreen,
+  levels,
+  currentLevel,
+  onLevelChange,
   isAdMode = false,
   onSkip,
+  endOverlay,
 }: VideoControllerOverlayProps) {
   const [showAdOverlay, setShowAdOverlay] = useState(true);
   const adHideTimer = useRef<ReturnType<typeof setTimeout>>(null);
@@ -66,19 +85,18 @@ export function VideoControllerOverlay({
       }`}
       onClick={handleClick}
     >
-      {/* 광고 모드일 때는 항상 배경 딤을 약간 주거나, 상황에 따라 조절 */}
+      {/* 광고 모드일 때는 항상 배경 딤 */}
       <div
         className={`absolute inset-0 ${isAdMode ? 'pointer-events-none duration-300' : 'bg-black/30'}`}
       />
 
       <>
-        {/* 뒤로가기 버튼 */}
-        {!isFullscreen && <PageHeader />}
-
         {/* 영상 중앙 플레이버튼 - 자동재생 실패 시나 일시정지 시 필요 */}
         {(!isAdMode || showAdOverlay) && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <PlayButton isPlaying={isPlaying} onTogglePlay={onTogglePlay} />
+            {endOverlay ?? (
+              <PlayButton isPlaying={isPlaying} onTogglePlay={onTogglePlay} />
+            )}
           </div>
         )}
       </>
@@ -97,6 +115,21 @@ export function VideoControllerOverlay({
         </button>
       )}
 
+      {/* 상단 컨트롤 영역 (속도·화질) */}
+      {!isAdMode && (
+        <div className="absolute top-0 right-0 left-0 flex items-center justify-end gap-2 px-4 pt-2">
+          <SpeedSelector
+            playbackRate={playbackRate}
+            onPlaybackRateChange={onPlaybackRateChange}
+          />
+          <QualitySelector
+            levels={levels}
+            currentLevel={currentLevel}
+            onLevelChange={onLevelChange}
+          />
+        </div>
+      )}
+
       {/* 하단 컨트롤 영역 */}
       <div className="absolute right-0 bottom-0 left-0">
         {isAdMode ? (
@@ -105,18 +138,16 @@ export function VideoControllerOverlay({
             <AdProgressBar currentTime={currentTime} duration={duration} />
           </div>
         ) : (
-          // 일반 모드: 표준 컨트롤바 + 인터랙티브 프로그레스 바
+          // 일반 모드: 시간, 전체화면, 프로그레스 바
           <div key="standard-controls">
             <ControlBar
               currentTime={currentTime}
               duration={duration}
-              playbackRate={playbackRate}
-              onSeek={onSeek}
-              onPlaybackRateChange={onPlaybackRateChange}
               onToggleFullscreen={onToggleFullscreen}
+              isFullscreen={isFullscreen}
             />
             <ProgressBar
-              currentTime={currentTime}
+              videoRef={videoRef}
               duration={duration}
               onSeek={onSeek}
               isDragging={isDragging}

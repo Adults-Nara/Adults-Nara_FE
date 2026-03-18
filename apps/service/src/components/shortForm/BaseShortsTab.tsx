@@ -30,6 +30,7 @@ import {
 } from '@/lib/tanstack/mutation/watch-history.mutation';
 import { LoadingSpinner } from '../LoadingSpinner';
 import { useIsLoggedIn } from '@/store/useAuthStore';
+import { Button } from '@repo/ui';
 
 // 무한 스크롤 메모리 초과 방지, window 형식. offset 보정 함수.
 function applyWindowing<T>(
@@ -330,15 +331,19 @@ export default function BaseShortsTab({
       });
     }
   };
-  if (isS3Error) {
-    return <>영상을 불러오지 못했습니다.</>;
-  }
+
   if (
     !mergedCurrentVideo ||
     mergedCurrentVideo.videoId === undefined ||
     isS3Pending
   ) {
-    return <LoadingSpinner thumbnail={mergedCurrentVideo?.thumbnail || ''} />;
+    return (
+      <div className="h-dvh">
+        <LoadingSpinner
+          thumbnail={mergedCurrentVideo?.thumbnail || undefined}
+        />
+      </div>
+    );
   } else {
     const virtualSwipePlayerProps: VirtualSwipePlayerProps = {
       currentVideo: mergedCurrentVideo,
@@ -349,6 +354,8 @@ export default function BaseShortsTab({
       hasNextPage: !!onRequireMoreVertical,
       videoUrl: s3Url,
       videoLoading: isS3Pending || isS3Error,
+      videoError: isS3Error,
+
       getThumbnailUrl: (v) => v.thumbnail,
       watchProgress: mergedCurrentVideo.watchProgress ?? 0,
       onStartWatching: handleStartWatching,

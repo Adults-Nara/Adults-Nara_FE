@@ -121,12 +121,11 @@ export default function ShortsTab({ params }: ShortsTabProps) {
 
   if (isDetailLoading && !!targetVideoId) {
     // 공통 로딩 스피너 컴포넌트나 스켈레톤 UI를 반환
-    return <LoadingSpinner />;
-  }
-
-  if (targetVideoId && isDetailError) {
-    // TODO : 에러 UI 컴포넌트로 교체
-    return null;
+    return (
+      <div className="h-dvh">
+        <LoadingSpinner thumbnail={videos[0]?.thumbnail || undefined} />
+      </div>
+    );
   }
 
   // 데이터가 완벽하게 준비된 이후에만 BaseShortsTab 렌더링

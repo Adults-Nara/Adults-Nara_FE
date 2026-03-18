@@ -1,4 +1,7 @@
+'use client';
+
 import { findLabelByValue } from '@/utils/findLabelByValue';
+import { useLongPressTTS } from '@/hooks/useLongPressTTS';
 import { Chip } from '@repo/ui';
 import { Sparkles, FileText, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
@@ -15,6 +18,8 @@ export function VideoDescription({
   tags,
 }: VideoDescriptionProps) {
   const [isDescExpanded, setIsDescExpanded] = useState(false);
+  const headerContent = aiSummary ?? description;
+  const descTTS = useLongPressTTS(headerContent);
   const fileIcon = (
     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-800">
       <FileText className="h-5 w-5 text-white" />
@@ -29,7 +34,6 @@ export function VideoDescription({
   );
 
   const headerTitle = aiSummary ? 'AI 요약' : '영상 설명';
-  const headerContent = aiSummary ?? description;
 
   return (
     <div
@@ -48,6 +52,7 @@ export function VideoDescription({
       {/* 헤더 내용 */}
       <div className="overflow-hidden px-1">
         <p
+          {...descTTS}
           className={`body2 mt-2 text-gray-800 transition-all duration-300 ${
             isDescExpanded
               ? 'whitespace-pre-wrap'

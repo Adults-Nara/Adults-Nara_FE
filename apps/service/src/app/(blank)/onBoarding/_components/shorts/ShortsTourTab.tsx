@@ -197,6 +197,7 @@ export const ShortsTourTab = React.memo(
           getThumbnailUrl={(v) => v.thumbnail}
           onSwipe={handleSwipe}
           renderController={renderController}
+          videoError={false}
         />
 
         {/* 오버레이 UI 레이어 */}

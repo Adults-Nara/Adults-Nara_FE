@@ -23,6 +23,8 @@ import {
 import { useSheetStore } from '@/store/useSheetStore';
 import CommentList from '@/components/comment/CommentList';
 import { InteractionType } from '@/types/interaction';
+import { toast } from '@/lib/toast';
+import { useLongPressTTS } from '@/hooks/useLongPressTTS';
 
 interface VideoInfoProps {
   videoId: string;
@@ -55,32 +57,51 @@ export function VideoInfo({
   const { mutate: mutateSuperlike, isPending: isSuperlikePending } =
     useSuperLikeVideo();
 
-  const interacted = interaction ?? null;
+  const titleTTS = useLongPressTTS(title);
+  const viewInfoTTS = useLongPressTTS(
+    `조회수 ${formatViewCount(viewCount)}, ${formatRelativeTime(uploadDate)}`,
+  );
   const isInteractionBusy =
     isLikePending || isDislikePending || isSuperlikePending;
   const isBookmarkBusy = isToggleBookmarkPending;
 
   const handleInteraction = (type: InteractionType) => {
     if (isInteractionBusy) {
-      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
-      console.log('반응 처리 중입니다. 잠시만 기다려주세요.');
+      toast.info('반응 처리 중입니다. 잠시후 다시 시도해주세요.');
       return;
     }
     if (!isLogin) {
-      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
-      console.log('로그인이 필요합니다.');
+      toast.info('로그인이 필요합니다.');
       return;
     }
 
     switch (type) {
       case 'SUPERLIKE':
-        mutateSuperlike(videoId);
+        mutateSuperlike(videoId, {
+          onError: () => {
+            toast.error(
+              '최고예요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          },
+        });
         break;
       case 'LIKE':
-        mutateLike(videoId);
+        mutateLike(videoId, {
+          onError: () => {
+            toast.error(
+              '좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          },
+        });
         break;
       case 'DISLIKE':
-        mutateDislike(videoId);
+        mutateDislike(videoId, {
+          onError: () => {
+            toast.error(
+              '싫어요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.',
+            );
+          },
+        });
         break;
       default:
         break;
@@ -89,24 +110,29 @@ export function VideoInfo({
 
   const toggleBookmark = () => {
     if (isBookmarkBusy) {
-      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
-      console.log('북마크 처리 중입니다. 잠시만 기다려주세요.');
+      toast.info('북마크 처리 중입니다. 잠시후 다시 시도해주세요.');
       return;
     }
     if (!isLogin) {
-      // TODO : 사용자에게 피드백 제공 (예: 토스트 메시지)
-      console.log('로그인이 필요합니다.');
+      toast.info('로그인이 필요합니다.');
       return;
     }
-    toggleBookmarkMutate(videoId);
+
+    toggleBookmarkMutate(videoId, {
+      onError: () => {
+        toast.error('북마크 처리에 실패했습니다. 다시 시도해주세요.');
+      },
+    });
   };
 
   return (
     <div className="flex flex-col gap-3 px-3 py-2">
       {/* 제목 및 영상 정보*/}
       <div className="flex flex-col gap-1">
-        <p className="title2 wrap-break-word whitespace-normal">{title}</p>
-        <div className="body4 flex flex-row text-gray-700">
+        <p className="title2 wrap-break-word whitespace-normal" {...titleTTS}>
+          {title}
+        </p>
+        <div className="body4 flex flex-row text-gray-700" {...viewInfoTTS}>
           <p>조회수 {formatViewCount(viewCount)}</p>
           <p className="mx-1">·</p>
           <p>{formatRelativeTime(uploadDate)}</p>
@@ -116,15 +142,11 @@ export function VideoInfo({
       {/* 업로더 프로필 */}
       <div className="flex flex-row items-center gap-2">
         <div>
-          {uploader.profileImg ? (
-            <img
-              src={uploader.profileImg}
-              alt="profile"
-              className="h-8 w-8 rounded-full"
-            />
-          ) : (
-            <div className="bg-primary-100 h-8 w-8 rounded-full"></div>
-          )}
+          <img
+            src={uploader.profileImg ?? './defaultProfile.png'}
+            alt="profile"
+            className="h-8 w-8 rounded-full"
+          />
         </div>
         <div className="title3">{uploader.name}</div>
       </div>

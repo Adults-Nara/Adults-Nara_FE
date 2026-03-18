@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/',
-        destination: '/home',
+        destination: '/login',
         permanent: false,
       },
     ];
@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'http',
-        hostname: 'k.kakaocdn.net', // 카카오 프로필
+        hostname: '*.kakaocdn.net', // 카카오 프로필
       },
       {
         protocol: 'https',

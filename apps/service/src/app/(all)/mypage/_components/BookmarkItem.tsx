@@ -1,3 +1,5 @@
+'use client';
+
 import Thumbnail from '@/components/thumbnail/Thumbnail';
 import { BookmarkPlaylistResponse } from '@/models/bookmark.model';
 

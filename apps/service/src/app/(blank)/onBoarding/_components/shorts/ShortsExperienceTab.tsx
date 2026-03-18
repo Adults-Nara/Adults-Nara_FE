@@ -14,14 +14,12 @@ import {
 } from '@/lib/tanstack/query/video.query';
 import { mapVideoDetailToShortsData } from '@/utils/videoMapper';
 import { InteractionType } from '@/types/interaction';
-import { motion } from 'framer-motion';
 
 export interface ShortsExperienceTabProps {
   onCompleteExperience: (collectedData: string[]) => void;
   setVideoStep: (videoStep: number) => void;
 }
 
-// TODO: Replace with real video IDs before production
 const EXPERIENCE_VIDEO_IDS: string[][] = [
   // 1. 음식 (기존 데이터 완벽)
   ['820709315068849250', '820708335296210663', '820706994075231204'],
@@ -274,8 +272,10 @@ export const ShortsExperienceTab = React.memo(
       const sortedCategories = Array.from(categoryScores.entries()).sort(
         (a, b) => b[1] - a[1],
       );
-      // TODO : 이후 카테고리 정해지면, 음수 점수는 제외하고 보내기
-      return sortedCategories.slice(0, 5).map((category) => category[0]);
+      return sortedCategories
+        .slice(0, 5)
+        .filter((category) => category[1] > 0)
+        .map((category) => category[0]);
     }, [userActions, videoTagsCache]);
 
     const handleComplete = useCallback(() => {
@@ -329,6 +329,7 @@ export const ShortsExperienceTab = React.memo(
           getThumbnailUrl={(v) => v.thumbnail}
           onSwipe={handleSwipe}
           renderController={renderController}
+          videoError={videoLoading}
         />
       </div>
     );

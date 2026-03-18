@@ -4,12 +4,9 @@ import { useRef, useState, ReactNode, useEffect, useCallback } from 'react';
 import { ShortFormVideoData } from '@/types/video';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 import { AdProgressBar } from '@/app/(blank)/long/_components/AdProgressBar';
+import { toast } from '@/lib/toast';
+import { Button } from '@repo/ui';
 
-/**
- * 숏폼 플레이어 전용 스타일
- * 라이브러리 내부의 CSS 변수 및 Shadow DOM 요소를 강제로 제어하여
- * 16:9 영상을 세로 꽉 차게(cover) 만듭니다.
- */
 const SHORT_FORM_PLAYER_STYLE = `
   .shortform-player {
     --media-object-fit: cover !important;
@@ -28,20 +25,22 @@ export interface VirtualSwipePlayerProps {
   rightVideo: ShortFormVideoData | null;
 
   // Data extraction
-  videoUrl: string | undefined; // final playable url
-  videoLoading: boolean; // is url or data loading
+  videoUrl: string | undefined;
+  videoLoading: boolean;
+  videoError?: boolean;
   getThumbnailUrl: (video: ShortFormVideoData) => string;
   // Progress & events
   watchProgress?: number; // start position
-  onStartWatching?: (videoId: string, watchSeconds: number) => void; // Called when video begins playing
-  onWatchProgressUpdate?: (currentTime: number, watchSeconds: number) => void; // every 10s callback
+  onStartWatching?: (videoId: string, watchSeconds: number) => void;
+  onWatchProgressUpdate?: (currentTime: number, watchSeconds: number) => void;
   onStopWatching?: (
     videoId: string,
     lastTime: number,
     watchSeconds: number,
+    errorMessage?: string,
   ) => void;
 
-  hasNextPage?: boolean; // more vertical videos may be loaded
+  hasNextPage?: boolean;
 
   onSwipe: (direction: 'up' | 'down' | 'left' | 'right') => void;
   renderController?: (video: ShortFormVideoData) => ReactNode;
@@ -49,7 +48,7 @@ export interface VirtualSwipePlayerProps {
 
 export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   /* --- 비디오 제어 및 시청 기록 로직 --- */
-  const playerRef = useRef<HTMLVideoElement>(null); // ReactPlayer ref
+  const playerRef = useRef<HTMLVideoElement>(null);
   const currentTimeRef = useRef<number>(0);
   const isLogin = useIsLoggedIn();
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
@@ -73,6 +72,12 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   useEffect(() => {
     latestProgressUpdateRef.current = props.onWatchProgressUpdate;
   }, [props.onWatchProgressUpdate]);
+
+  useEffect(() => {
+    if (!isLogin && props.currentVideo.isAd) {
+      toast.info('로그인 후 광고 포인트를 받아가세요!');
+    }
+  }, [props.currentVideo.videoId, isLogin]);
 
   // 벗어날 때 기록 저장
   useEffect(() => {
@@ -228,7 +233,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
       >
         {/* 중앙 플레이어 */}
         <div className="absolute inset-0 h-full w-full">
-          {props.videoUrl && (
+          {props.videoUrl ? (
             <ReactPlayer
               className="shortform-player"
               key={props.currentVideo.videoId}
@@ -265,17 +270,19 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                     Math.floor(props.currentVideo.duration),
                     getStayingTimeDelta(),
                   );
-                  // TODO : 영상이 끝났을 때, 포인트 적립 토스트
-                  console.log('영상이 끝났습니다. 포인트가 적립되었습니다!');
-                } else {
-                  // TODO : 로그인 유도 토스트
-                  console.log('로그인을 해주세요.');
+                  if (props.currentVideo.isAd) {
+                    toast.success('포인트가 적립되었습니다!');
+                  }
                 }
                 // 처음으로 돌리기
                 if (playerRef.current) playerRef.current.currentTime = 0;
               }}
             />
-          )}
+          ) : props.videoError ? (
+            <div className="flex h-dvh w-full flex-col items-center justify-center bg-black p-4 text-center text-white">
+              <p className="title3 mb-4">영상을 불러오는 데 실패했습니다.</p>
+            </div>
+          ) : null}
 
           {props.renderController && props.renderController(props.currentVideo)}
           {props.currentVideo.isAd && (
@@ -287,31 +294,6 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
             </div>
           )}
         </div>
-
-        {/* 로딩 스피너 오버레이 (영상이 안 왔을 때) */}
-        {props.videoLoading && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50">
-            <svg
-              className="h-10 w-10 animate-spin text-white"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-                fill="none"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-          </div>
-        )}
 
         {!isPlaying && !props.videoLoading && (
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/20">
@@ -327,7 +309,6 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           </div>
         )}
 
-        {/* TODO : 광고일 경우, AD 프로그래스바 */}
         {props.currentVideo.isAd && (
           <div className="absolute bottom-4 left-1/2 h-1 w-3/4 -translate-x-1/2 transform bg-white/50"></div>
         )}
