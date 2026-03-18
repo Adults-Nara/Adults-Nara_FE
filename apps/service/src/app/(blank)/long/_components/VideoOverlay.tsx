@@ -27,6 +27,7 @@ interface VideoControllerOverlayProps {
   onSeek: (time: number) => void;
   onPlaybackRateChange: (rate: number) => void;
   onToggleFullscreen: () => void;
+  isFullscreen?: boolean;
   levels: HlsLevel[];
   currentLevel: number;
   onLevelChange: (index: number) => void;
@@ -49,6 +50,7 @@ export function VideoControllerOverlay({
   onSeek,
   onPlaybackRateChange,
   onToggleFullscreen,
+  isFullscreen,
   levels,
   currentLevel,
   onLevelChange,
@@ -142,6 +144,7 @@ export function VideoControllerOverlay({
               currentTime={currentTime}
               duration={duration}
               onToggleFullscreen={onToggleFullscreen}
+              isFullscreen={isFullscreen}
             />
             <ProgressBar
               videoRef={videoRef}

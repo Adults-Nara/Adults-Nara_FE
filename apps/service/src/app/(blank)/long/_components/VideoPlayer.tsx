@@ -277,6 +277,7 @@ export function VideoPlayer({
         onToggleFullscreen={toggleFullscreen}
         onLevelChange={setLevel}
         onSkip={onAdSkip}
+        isFullscreen={isFullscreen}
       />
       {!isFullscreen && <PageHeader />}
     </div>

@@ -77,7 +77,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     if (!isLogin && props.currentVideo.isAd) {
       toast.info('로그인 후 광고 포인트를 받아가세요!');
     }
-  }, [props.currentVideo.videoId]);
+  }, [props.currentVideo.videoId, isLogin]);
 
   // 벗어날 때 기록 저장
   useEffect(() => {
@@ -281,9 +281,6 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           ) : props.videoError ? (
             <div className="flex h-dvh w-full flex-col items-center justify-center bg-black p-4 text-center text-white">
               <p className="title3 mb-4">영상을 불러오는 데 실패했습니다.</p>
-              <Button size={'lg'} onClick={() => {}}>
-                다시 불러오기
-              </Button>
             </div>
           ) : null}
 

@@ -1,15 +1,18 @@
 import { formatVideoTime } from '@/utils/format';
+import { Maximize2, Minimize2 } from 'lucide-react';
 
 interface ControlBarProps {
   currentTime: number;
   duration: number;
   onToggleFullscreen: () => void;
+  isFullscreen?: boolean;
 }
 
 export function ControlBar({
   currentTime,
   duration,
   onToggleFullscreen,
+  isFullscreen = false,
 }: ControlBarProps) {
   return (
     <div className="body3 flex items-center justify-between px-4 pt-1">
@@ -23,19 +26,7 @@ export function ControlBar({
         onClick={onToggleFullscreen}
         className="rounded bg-black/50 px-2 py-1 text-white"
       >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <polyline points="15 3 21 3 21 9" />
-          <polyline points="9 21 3 21 3 15" />
-          <line x1="21" y1="3" x2="14" y2="10" />
-          <line x1="3" y1="21" x2="10" y2="14" />
-        </svg>
+        {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
       </button>
     </div>
   );

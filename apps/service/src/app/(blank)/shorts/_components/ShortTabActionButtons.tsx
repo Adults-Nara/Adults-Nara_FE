@@ -166,8 +166,8 @@ export function ShortTabActionButtons({
 
       <button
         onClick={handleBookmark}
-        disabled={isBookmarkBusy || isAd}
-        className="flex flex-col items-center gap-1 transition-transform active:scale-90 disabled:opacity-50"
+        disabled={isBookmarkBusy}
+        className={`flex flex-col items-center gap-1 transition-transform active:scale-90 disabled:opacity-50 ${isAd ? 'opacity-50' : ''}`}
       >
         {bookmarked ? <BookmarkFill /> : <Bookmark />}
         <span className="body4">찜하기</span>

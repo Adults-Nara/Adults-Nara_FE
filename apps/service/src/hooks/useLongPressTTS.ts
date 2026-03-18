@@ -1,9 +1,17 @@
-import { useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 
-const LONG_PRESS_DELAY = 500; // ms
+const LONG_PRESS_DELAY = 1000; // ms
 
 export function useLongPressTTS(text: string) {
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  // 언마운트 시 타이머 정리 및 TTS 중지
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    };
+  }, []);
 
   const speak = useCallback(() => {
     if (!window.speechSynthesis) return;
@@ -29,7 +37,15 @@ export function useLongPressTTS(text: string) {
   }, []);
 
   return {
-    onMouseDown: () => { timerRef.current = setTimeout(speak, LONG_PRESS_DELAY); }, // 데스크탑
+    style: {
+      WebkitTouchCallout: 'none',
+      WebkitUserSelect: 'none',
+      userSelect: 'none',
+    },
+    oncontextmenu: (e: React.MouseEvent) => e.preventDefault(),
+    onMouseDown: () => {
+      timerRef.current = setTimeout(speak, LONG_PRESS_DELAY);
+    }, // 데스크탑
     onMouseUp: handleTouchEnd,
     onMouseLeave: handleTouchEnd,
     onTouchStart: handleTouchStart, // 모바일
