@@ -1,13 +1,13 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { VirtualSwipePlayer } from '@/components/shortForm/VirtualSwipePlayer';
 import { ShortFormVideoData } from '@/types/video';
 import { BaseShortFormController } from '@/components/shortForm/BaseShortFormController';
 import {
   ShortsOnBoardingActionButtons,
   ActionType,
-} from './ShortsOnBoardingActionButtons';
+} from '../ShortsOnBoardingActionButtons';
 import React from 'react';
 
 export interface ShortsTourTabProps {
@@ -78,15 +78,17 @@ export const ShortsTourTab = React.memo(
 
     const advanceTutorial = useCallback(() => {
       setTutorialStep((prev) => {
-        if (prev >= 4 && prev < 8) return prev + 1;
-        if (prev >= 8) {
-          onCompleteOnboarding();
-          console.log(prev);
-          return prev;
-        }
+        if (prev >= 4 && prev <= 8) return prev + 1;
         return prev;
       });
-    }, [onCompleteOnboarding]);
+    }, []);
+
+    // tutorialStep 변경 감지하여 단계 종료 처리
+    useEffect(() => {
+      if (tutorialStep > 8) {
+        onCompleteOnboarding();
+      }
+    }, [tutorialStep, onCompleteOnboarding]);
 
     const handlePointerUp = useCallback(() => {
       if (tutorialStep === 3) {

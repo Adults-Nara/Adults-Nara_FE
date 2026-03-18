@@ -7,13 +7,14 @@ import { BaseShortFormController } from '@/components/shortForm/BaseShortFormCon
 import {
   ShortsOnBoardingActionButtons,
   ActionType,
-} from './ShortsOnBoardingActionButtons';
+} from '../ShortsOnBoardingActionButtons';
 import {
   useVideoDetail,
   useVideoS3Url,
 } from '@/lib/tanstack/query/video.query';
 import { mapVideoDetailToShortsData } from '@/utils/videoMapper';
 import { InteractionType } from '@/types/interaction';
+import { toast } from '@/lib/toast';
 
 export interface ShortsExperienceTabProps {
   onCompleteExperience: (collectedData: string[]) => void;
@@ -156,6 +157,7 @@ export const ShortsExperienceTab = React.memo(
           direction === 'right' &&
           colIndex < EXPERIENCE_VIDEO_IDS[rowIndex].length - 1
         ) {
+          toast.success('이 영상과 비슷한 영상을 보여드릴게요.');
           nextCol = colIndex + 1;
         }
 
@@ -166,18 +168,10 @@ export const ShortsExperienceTab = React.memo(
         setRowIndex(nextRow);
         setColIndex(nextCol);
 
-        // 3. 시청 기록(Seen) 및 진행 단계(Step) 업데이트
+        // 3. 시청 기록(Seen) 업데이트
         const targetAction = userActions[nextRow][nextCol];
 
         if (!targetAction.isSeen) {
-          // 층(Row)이 아래로 내려갔을 때만 Step 증가
-          if (nextRow > rowIndex) {
-            setVideoStep(nextRow);
-            if (nextRow === EXPERIENCE_VIDEO_IDS.length - 1) {
-              setIsComplete(true);
-            }
-          }
-
           setUserActions((prev) => {
             const newActions = [...prev];
             newActions[nextRow] = [...newActions[nextRow]];
@@ -189,8 +183,19 @@ export const ShortsExperienceTab = React.memo(
           });
         }
       },
-      [rowIndex, colIndex, userActions, setVideoStep],
+      [rowIndex, colIndex, userActions],
     );
+
+    // 💡 rowIndex 변경 감지하여 부모 Step 및 완료 상태 업데이트 (에러 방지용)
+    useEffect(() => {
+      // 1-based index로 step 업데이트
+      setVideoStep(rowIndex + 1);
+
+      // 마지막 층에 도달했을 때 완료 처리
+      if (rowIndex === EXPERIENCE_VIDEO_IDS.length - 1) {
+        setIsComplete(true);
+      }
+    }, [rowIndex, setVideoStep]);
 
     // 사용자 반응(좋아요, 북마크) 기록
     const handleAction = useCallback(
@@ -206,14 +211,27 @@ export const ShortsExperienceTab = React.memo(
             action === 'DISLIKE' ||
             action === 'SUPERLIKE'
           ) {
-            if (action === interacted) interacted = null;
-            else if (action === 'LIKE') interacted = 'LIKE';
-            else if (action === 'DISLIKE') interacted = 'DISLIKE';
-            else interacted = 'SUPERLIKE';
+            if (action === interacted) {
+              interacted = null;
+            } else if (action === 'LIKE') {
+              toast.success('앞으로 비슷한 영상을 많이 보여드릴게요!');
+              interacted = 'LIKE';
+            } else if (action === 'DISLIKE') {
+              toast.info('앞으로 이런 영상을 조금만 보여드릴게요!');
+              interacted = 'DISLIKE';
+            } else {
+              toast.success('앞으로 비슷한 영상을 더 많이 보여드릴게요!');
+              interacted = 'SUPERLIKE';
+            }
           }
 
           if (action === 'BOOKMARK') {
             isBookmarked = !isBookmarked;
+            if (isBookmarked) {
+              toast.success(
+                '찜하기 목록에 추가되었어요. 나중에 영상들을 모아볼 수 있어요.',
+              );
+            }
           }
 
           newActions[rowIndex] = [...prev[rowIndex]];

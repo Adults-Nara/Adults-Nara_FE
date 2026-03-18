@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ActionType } from './ShortsOnBoardingActionButtons';
+import { ActionType } from '../ShortsOnBoardingActionButtons';
 
 interface ShortsTourFocusWrapperProps {
   type: ActionType;
