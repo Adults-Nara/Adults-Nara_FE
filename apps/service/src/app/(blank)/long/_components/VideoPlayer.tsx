@@ -85,7 +85,7 @@ export function VideoPlayer({
       return () =>
         video.removeEventListener('loadedmetadata', handleLoadedMetadata);
     }
-  }, [src, progress]);
+  }, [src]);
 
   // 실제 재생 상태 동기화 (autoplay 성공/실패, 외부 개입 등 모두 반영)
   useEffect(() => {

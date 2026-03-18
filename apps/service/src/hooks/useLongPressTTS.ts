@@ -37,12 +37,13 @@ export function useLongPressTTS(text: string) {
   }, []);
 
   return {
-    style: {
-      WebkitTouchCallout: 'none',
-      WebkitUserSelect: 'none',
-      userSelect: 'none',
-    },
+    // style: {
+    //   WebkitTouchCallout: 'none',
+    //   WebkitUserSelect: 'none',
+    //   userSelect: 'none',
+    // },
     oncontextmenu: (e: React.MouseEvent) => e.preventDefault(),
+    onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
     onMouseDown: () => {
       timerRef.current = setTimeout(speak, LONG_PRESS_DELAY);
     }, // 데스크탑
