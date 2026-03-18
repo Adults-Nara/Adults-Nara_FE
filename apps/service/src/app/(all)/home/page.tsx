@@ -1,3 +1,4 @@
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 import CategorySection from './_components/CategorySection';
 import RecommendedSection from './_components/RecommendedSection';
 import TopTenSection from './_components/TopTenSection';
@@ -8,6 +9,8 @@ export default function Home() {
       <TopTenSection />
       <CategorySection />
       <RecommendedSection />
+
+      <ScrollToTopButton />
     </div>
   );
 }

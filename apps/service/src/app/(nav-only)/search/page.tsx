@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import InputHeader from './_components/InputHeader';
 import SearchList from './_components/SearchList';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 
 const SearchPage = () => {
   return (
@@ -9,6 +10,8 @@ const SearchPage = () => {
         <InputHeader />
         <SearchList />
       </Suspense>
+
+      <ScrollToTopButton />
     </div>
   );
 };
