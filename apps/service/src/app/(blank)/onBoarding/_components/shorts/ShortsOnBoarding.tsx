@@ -1,22 +1,29 @@
 import { useState } from 'react';
+import { OnboardingDescPage } from '../common/OnboardingDescPage';
 import { OnboardingHeader } from '../common/OnboardingHeader';
-import { ShortsTourTab } from './ShortsTourTab';
 import { ShortsExperienceTab } from './ShortsExperienceTab';
+import { ShortsTourTab } from './ShortsTourTab';
 
 export function ShortsOnBoarding({
   onCompleteExperience,
 }: {
   onCompleteExperience: (tags: string[]) => void;
 }) {
-  const [currentPhase, setCurrentPhase] = useState<'tour' | 'experience'>(
-    'tour',
-  );
+  const [currentPhase, setCurrentPhase] = useState<
+    'tour' | 'description' | 'experience'
+  >('tour');
   const [videoStep, setVideoStep] = useState<number>(1);
 
   const handleCompleteExperience = (collectedData: string[]) => {
     // 설정 페이지로 값 전달을 위함.
     onCompleteExperience(collectedData);
   };
+
+  if (currentPhase === 'description') {
+    return (
+      <OnboardingDescPage onNext={() => setCurrentPhase('experience')} />
+    );
+  }
 
   return (
     <div className="relative h-dvh">
@@ -36,7 +43,7 @@ export function ShortsOnBoarding({
               className="title2 flex cursor-pointer justify-end border-none bg-transparent pr-1.5 text-white drop-shadow-sm"
               onClick={() => {
                 if (currentPhase === 'tour') {
-                  setCurrentPhase('experience');
+                  setCurrentPhase('description');
                 } else {
                   handleCompleteExperience([]);
                 }
@@ -48,7 +55,7 @@ export function ShortsOnBoarding({
         </div>
         {currentPhase === 'tour' ? (
           <ShortsTourTab
-            onCompleteOnboarding={() => setCurrentPhase('experience')}
+            onCompleteOnboarding={() => setCurrentPhase('description')}
           />
         ) : (
           <ShortsExperienceTab

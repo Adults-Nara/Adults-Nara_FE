@@ -14,6 +14,7 @@ import {
 } from '@/lib/tanstack/query/video.query';
 import { mapVideoDetailToShortsData } from '@/utils/videoMapper';
 import { InteractionType } from '@/types/interaction';
+import { toast } from '@/lib/toast';
 
 export interface ShortsExperienceTabProps {
   onCompleteExperience: (collectedData: string[]) => void;
@@ -156,6 +157,7 @@ export const ShortsExperienceTab = React.memo(
           direction === 'right' &&
           colIndex < EXPERIENCE_VIDEO_IDS[rowIndex].length - 1
         ) {
+          toast.success('이 영상과 비슷한 영상을 보여드릴게요.');
           nextCol = colIndex + 1;
         }
 
@@ -189,7 +191,7 @@ export const ShortsExperienceTab = React.memo(
           });
         }
       },
-      [rowIndex, colIndex, userActions, setVideoStep],
+      [rowIndex, colIndex, userActions],
     );
 
     // 사용자 반응(좋아요, 북마크) 기록
@@ -206,14 +208,27 @@ export const ShortsExperienceTab = React.memo(
             action === 'DISLIKE' ||
             action === 'SUPERLIKE'
           ) {
-            if (action === interacted) interacted = null;
-            else if (action === 'LIKE') interacted = 'LIKE';
-            else if (action === 'DISLIKE') interacted = 'DISLIKE';
-            else interacted = 'SUPERLIKE';
+            if (action === interacted) {
+              interacted = null;
+            } else if (action === 'LIKE') {
+              toast.success('앞으로 비슷한 영상을 많이 보여드릴게요!');
+              interacted = 'LIKE';
+            } else if (action === 'DISLIKE') {
+              toast.info('앞으로 이런 영상을 조금만 보여드릴게요!');
+              interacted = 'DISLIKE';
+            } else {
+              toast.success('앞으로 비슷한 영상을 더 많이 보여드릴게요!');
+              interacted = 'SUPERLIKE';
+            }
           }
 
           if (action === 'BOOKMARK') {
             isBookmarked = !isBookmarked;
+            if (isBookmarked) {
+              toast.success(
+                '찜하기 목록에 추가되었어요. 나중에 영상들을 모아볼 수 있어요.',
+              );
+            }
           }
 
           newActions[rowIndex] = [...prev[rowIndex]];
