@@ -57,7 +57,7 @@ export function ShortsOnBoarding({
           />
         ) : (
           <ShortsExperienceTab
-            setVideoStep={() => setVideoStep((prev) => prev + 1)}
+            setVideoStep={(step) => setVideoStep(step)}
             onCompleteExperience={handleCompleteExperience}
           />
         )}

@@ -168,18 +168,10 @@ export const ShortsExperienceTab = React.memo(
         setRowIndex(nextRow);
         setColIndex(nextCol);
 
-        // 3. 시청 기록(Seen) 및 진행 단계(Step) 업데이트
+        // 3. 시청 기록(Seen) 업데이트
         const targetAction = userActions[nextRow][nextCol];
 
         if (!targetAction.isSeen) {
-          // 층(Row)이 아래로 내려갔을 때만 Step 증가
-          if (nextRow > rowIndex) {
-            setVideoStep(nextRow);
-            if (nextRow === EXPERIENCE_VIDEO_IDS.length - 1) {
-              setIsComplete(true);
-            }
-          }
-
           setUserActions((prev) => {
             const newActions = [...prev];
             newActions[nextRow] = [...newActions[nextRow]];
@@ -193,6 +185,17 @@ export const ShortsExperienceTab = React.memo(
       },
       [rowIndex, colIndex, userActions],
     );
+
+    // 💡 rowIndex 변경 감지하여 부모 Step 및 완료 상태 업데이트 (에러 방지용)
+    useEffect(() => {
+      // 1-based index로 step 업데이트
+      setVideoStep(rowIndex + 1);
+
+      // 마지막 층에 도달했을 때 완료 처리
+      if (rowIndex === EXPERIENCE_VIDEO_IDS.length - 1) {
+        setIsComplete(true);
+      }
+    }, [rowIndex, setVideoStep]);
 
     // 사용자 반응(좋아요, 북마크) 기록
     const handleAction = useCallback(
