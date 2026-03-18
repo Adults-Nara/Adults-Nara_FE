@@ -41,6 +41,7 @@ export const CONTENT_COLUMNS = (
               src={item.thumbnailUrl}
               alt={item.title}
               fill
+              sizes="(max-width: 768px) 100vw, 33vw"
               className="object-cover"
             />
           )}
@@ -54,7 +55,7 @@ export const CONTENT_COLUMNS = (
     ),
   },
   {
-    key: 'otherVideoUrl', //TODO: 추후 링크상태 확인
+    key: 'otherVideoUrl',
     label: '링크',
     width: '80px',
     align: 'center',

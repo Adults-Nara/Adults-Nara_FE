@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import ContentForm from './form/ContentForm';
 import { UploadRequest } from '@/models/content.model';
-import { LeftArrow } from '@repo/ui';
+import { Button, LeftArrow, Spinner } from '@repo/ui';
 import { useContentDetail } from '@/lib/tanstack/query/content.query';
 import {
   useContentDelete,
@@ -10,7 +10,8 @@ import {
 } from '@/lib/tanstack/mutation/content.mutation';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constant/routes';
-import { useDialogStore } from '@/store/useDialogStore';
+import { toast } from '@/lib/toast';
+import { confirm } from '@/lib/confirm';
 
 interface EditContentContainerProps {
   videoId: string;
@@ -19,10 +20,10 @@ interface EditContentContainerProps {
 const EditContentContainer = ({ videoId }: EditContentContainerProps) => {
   const router = useRouter();
   const { data, isPending, isError, refetch } = useContentDetail(videoId);
-  const { openDialog } = useDialogStore();
 
-  const { mutate: editMutate } = useContentEdit();
-  const { mutate: deleteMutate } = useContentDelete();
+  const { mutate: editMutate, isPending: isEditPending } = useContentEdit();
+  const { mutate: deleteMutate, isPending: isDeletePending } =
+    useContentDelete();
 
   const handleEdit = (data: UploadRequest, thumbnailFile: File | null) => {
     const formData = new FormData();
@@ -40,48 +41,51 @@ const EditContentContainer = ({ videoId }: EditContentContainerProps) => {
       { videoId: videoId, data: formData },
       {
         onSuccess: () => {
-          //TODO: 토스트 변경
-          console.log('업로드 성공');
+          toast.success('영상 수정을 완료하였습니다.');
           router.push(ROUTES.CONTENT);
         },
-        onError: (error) => {
-          //TODO: 토스트 변경
-          console.error(error.message);
+        onError: () => {
+          toast.error('영상 수정중 오류가 발생하였습니다.');
         },
       },
     );
   };
 
-  const handleDelete = () => {
-    openDialog('content', 'delete', {
-      onConfirm: () =>
-        deleteMutate(
-          { videoIds: [videoId] },
-          {
-            onSuccess: () => {
-              //TODO: 토스트 변경
-              console.log('삭제 성공');
-              router.push(ROUTES.CONTENT);
-            },
-            onError: (error) => {
-              //TODO: 토스트 변경
-              console.error(error.message);
-            },
-          },
-        ),
-    });
+  const handleDelete = async () => {
+    const ok = await confirm('영상을 삭제하시겠습니까?', '삭제');
+
+    if (!ok) return;
+
+    deleteMutate(
+      { videoIds: [videoId] },
+      {
+        onSuccess: () => {
+          toast.success('영상 삭제를 완료하였습니다.');
+          router.push(ROUTES.CONTENT);
+        },
+        onError: () => {
+          toast.error('영상 삭제중 오류가 발생하였습니다.');
+        },
+      },
+    );
   };
 
-  //TODO: 로딩에러화면 추후 보강
-  if (isPending) return <span>비디오 풀러오는중</span>;
+  if (isPending)
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <Spinner size={70} />
+      </div>
+    );
   if (isError) {
     return (
-      <>
-        <span>비디오 정보 불러오는데 에러</span>
-        <button type="button" onClick={() => refetch()}>
-          refetch 재시도
-        </button>
-      </>
+      <div className="flex h-full w-full items-center justify-center">
+        <span className="body2 text-primary-500">
+          비디오 정보를 불러오지 못했습니다.
+        </span>
+        <Button type="button" className="w-30" onClick={() => refetch()}>
+          재시도
+        </Button>
+      </div>
     );
   }
   return (
@@ -98,6 +102,8 @@ const EditContentContainer = ({ videoId }: EditContentContainerProps) => {
         defaultValues={data}
         onDelete={handleDelete}
         onSubmit={handleEdit}
+        isPending={isEditPending}
+        isDeletePending={isDeletePending}
       />
     </div>
   );

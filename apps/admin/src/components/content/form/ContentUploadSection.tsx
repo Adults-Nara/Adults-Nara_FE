@@ -1,4 +1,5 @@
 'use client';
+import { toast } from '@/lib/toast';
 import { MultipartCompleteRequest } from '@/models/content.model';
 import {
   apiComplete,
@@ -17,6 +18,15 @@ interface ContentUploadSectionProps {
   setVideoId?: (videoId: string) => void;
 }
 
+const ProgressBar = ({ percent }: { percent: number }) => (
+  <div className="mt-2 h-2.5 w-full rounded-full bg-gray-200">
+    <div
+      className="bg-primary-600 h-2.5 rounded-full transition-all duration-300"
+      style={{ width: `${percent}%` }}
+    ></div>
+  </div>
+);
+
 const ContentUploadSection = ({
   isEdit,
   setThumbnailFile,
@@ -26,6 +36,9 @@ const ContentUploadSection = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialThumbnail);
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   // 마운트시 섬네일임시URL 클린업
   useEffect(() => {
@@ -65,11 +78,10 @@ const ContentUploadSection = ({
       URL.revokeObjectURL(previewUrl);
     }
 
-    // 파일 용량 제한 (예: 5MB) 나중에 체크
-    // if (file.size > 5 * 1024 * 1024) {
-    //   alert('파일 크기는 5MB를 초과할 수 없습니다.');
-    //   return;
-    // }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('썸네일 크기는 10MB를 초과할 수 없습니다.');
+      return;
+    }
 
     setThumbnailFile(file);
     setPreviewUrl(URL.createObjectURL(file));
@@ -82,12 +94,12 @@ const ContentUploadSection = ({
     if (selected) setVideoFile(selected);
 
     try {
+      //---  업로드 시작 상태 설정 ---
+      setIsUploading(true);
+      setUploadProgress(0);
+
       const init = await apiInit(selected);
-
-      // local slicing based on partSizeBytes returned by server
       const localParts = sliceFileIntoParts(selected, init.partSizeBytes);
-
-      // sanity check: server-provided part count should match our calculated one
       if (init.presignedParts.length !== localParts.length) {
         console.log(
           `WARN: part count mismatch (server=${init.presignedParts.length}, local=${localParts.length}). Using local count.`,
@@ -99,12 +111,8 @@ const ContentUploadSection = ({
       for (const p of init.presignedParts)
         urlByPartNumber.set(p.partNumber, p.url);
 
-      // Collect completed parts (partNumber, etag)
       const completed: { partNumber: number; eTag: string }[] = [];
 
-      // setPhase('UPLOADING');
-
-      // progress updates
       const uploadedBytes = new Array(localParts.length).fill(0);
 
       await uploadWithConcurrency(
@@ -119,9 +127,6 @@ const ContentUploadSection = ({
           console.log(
             `PUT part ${lp.partNumber} start (${lp.end - lp.start} bytes)`,
           );
-          // Optional: small jitter to reduce bursts
-
-          // await sleep(30);
 
           const etag = await putPart(url, lp.blob);
 
@@ -129,18 +134,14 @@ const ContentUploadSection = ({
 
           uploadedBytes[lp.partNumber - 1] = lp.end - lp.start;
           const sum = uploadedBytes.reduce((a: number, b: number) => a + b, 0);
-          // setProgress({ uploaded: sum, total: file.size });
-
-          console.log(`PUT part ${lp.partNumber} ok, ETag=${etag}`);
+          const percent = Math.round((sum / selected.size) * 100);
+          setUploadProgress(percent);
         },
         3, //병렬로 몇개씩보낼지 설정
       );
 
       // sort parts by partNumber for complete
       completed.sort((a, b) => a.partNumber - b.partNumber);
-
-      // setPhase('COMPLETING');
-      console.log(`complete start: parts=${completed.length}`);
 
       const completeReq: MultipartCompleteRequest = {
         uploadId: init.uploadId,
@@ -152,30 +153,40 @@ const ContentUploadSection = ({
 
       if (setVideoId) setVideoId(init.videoId);
 
-      console.log(`complete ok: videoId=${init.videoId}`);
-      // setPhase('DONE');
+      setUploadProgress(100);
+      toast.success('원본 영상 업로드 완료');
     } catch (e: any) {
-      // setError(e?.message ?? 'Unknown error');
-      // setPhase('ERROR');
-      console.log(`ERROR: ${e?.message ?? e}`);
+      toast.error('원본영상 업로드중 오류 발생');
+    } finally {
+      setIsUploading(false);
     }
   };
   return (
     <div className="flex w-full gap-2">
       <div className="flex h-65 w-full flex-col gap-3 rounded-lg border border-gray-500 bg-white px-6 py-4">
         <span className="title2">영상 파일</span>
-        {/* TODO:추후 영상업로드 로직 추가예정 */}
-        <label className="body2 flex h-full w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-lg border border-dashed border-gray-500 bg-gray-100 text-gray-700">
+        <label className="body2 relative flex aspect-video w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-lg border border-dashed border-gray-500 bg-gray-100 text-gray-700">
           {isEdit ? (
             '수정불가'
           ) : (
             <>
               {videoFile ? (
-                <video
-                  // src={URL.createObjectURL(videoFile)}
-                  src={videoPreviewUrl ?? undefined}
-                  className="w-full rounded-lg"
-                />
+                <div className="relative h-full w-full">
+                  <video
+                    src={videoPreviewUrl ?? undefined}
+                    className="h-full w-full object-cover"
+                    controls={!isUploading}
+                  />
+                  {/* ---  업로드 중일 때 진행률 표시 --- */}
+                  {isUploading && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 px-4 text-center">
+                      <span className="body3 mb-2 text-white">
+                        {uploadProgress}% 업로드 중...
+                      </span>
+                      <ProgressBar percent={uploadProgress} />
+                    </div>
+                  )}
+                </div>
               ) : (
                 <>
                   <Upload className="h-7 w-7" />
@@ -187,6 +198,7 @@ const ContentUploadSection = ({
                 type="file"
                 accept="video/*"
                 onChange={handleChange}
+                disabled={isUploading}
               />
             </>
           )}
@@ -194,7 +206,7 @@ const ContentUploadSection = ({
       </div>
       <div className="flex h-65 w-full flex-col gap-3 rounded-lg border border-gray-500 bg-white px-6 py-4">
         <span className="title2">썸네일</span>
-        <label className="body2 flex h-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-lg border border-dashed border-gray-500 bg-gray-100 text-gray-700">
+        <label className="body2 flex aspect-video cursor-pointer flex-col items-center justify-center overflow-hidden rounded-lg border border-dashed border-gray-500 bg-gray-100 text-gray-700">
           {previewUrl ? (
             <img
               src={previewUrl}

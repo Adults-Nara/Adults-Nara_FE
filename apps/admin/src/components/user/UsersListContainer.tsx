@@ -11,6 +11,7 @@ import {
   useUsersStatusUpdate,
 } from '@/lib/tanstack/mutation/users.mutation';
 import { UserBanStatus, UsersStatusRequest } from '@/models/users.model';
+import { toast } from '@/lib/toast';
 
 interface UsersListContainerProps {
   currentPage: number;
@@ -58,16 +59,14 @@ const UsersListContainer = ({
     statusMutate(payload, {
       onSuccess: () => {
         setSelectedIds([]);
-        //TODO:추후 토스트추가
         if (status == 'ACTIVE') {
-          console.log('활성화 성공', userIds, status);
+          toast.success('활성화 성공');
         } else {
-          console.log('비활성화 성공', userIds);
+          toast.success('비활성화 성공');
         }
       },
-      onError: (error) => {
-        //TODO:추후 토스트추가
-        console.error(error.message);
+      onError: () => {
+        toast.error('상태변경중 오류 발생');
       },
     });
   };
@@ -85,12 +84,9 @@ const UsersListContainer = ({
       name,
       onConfirm: (text, period) => {
         if (!id || !period) {
-          //TODO: 추후 토스트 추가
-          console.error('비활성화 오류 id,period 없음');
+          toast.error('비활성화중 오류발생: 존재하지않는 ID');
           return;
         }
-        //TODO:추후 토스트추가
-        console.log('비활성화', text, id, period);
         updateUserStatus([id], period, text ?? '관리자가 차단하였습니다.');
       },
     });
@@ -113,8 +109,7 @@ const UsersListContainer = ({
     openDialog(type, 'deactivate', {
       onConfirm: (text, period) => {
         if (!period) {
-          //TODO: 추후 토스트 추가
-          console.error('비활성화 오류 id,period 없음');
+          toast.error('비활성화중 오류발생: 존재하지않는 ID');
           return;
         }
         updateUserStatus(
@@ -133,12 +128,10 @@ const UsersListContainer = ({
           {
             onSuccess: () => {
               setSelectedIds([]);
-              //TODO:추후 토스트추가
-              console.log('삭제 성공', selectedIds);
+              toast.success('삭제 성공');
             },
-            onError: (error) => {
-              //TODO:추후 토스트추가
-              console.error(error.message);
+            onError: () => {
+              toast.error('삭제중 오류발생');
             },
           },
         );

@@ -4,8 +4,10 @@ import {
   useBackofficeCheckEmail,
   useBackofficeSign,
 } from '@/lib/tanstack/mutation/auth.mutation';
+import { toast } from '@/lib/toast';
 import { BackofficeSignRequest } from '@/models/auth.model';
 import { Button, Input, Logo } from '@repo/ui';
+import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -59,7 +61,7 @@ const SignForm = () => {
         if (res) {
           setIsEmailVerified(true);
           clearErrors('email');
-          alert('사용 가능한 이메일입니다.'); //TODO:추후 토스트로 변경
+          toast.success('사용 가능한 이메일입니다.');
         } else {
           setError('email', {
             type: 'manual',
@@ -68,9 +70,8 @@ const SignForm = () => {
           setIsEmailVerified(false);
         }
       },
-      onError: (error) => {
-        //TODO:추후 토스트
-        console.error('이메일 체크 실패:', error.message);
+      onError: () => {
+        toast.error('이메일 중복확인 오류');
       },
     });
   };
@@ -87,12 +88,11 @@ const SignForm = () => {
     const { passwordConfirm, ...submitData } = data;
     signMutate(submitData, {
       onSuccess: () => {
-        //TODO:추후 토스트 (회원가입성공)
+        toast.success('회원가입에 성공하였습니다.');
         router.push(ROUTES.LOGIN);
       },
-      onError: (error) => {
-        //TODO:추후 토스트
-        console.error('회원 가입 실패:', error.message);
+      onError: () => {
+        toast.error('회원가입중 오류가 발생하였습니다.');
       },
     });
   };
@@ -181,7 +181,8 @@ const SignForm = () => {
 
       <div className="flex w-full flex-col items-center gap-7">
         <Button disabled={signPending} type="submit">
-          회원가입
+          {signPending && <Loader2 className="h-4 w-4 animate-spin" />}
+          {signPending ? '회원가입 중...' : '회원가입'}
         </Button>
         <span className="title3 text-gray-700">
           이미 계정이 있으신가요?

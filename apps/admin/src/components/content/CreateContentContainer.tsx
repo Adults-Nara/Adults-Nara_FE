@@ -7,16 +7,16 @@ import { useContentUpload } from '@/lib/tanstack/mutation/content.mutation';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constant/routes';
+import { toast } from '@/lib/toast';
 
 const CreateContentContainer = () => {
   const router = useRouter();
-  const { mutate } = useContentUpload();
+  const { mutate, isPending } = useContentUpload();
   const [videoId, setVideoId] = useState('');
 
   const handleCreate = (data: UploadRequest, thumbnailFile: File | null) => {
     if (!videoId) {
-      // TODO: 토스트로 교체
-      console.log('원본 영상 업로드 완료 후 저장해주세요.');
+      toast.error('원본 영상 업로드 완료 후 저장해주세요.');
       return;
     }
     const formData = new FormData();
@@ -34,13 +34,11 @@ const CreateContentContainer = () => {
       { videoId: videoId, data: formData },
       {
         onSuccess: () => {
-          //TODO: 추후업로드성공 토스트
-          console.log('업로드성공');
+          toast.success('영상 업로드를 완료하였습니다.');
           router.push(ROUTES.CONTENT);
         },
-        onError: (error) => {
-          //TODO: 추후 토스트로 변경
-          console.log(error.message);
+        onError: () => {
+          toast.error('영상 업로드중 오류가 발생하였습니다.');
         },
       },
     );
@@ -56,6 +54,7 @@ const CreateContentContainer = () => {
       </div>
       <ContentForm
         mode="create"
+        isPending={isPending}
         onSubmit={handleCreate}
         setVideoId={setVideoId}
       />
