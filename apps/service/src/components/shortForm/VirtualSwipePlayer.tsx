@@ -4,6 +4,7 @@ import { ShortFormVideoData } from '@/types/video';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 import { AdProgressBar } from '@/app/(blank)/long/_components/AdProgressBar';
 import { toast } from '@/lib/toast';
+import { useHlsPlayer } from '@/hooks/useHlsPlayer';
 
 const SHORT_FORM_PLAYER_STYLE = `
   .shortform-player video {
@@ -46,6 +47,8 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   /* --- 비디오 제어 및 시청 기록 로직 --- */
   const videoRef = useRef<HTMLVideoElement>(null);
   const currentTimeRef = useRef<number>(0);
+
+  useHlsPlayer(videoRef, props.videoUrl ?? null);
   const isLogin = useIsLoggedIn();
 
   // play() Promise 추적 - pause() 호출 전 반드시 resolve 대기
@@ -277,9 +280,8 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
         <div className="shortform-player absolute inset-0 h-full w-full">
           {props.videoUrl ? (
             <video
-              key={props.currentVideo.videoId}
               ref={videoRef}
-              src={props.videoUrl}
+              poster={props.getThumbnailUrl(props.currentVideo) || undefined}
               playsInline
               muted={false}
               controls={false}
