@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { OnboardingDescPage } from '../common/OnboardingDescPage';
+import { OnboardingDescPage } from './description/OnboardingDescPage';
 import { OnboardingHeader } from '../common/OnboardingHeader';
-import { ShortsExperienceTab } from './ShortsExperienceTab';
-import { ShortsTourTab } from './ShortsTourTab';
+import { ShortsExperienceTab } from './experience/ShortsExperienceTab';
+import { ShortsTourTab } from './tour/ShortsTourTab';
 
 export function ShortsOnBoarding({
   onCompleteExperience,
@@ -20,9 +20,7 @@ export function ShortsOnBoarding({
   };
 
   if (currentPhase === 'description') {
-    return (
-      <OnboardingDescPage onNext={() => setCurrentPhase('experience')} />
-    );
+    return <OnboardingDescPage onNext={() => setCurrentPhase('experience')} />;
   }
 
   return (

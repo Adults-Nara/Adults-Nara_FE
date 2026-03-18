@@ -2,10 +2,9 @@
 
 import { Button, Coin, Logo } from '@repo/ui';
 import useEmblaCarousel from 'embla-carousel-react';
-import { Volume2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { OnboardingHeader } from './OnboardingHeader';
-import { useLongPressTTS } from '@/hooks/useLongPressTTS';
+import { OnboardingHeader } from '../../common/OnboardingHeader';
+import { SlideItem } from './SlideItem';
 
 const SLIDES = [
   {
@@ -52,30 +51,7 @@ export function OnboardingDescPage({ onNext }: { onNext: () => void }) {
       <div className="w-full overflow-hidden" ref={emblaRef}>
         <div className="flex">
           {SLIDES.map((slide, index) => (
-            <div
-              key={index}
-              className="flex flex-[0_0_100%] flex-col items-center gap-10 rounded-2xl px-4 py-8"
-            >
-              {slide.icon && (
-                <div className="flex h-48 items-center justify-center">
-                  {slide.icon}
-                </div>
-              )}
-              {slide.imgSrc && (
-                <img
-                  src={slide.imgSrc}
-                  alt={`Slide ${index + 1}`}
-                  className="h-70 object-contain"
-                />
-              )}
-
-              <p
-                className="title1 p-2 text-center break-keep whitespace-pre-wrap"
-                {...useLongPressTTS(slide.description)}
-              >
-                {slide.description}
-              </p>
-            </div>
+            <SlideItem key={index} {...slide} index={index} />
           ))}
         </div>
       </div>

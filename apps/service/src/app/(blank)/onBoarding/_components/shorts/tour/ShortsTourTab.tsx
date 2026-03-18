@@ -7,7 +7,7 @@ import { BaseShortFormController } from '@/components/shortForm/BaseShortFormCon
 import {
   ShortsOnBoardingActionButtons,
   ActionType,
-} from './ShortsOnBoardingActionButtons';
+} from '../ShortsOnBoardingActionButtons';
 import React from 'react';
 
 export interface ShortsTourTabProps {

@@ -9,7 +9,7 @@ import {
   Like,
   LikeFill,
 } from '@repo/ui';
-import { ShortsTourFocusWrapper } from './ShortsTourFocusWrapper';
+import { ShortsTourFocusWrapper } from './tour/ShortsTourFocusWrapper';
 import { InteractionType } from '@/types/interaction';
 
 export type ActionType =
