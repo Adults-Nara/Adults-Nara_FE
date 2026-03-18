@@ -1,19 +1,16 @@
 'use client';
-import ReactPlayer from 'react-player';
 import { useRef, useState, ReactNode, useEffect, useCallback } from 'react';
 import { ShortFormVideoData } from '@/types/video';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 import { AdProgressBar } from '@/app/(blank)/long/_components/AdProgressBar';
 import { toast } from '@/lib/toast';
-import { Button } from '@repo/ui';
+import { useHlsPlayer } from '@/hooks/useHlsPlayer';
 
 const SHORT_FORM_PLAYER_STYLE = `
-  .shortform-player {
-    --media-object-fit: cover !important;
-  }
-  .shortform-player :where(video, [part="video"], media-video, canvas) {
+  .shortform-player video {
     object-fit: cover !important;
-    max-width: none !important;
+    width: 100% !important;
+    height: 100% !important;
   }
 `;
 
@@ -48,12 +45,21 @@ export interface VirtualSwipePlayerProps {
 
 export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   /* --- 비디오 제어 및 시청 기록 로직 --- */
-  const playerRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const currentTimeRef = useRef<number>(0);
+
+  useHlsPlayer(videoRef, props.videoUrl ?? null);
   const isLogin = useIsLoggedIn();
-  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
-  const isPlaying = playingVideoId === props.currentVideo.videoId;
-  const initializedVideoIdRef = useRef<string | null>(null);
+
+  // play() Promise 추적 - pause() 호출 전 반드시 resolve 대기
+  const playPromiseRef = useRef<Promise<void> | null>(null);
+
+  // 실제 재생 상태 (브라우저 이벤트 기준)
+  const [isActuallyPlaying, setIsActuallyPlaying] = useState(false);
+
+  // 사용자가 수동으로 일시정지했는지 여부 (canplay 시 자동재생 여부 결정)
+  const isUserPausedRef = useRef(false);
+
   const latestStopWatchingRef = useRef(props.onStopWatching);
   const latestProgressUpdateRef = useRef(props.onWatchProgressUpdate);
   const lastReportedTimeRef = useRef<number>(Date.now());
@@ -79,12 +85,19 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     }
   }, [props.currentVideo.videoId, isLogin]);
 
+  // 영상 변경 시 상태 초기화
+  useEffect(() => {
+    isUserPausedRef.current = false;
+    setIsActuallyPlaying(false);
+    playPromiseRef.current = null;
+  }, [props.currentVideo.videoId]);
+
   // 벗어날 때 기록 저장
   useEffect(() => {
     return () => {
-      if (latestStopWatchingRef.current && playerRef.current) {
+      if (latestStopWatchingRef.current && videoRef.current) {
         const finalTime =
-          playerRef.current.currentTime ?? currentTimeRef.current;
+          videoRef.current.currentTime ?? currentTimeRef.current;
         latestStopWatchingRef.current(
           props.currentVideo.videoId,
           Math.floor(finalTime),
@@ -94,23 +107,19 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     };
   }, [props.currentVideo.videoId]);
 
-  // 자동 재생 타이머
-  useEffect(() => {
-    const starterTimer = setTimeout(
-      () => setPlayingVideoId(props.currentVideo.videoId),
-      100,
-    );
-    return () => clearTimeout(starterTimer);
-  }, [props.currentVideo.videoId]);
-
   // 10초마다 주기적 업데이트
   useEffect(() => {
-    if (!isPlaying || props.videoLoading || !isLogin || props.currentVideo.isAd)
+    if (
+      !isActuallyPlaying ||
+      props.videoLoading ||
+      !isLogin ||
+      props.currentVideo.isAd
+    )
       return;
 
     const interval = setInterval(() => {
-      if (playerRef.current && latestProgressUpdateRef.current) {
-        const currentTime = playerRef.current.currentTime || 0;
+      if (videoRef.current && latestProgressUpdateRef.current) {
+        const currentTime = videoRef.current.currentTime || 0;
         currentTimeRef.current = currentTime;
         latestProgressUpdateRef.current(
           Math.floor(currentTime),
@@ -119,7 +128,46 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
       }
     }, 10000);
     return () => clearInterval(interval);
-  }, [isPlaying, props.videoLoading, props.currentVideo.videoId, isLogin]);
+  }, [
+    isActuallyPlaying,
+    props.videoLoading,
+    props.currentVideo.videoId,
+    isLogin,
+  ]);
+
+  // canplay: 영상 재생 준비 완료. 사용자가 일시정지하지 않은 경우 자동재생
+  const handleCanPlay = useCallback(() => {
+    if (isUserPausedRef.current) return;
+    const video = videoRef.current;
+    if (!video) return;
+    playPromiseRef.current = video.play();
+    playPromiseRef.current?.catch(() => {
+      // 브라우저 정책으로 차단된 경우 실제 상태를 false로
+      setIsActuallyPlaying(false);
+    });
+  }, []);
+
+  // 클릭 토글용 play/pause (play Promise 레이스 컨디션 방지)
+  const togglePlayPause = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isActuallyPlaying) {
+      isUserPausedRef.current = true;
+      if (playPromiseRef.current) {
+        playPromiseRef.current.then(() => video.pause()).catch(() => {});
+        playPromiseRef.current = null;
+      } else {
+        video.pause();
+      }
+    } else {
+      isUserPausedRef.current = false;
+      playPromiseRef.current = video.play();
+      playPromiseRef.current?.catch(() => {
+        setIsActuallyPlaying(false);
+      });
+    }
+  }, [isActuallyPlaying]);
 
   /* 통합 포인터(터치/마우스) 스와이프 로직 */
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -171,9 +219,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
 
     // 1. 단순 클릭/터치 판정
     if (distance < 10 && timeElapsed < 300) {
-      setPlayingVideoId((prev) =>
-        prev === props.currentVideo.videoId ? null : props.currentVideo.videoId,
-      );
+      togglePlayPause();
       setOffset({ x: 0, y: 0 });
       return;
     }
@@ -213,7 +259,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       // 컨테이너 밖으로 나갔을 때의 안전장치
-      onPointerLeave={(e) => {
+      onPointerLeave={() => {
         if (isDragging.current) {
           isDragging.current = false;
           setOffset({ x: 0, y: 0 });
@@ -221,7 +267,6 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
       }}
       // 드래그 시 이미지/텍스트 선택 방지
       onDragStart={(e) => e.preventDefault()}
-      // 인라인 스타일로 오프셋 적용
     >
       <style>{SHORT_FORM_PLAYER_STYLE}</style>
       <div
@@ -232,30 +277,19 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
         }}
       >
         {/* 중앙 플레이어 */}
-        <div className="absolute inset-0 h-full w-full">
+        <div className="shortform-player absolute inset-0 h-full w-full">
           {props.videoUrl ? (
-            <ReactPlayer
-              className="shortform-player"
-              key={props.currentVideo.videoId}
-              onReady={() => {
-                if (
-                  initializedVideoIdRef.current !== props.currentVideo.videoId
-                ) {
-                  initializedVideoIdRef.current = props.currentVideo.videoId; // 현재 영상 ID 기억
-                }
-              }}
-              ref={playerRef}
-              src={props.videoUrl}
-              playing={isPlaying}
+            <video
+              ref={videoRef}
+              poster={props.getThumbnailUrl(props.currentVideo) || undefined}
+              playsInline
               muted={false}
               controls={false}
-              playsInline
-              width="100%"
-              height="100%"
-              style={{ objectFit: 'cover' }}
+              onCanPlay={handleCanPlay}
               onPlay={() => {
+                setIsActuallyPlaying(true);
                 if (!isLogin) return;
-                const currentTime = playerRef.current?.currentTime || 0;
+                const currentTime = videoRef.current?.currentTime || 0;
                 if (props.onStartWatching && currentTime < 1) {
                   props.onStartWatching(
                     props.currentVideo.videoId,
@@ -263,7 +297,9 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                   );
                 }
               }}
+              onPause={() => setIsActuallyPlaying(false)}
               onEnded={() => {
+                setIsActuallyPlaying(false);
                 if (isLogin) {
                   props.onStopWatching?.(
                     props.currentVideo.videoId,
@@ -275,8 +311,9 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                   }
                 }
                 // 처음으로 돌리기
-                if (playerRef.current) playerRef.current.currentTime = 0;
+                if (videoRef.current) videoRef.current.currentTime = 0;
               }}
+              style={{ objectFit: 'cover', width: '100%', height: '100%' }}
             />
           ) : props.videoError ? (
             <div className="flex h-dvh w-full flex-col items-center justify-center bg-black p-4 text-center text-white">
@@ -288,14 +325,14 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
           {props.currentVideo.isAd && (
             <div className="pointer-events-none absolute bottom-0 left-0 z-50 w-full p-1">
               <AdProgressBar
-                playerRef={playerRef}
+                playerRef={videoRef}
                 duration={props.currentVideo.duration}
               />
             </div>
           )}
         </div>
 
-        {!isPlaying && !props.videoLoading && (
+        {!isActuallyPlaying && !props.videoLoading && (
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/20">
             <svg
               width="72"
