@@ -5,6 +5,7 @@ import { useIsLoggedIn } from '@/store/useAuthStore';
 import { AdProgressBar } from '@/app/(blank)/long/_components/AdProgressBar';
 import { toast } from '@/lib/toast';
 import { useHlsPlayer } from '@/hooks/useHlsPlayer';
+import { useQueryClient } from '@tanstack/react-query';
 
 const SHORT_FORM_PLAYER_STYLE = `
   .shortform-player video {
@@ -64,6 +65,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   const latestProgressUpdateRef = useRef(props.onWatchProgressUpdate);
   const lastReportedTimeRef = useRef<number>(Date.now());
 
+  const queryClient = useQueryClient();
   const getStayingTimeDelta = useCallback(() => {
     const now = Date.now();
     const delta = Math.floor((now - lastReportedTimeRef.current) / 1000);
@@ -307,6 +309,9 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                     getStayingTimeDelta(),
                   );
                   if (props.currentVideo.isAd) {
+                    queryClient.invalidateQueries({
+                      queryKey: ['pointBalance'],
+                    });
                     toast.success('포인트가 적립되었습니다!');
                   }
                 }
