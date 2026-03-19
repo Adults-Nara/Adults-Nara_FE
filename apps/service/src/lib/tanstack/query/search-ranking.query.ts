@@ -45,5 +45,7 @@ export function useRanking(limit: number = 10) {
   return useQuery({
     queryKey: ['ranking', limit],
     queryFn: () => getBookmarkRanking(limit),
+    staleTime: 0,
+    refetchOnMount: true,
   });
 }
