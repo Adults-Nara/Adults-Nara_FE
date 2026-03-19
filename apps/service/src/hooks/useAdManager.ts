@@ -7,6 +7,7 @@ import { useVideoS3Url } from '@/lib/tanstack/query/video.query';
 import { useStopWatching } from '@/lib/tanstack/mutation/watch-history.mutation';
 import { useIsLoggedIn } from '@/store/useAuthStore';
 import { toast } from '@/lib/toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 // TODO : 광고 노출 확률 수정
 const AD_PROBABILITY = 1;
@@ -24,6 +25,7 @@ export function useAdManager(videoId: string | null): UseAdManagerReturn {
   const [shouldFetchAd, setShouldFetchAd] = useState(false);
   const fetchTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
   const isLoggedIn = useIsLoggedIn();
+  const queryClient = useQueryClient();
   // 1. 광고 메타데이터 호출
   const { data: adData, isError: isAdError } = useAd(videoId, shouldFetchAd);
 
@@ -104,6 +106,8 @@ export function useAdManager(videoId: string | null): UseAdManagerReturn {
         }
         if (!isStopWatchingPending && !isStopWatchingError) {
           toast.success('포인트가 적립되었습니다.');
+
+          queryClient.invalidateQueries({ queryKey: ['pointBalance'] });
         } else {
           toast.error('포인트 적립 중 오류가 발생했습니다. 다시 시도해주세요.');
         }
