@@ -117,7 +117,7 @@ export function VideoControllerOverlay({
 
       {/* 상단 컨트롤 영역 (속도·화질) */}
       {!isAdMode && (
-        <div className="absolute top-0 right-0 left-0 flex items-center justify-end gap-2 px-4 pt-2">
+        <div className="absolute top-0 right-0 left-0 z-10 flex items-center justify-end gap-2 px-4 pt-2">
           <SpeedSelector
             playbackRate={playbackRate}
             onPlaybackRateChange={onPlaybackRateChange}

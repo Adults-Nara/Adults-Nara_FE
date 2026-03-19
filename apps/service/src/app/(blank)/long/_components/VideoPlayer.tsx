@@ -52,11 +52,15 @@ export function VideoPlayer({
   const isPlayingRef = useRef(isPlaying);
   const isDragging = useRef(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const isUserPausedRef = useRef(false);
+  const playPromiseRef = useRef<Promise<void> | null>(null);
 
   const { levels, currentLevel, setLevel } = useHlsPlayer(playerRef, src);
 
   // src가 바뀔 때마다 상태 초기화
   useEffect(() => {
+    isUserPausedRef.current = false;
+    playPromiseRef.current = null;
     setCurrentTime(0);
     setDuration(0);
     setIsReady(false);
@@ -157,15 +161,31 @@ export function VideoPlayer({
     clearTimeout(hideTimer.current ?? undefined);
   }, []);
 
+  const handleCanPlay = useCallback(() => {
+    if (isUserPausedRef.current) return;
+    const video = playerRef.current;
+    if (!video) return;
+    playPromiseRef.current = video.play();
+    playPromiseRef.current?.catch(() => setIsPlaying(false));
+  }, []);
+
   const togglePlay = useCallback(() => {
     const video = playerRef.current;
     if (!video) return;
     if (!video.paused) {
-      video.pause();
+      isUserPausedRef.current = true;
+      if (playPromiseRef.current) {
+        playPromiseRef.current.then(() => video.pause()).catch(() => {});
+        playPromiseRef.current = null;
+      } else {
+        video.pause();
+      }
       stopHideTimer();
       if (!isAdMode) onStopWatching?.(video.currentTime);
     } else {
-      video.play().catch(() => {});
+      isUserPausedRef.current = false;
+      playPromiseRef.current = video.play();
+      playPromiseRef.current?.catch(() => {});
       resetHideTimer();
     }
   }, [resetHideTimer, stopHideTimer, isAdMode, onStopWatching]);
@@ -254,8 +274,8 @@ export function VideoPlayer({
         ref={playerRef}
         playsInline
         className="pointer-events-none h-full w-full"
+        onCanPlay={handleCanPlay}
         onEnded={handleEnded}
-        autoPlay
       />
 
       <VideoControllerOverlay
