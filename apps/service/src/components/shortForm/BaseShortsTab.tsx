@@ -30,24 +30,11 @@ import {
 } from '@/lib/tanstack/mutation/watch-history.mutation';
 import { LoadingSpinner } from '../LoadingSpinner';
 import { useIsLoggedIn } from '@/store/useAuthStore';
-import { Button } from '@repo/ui';
 
-// 무한 스크롤 메모리 초과 방지, window 형식. offset 보정 함수.
-function applyWindowing<T>(
-  prevList: T[],
-  newItemsToAdd: T[],
-  windowSize: number,
-  currentIndex: number,
-  setIndexOffset: React.Dispatch<React.SetStateAction<number>>,
-  minBuffer: number = 15,
-): T[] {
-  const appended = [...prevList, ...newItemsToAdd];
-  if (appended.length <= windowSize) return appended;
-
-  const cutSize = appended.length - windowSize;
-  setIndexOffset((prevIndex) => Math.max(0, prevIndex - cutSize));
-  return appended.slice(cutSize);
-}
+// 슬라이딩 윈도우 상수
+const MAX_BACK_BUFFER = 10; // 현재 위치 뒤로 유지할 최대 개수
+const WINDOW_SIZE = 30; // 메모리에 담아둘 최대 개수
+const PREFETCH_THRESHOLD = 15; // 앞으로 남은 영상이 이 이하이면 다음 페이지 요청
 
 interface BaseShortsTabProps {
   algorithmList: ShortFormVideoData[];
@@ -83,9 +70,7 @@ export default function BaseShortsTab({
   const isLogin = useIsLoggedIn();
   const queryClient = useQueryClient();
 
-  // 페이징
   const FETCH_SIZE = 10; // api에 요청하는 개수
-  const WINDOW_SIZE = 20; // 메모리에 담아둘 최대 개수
 
   useEffect(() => {
     // api로 algorithmList를 성공적으로 추가한 경우
@@ -94,19 +79,18 @@ export default function BaseShortsTab({
       lastAlgorithmLengthRef.current = algorithmList.length;
 
       setVList((prev) => {
-        // 처음 리스트를 받아온 경우
         if (prev.length === 0) return algorithmList;
 
-        // 기존 리스트 뒤에 다음 페이지 영상 리스트가 추가된 경우
         const newItems = algorithmList.slice(-addedCount);
-        return applyWindowing(
-          prev,
-          newItems,
-          WINDOW_SIZE,
-          colIndex,
-          setRowIndex,
-          10,
-        );
+        const appended = [...prev, ...newItems];
+
+        // WINDOW_SIZE 초과 시 앞에서 제거 (안전장치 — 평소엔 handleSwipe에서 관리)
+        if (appended.length > WINDOW_SIZE) {
+          const excess = appended.length - WINDOW_SIZE;
+          setRowIndex((r) => Math.max(0, r - excess));
+          return appended.slice(excess);
+        }
+        return appended;
       });
     }
   }, [algorithmList]);
@@ -163,21 +147,18 @@ export default function BaseShortsTab({
       const addedCount = allRelated.length - lastRelatedLengthRef.current;
       lastRelatedLengthRef.current = allRelated.length;
 
-      // hList 업데이트
       setHList((prev) => {
-        // 처음 리스트를 받아온 경우
         if (prev.length === 0) return [source, ...allRelated];
 
-        // 기존 리스트 뒤에 다음 페이지 영상 리스트가 추가된 경우
         const newItems = allRelated.slice(-addedCount);
-        return applyWindowing(
-          prev,
-          newItems,
-          WINDOW_SIZE,
-          colIndex,
-          setColIndex,
-          10,
-        );
+        const appended = [...prev, ...newItems];
+
+        if (appended.length > WINDOW_SIZE) {
+          const excess = appended.length - WINDOW_SIZE;
+          setColIndex((c) => Math.max(0, c - excess));
+          return appended.slice(excess);
+        }
+        return appended;
       });
     } else if (
       lastRelatedLengthRef.current === 0 &&
@@ -245,20 +226,40 @@ export default function BaseShortsTab({
 
   // VirtualSwipePlayer이 스와이프 완료를 알려주면 상태 업데이트
   const handleSwipe = (direction: 'up' | 'down' | 'left' | 'right') => {
-    if (direction === 'up' || direction === 'down') {
-      const nextRow = direction === 'down' ? rowIndex + 1 : rowIndex - 1;
-      sourceVideoIdRef.current = vList[nextRow]?.videoId;
-      fetchNextPage();
+    if (direction === 'down') {
+      // 가로 영상 보던 중이었다면 vList 해당 행 복원
+      let baseList = vList;
+      if (colIndex !== 0) {
+        baseList = [...vList];
+        baseList[rowIndex] = hList[colIndex];
+      }
 
-      if (
-        direction === 'down' &&
-        nextRow >= vList.length - FETCH_SIZE &&
-        onRequireMoreVertical
-      ) {
+      let newList = baseList;
+      let newRowIndex = rowIndex + 1;
+
+      // 슬라이딩 윈도우: 뒤 버퍼가 MAX_BACK_BUFFER를 초과하면 앞에서 1개 제거
+      // index는 그대로 MAX_BACK_BUFFER로 유지 (리스트가 앞으로 당겨짐)
+      if (rowIndex >= MAX_BACK_BUFFER) {
+        newList = baseList.slice(1);
+        newRowIndex = rowIndex; // slice(1)로 인해 실질적으로 다음 영상을 가리킴
+      }
+
+      sourceVideoIdRef.current = newList[newRowIndex]?.videoId;
+
+      // 앞으로 남은 영상이 PREFETCH_THRESHOLD 이하이면 다음 페이지 미리 요청
+      const remaining = newList.length - newRowIndex - 1;
+      if (remaining <= PREFETCH_THRESHOLD && onRequireMoreVertical) {
         onRequireMoreVertical();
       }
 
-      // 위아래로 층을 떠날 때, 가로 영상을 보던 중이었다면 원본 덮어씌우기
+      setVList(newList);
+      fetchNextPage(); // 다음 행의 연관 영상 프리패치
+      startTransition(() => {
+        setRowIndex(newRowIndex);
+        setColIndex(0);
+      });
+    } else if (direction === 'up') {
+      // 가로 영상 보던 중이었다면 vList 해당 행 복원
       if (colIndex !== 0) {
         setVList((prev) => {
           const newList = [...prev];
@@ -267,9 +268,12 @@ export default function BaseShortsTab({
         });
       }
 
+      const newRowIndex = rowIndex - 1;
+      sourceVideoIdRef.current = vList[newRowIndex]?.videoId;
+      fetchNextPage();
       startTransition(() => {
-        setRowIndex(nextRow);
-        setColIndex(0); // 새 층에선 무조건 원본(0번)
+        setRowIndex(newRowIndex);
+        setColIndex(0);
       });
     } else if (direction === 'left') {
       startTransition(() => {
