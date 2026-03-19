@@ -158,8 +158,14 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
     if (!video.paused) {
       isUserPausedRef.current = true;
       if (playPromiseRef.current) {
-        playPromiseRef.current.then(() => video.pause()).catch(() => {});
+        const pendingPlay = playPromiseRef.current;
+        const srcAtPauseRequest = video.currentSrc;
         playPromiseRef.current = null;
+        pendingPlay
+          .then(() => {
+            if (video.currentSrc === srcAtPauseRequest) video.pause();
+          })
+          .catch(() => {});
       } else {
         video.pause();
       }
