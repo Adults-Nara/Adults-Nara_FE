@@ -22,6 +22,8 @@ export function useRelatedVideosInfinite(
       return lastPage.currentPage + 1;
     },
     enabled: !!videoId,
+    staleTime: 0,
+    refetchOnMount: true,
   });
 }
 
@@ -40,6 +42,8 @@ export const feedVideoQueryOptions = (
       }
       return lastPage.currentPage + 1;
     },
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
 export function useFeedVideoInfinite(
@@ -64,5 +68,7 @@ export function useHomeFeedVideoInfinite(size?: number) {
       }
       return lastPage.currentPage + 1;
     },
+    staleTime: 0,
+    refetchOnMount: true,
   });
 }
