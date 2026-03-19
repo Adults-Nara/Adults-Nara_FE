@@ -148,11 +148,12 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
   }, []);
 
   // 클릭 토글용 play/pause (play Promise 레이스 컨디션 방지)
+  // isActuallyPlaying 대신 video.paused 기준으로 분기 — React 상태가 불일치해도 동작 보장
   const togglePlayPause = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    if (isActuallyPlaying) {
+    if (!video.paused) {
       isUserPausedRef.current = true;
       if (playPromiseRef.current) {
         playPromiseRef.current.then(() => video.pause()).catch(() => {});
@@ -167,7 +168,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
         setIsActuallyPlaying(false);
       });
     }
-  }, [isActuallyPlaying]);
+  }, []);
 
   /* 통합 포인터(터치/마우스) 스와이프 로직 */
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -298,6 +299,10 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                 }
               }}
               onPause={() => setIsActuallyPlaying(false)}
+              onTimeUpdate={() => {
+                
+                if (!isActuallyPlaying) setIsActuallyPlaying(true);
+              }}
               onEnded={() => {
                 setIsActuallyPlaying(false);
                 if (isLogin) {
