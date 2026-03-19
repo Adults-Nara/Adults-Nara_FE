@@ -5,8 +5,8 @@
 <table>
 <thead>
 <tr>
-<th width="70%">기능 미리보기</th>
-<th width="30%">기능 설명</th>
+<th width="40%">기능 미리보기</th>
+<th width="60%">기능 설명</th>
 </tr>
 </thead>
 
@@ -14,9 +14,24 @@
 
 <tr>
 <td align="center">
+<img width="260" src="https://github.com/user-attachments/assets/9f96c2d4-0568-42f4-a77c-30f532e16932" />
+</td>
+<td>
 
-<img width="260" src="https://github.com/user-attachments/assets/f3f4ad3a-1b60-4e36-94b5-c30a8428e960" />
-<img width="260" src="https://github.com/user-attachments/assets/551fa63c-e31c-4e64-b258-ea492b0b8a07" />
+<b>온보딩</b><br/>
+
+1. 인기 영상 10위 리스트 <br/>
+유저들의 북마크 기준으로 순위를 정합니다. <br/><br/>
+
+
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+
+<img width="260" src="https://github.com/user-attachments/assets/17980437-b06a-42c4-bc7b-cd0ea077e5e0" />
 
 </td>
 <td>
@@ -33,6 +48,74 @@
 3. 사용자의 선호도 기반 추천영상 리스트 <br/>
 로그인 유저는 자신의 시청기록과 선호주제에 맞는 추천영상을 보여줍니다. <br/>
 비로그인 유저는 전체적으로 인기있는 추천영상을 보여줍니다.
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+
+<img width="260" src="https://github.com/user-attachments/assets/4e032bd5-b17c-4581-806f-974f7b816200" />
+
+</td>
+<td>
+
+<b>검색</b><br/>
+
+1. 헤더의 돋보기 클릭 시 사용 가능 <br/>
+2. 입력된 검색어 기반 자동완성 기능 <br/>
+3. 검색어 기반 영상 리스트 확인 가능
+
+</td>
+</tr>
+
+<tr>
+<td align="center">
+
+<img width="260" src="https://github.com/user-attachments/assets/4b2ae76b-db5f-44a1-b7b5-0b6e61772754" />
+
+</td>
+<td>
+
+<b>숏폼 페이지</b><br/>
+
+1. 숏폼 타입 영상 및 반응 확인 가능 <br/>
+2. 세로 스와이프 시 사용자 선호도 기반 추천영상 재생 <br/>
+3. 가로 스와이프 시 현재 영상의 주제 관련 영상 재생
+
+</td>
+</tr>
+
+<tr>
+<td align="center">
+
+<img width="260" src="https://github.com/user-attachments/assets/3dc223aa-d236-4352-bfa7-d439816fef84" />
+
+</td>
+<td>
+
+<b>롱폼 페이지</b><br/>
+
+1. 롱폼 타입 영상 및 반응 확인 가능 <br/>
+2. 현재 영상 시청 완료 시 자동 연속 재생 <br/>
+3. 하단에 현재 영상 기반 추천영상 리스트
+
+</td>
+</tr>
+
+<tr>
+<td align="center">
+
+<img width="260" src="" />
+
+</td>
+<td>
+
+<b>광고,포인트</b><br/>
+
+1.  <br/>
+
+
 </td>
 </tr>
 
@@ -80,58 +163,9 @@
 </td>
 </tr>
 
-<tr>
-<td align="center">
 
-<img width="260" src="https://github.com/user-attachments/assets/c602b938-d750-45a6-bf78-9260d8858329" />
 
-</td>
-<td>
 
-<b>숏폼 페이지</b><br/>
-
-1. 숏폼 타입 영상 및 반응 확인 가능 <br/>
-2. 세로 스와이프 시 사용자 선호도 기반 추천영상 재생 <br/>
-3. 가로 스와이프 시 현재 영상의 주제 관련 영상 재생
-
-</td>
-</tr>
-
-<tr>
-<td align="center">
-
-<img width="260" src="https://github.com/user-attachments/assets/4bee9e6b-de60-4aad-8c61-8fc0afcdb27e" />
-<img width="260" src="https://github.com/user-attachments/assets/60260671-3c0f-4bd9-ab72-3e5667a819dc" />
-
-</td>
-<td>
-
-<b>롱폼 페이지</b><br/>
-
-1. 롱폼 타입 영상 및 반응 확인 가능 <br/>
-2. 현재 영상 시청 완료 시 자동 연속 재생 <br/>
-3. 하단에 현재 영상 기반 추천영상 리스트
-
-</td>
-</tr>
-
-<tr>
-<td align="center">
-
-<img width="260" src="https://github.com/user-attachments/assets/4125a3d8-d6cd-432a-8e9e-76f4e1d7bc08" />
-<img width="260" src="https://github.com/user-attachments/assets/a4decb51-5795-4c40-b15c-1625ccb5907c" />
-
-</td>
-<td>
-
-<b>검색</b><br/>
-
-1. 헤더의 돋보기 클릭 시 사용 가능 <br/>
-2. 입력된 검색어 기반 자동완성 기능 <br/>
-3. 검색어 기반 영상 리스트 확인 가능
-
-</td>
-</tr>
 
 </tbody>
 </table>
