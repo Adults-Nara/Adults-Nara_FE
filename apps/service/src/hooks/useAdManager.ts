@@ -10,7 +10,7 @@ import { toast } from '@/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
 
 // TODO : 광고 노출 확률 수정
-const AD_PROBABILITY = 1;
+const AD_PROBABILITY = 0.4;
 const AD_FETCH_TIMEOUT_MS = 5000;
 
 interface UseAdManagerReturn {
