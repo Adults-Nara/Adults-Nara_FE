@@ -323,16 +323,33 @@ export default function BaseShortsTab({
 
   const { mutate: stopWatching } = useStopWatching();
 
+  const markAdAsRewarded = (videoId: string) => {
+    const update = (list: ShortFormVideoData[]) =>
+      list.map((v) => (v.videoId === videoId ? { ...v, isRewarded: true } : v));
+    setVList(update);
+    setHList(update);
+  };
+
   const handleStopWatching = (
     videoId: string,
     lastTime: number,
     watchSeconds: number,
   ) => {
+    const video =
+      vList.find((v) => v.videoId === videoId) ??
+      hList.find((v) => v.videoId === videoId);
+
+    if (video?.isRewarded) return;
+
     if (isLogin) {
       stopWatching({
         videoId,
         body: { lastPosition: lastTime, watchSeconds: watchSeconds },
       });
+
+      if (video?.isAd && Math.floor(lastTime) >= Math.floor(video.duration)) {
+        markAdAsRewarded(videoId);
+      }
     }
   };
 
