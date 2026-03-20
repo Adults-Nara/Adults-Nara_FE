@@ -319,7 +319,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
                     Math.floor(props.currentVideo.duration),
                     getStayingTimeDelta(),
                   );
-                  if (props.currentVideo.isAd) {
+                  if (props.currentVideo.isAd && !props.currentVideo.isRewarded) {
                     queryClient.invalidateQueries({
                       queryKey: ['pointBalance'],
                     });
@@ -343,6 +343,7 @@ export function VirtualSwipePlayer(props: VirtualSwipePlayerProps) {
               <AdProgressBar
                 playerRef={videoRef}
                 duration={props.currentVideo.duration}
+                isRewarded={props.currentVideo.isRewarded}
               />
             </div>
           )}

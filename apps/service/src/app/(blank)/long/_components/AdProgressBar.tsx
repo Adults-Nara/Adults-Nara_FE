@@ -9,12 +9,14 @@ interface AdProgressBarProps {
   currentTime?: number; // 숏폼 등에서 직접 넘겨줄 때
   duration?: number; // 전체 길이
   playerRef?: React.RefObject<HTMLVideoElement | any>; // 롱폼 등 Ref로 접근할 때
+  isRewarded?: boolean;
 }
 
 export const AdProgressBar = React.memo(function AdProgressBar({
   currentTime: propsCurrentTime,
   duration: propsDuration,
   playerRef,
+  isRewarded,
 }: AdProgressBarProps) {
   // 내부 상태 관리 (Ref 사용 시 실시간 업데이트용)
   const [internalTime, setInternalTime] = useState(0);
@@ -80,7 +82,7 @@ export const AdProgressBar = React.memo(function AdProgressBar({
 
           {/* 코인 아이콘: 100%가 되면 사라짐 */}
           <AnimatePresence>
-            {!hasEarned && (
+            {!hasEarned && !isRewarded && (
               <motion.div
                 key="reward-coin"
                 initial={{ opacity: 1, y: '-50%', scale: 1 }}
